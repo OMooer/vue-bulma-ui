@@ -1,5 +1,5 @@
 import { createApp, defineComponent, getCurrentInstance, h, ref } from 'vue';
-import Modal from '../ui/container/Modal.vue';
+import Modal from '../packages/modal';
 
 // 创建 dialog vnode 组件
 const dialogVNode = defineComponent(
