@@ -22,7 +22,7 @@ export { default as VbEmpty } from './packages/empty';
 // 表单容器
 export { default as VbForm } from './packages/form';
 // 表单项容器
-export { FormElement as VbFormEl } from './packages/form';
+export { FormElement as VbFormItem } from './packages/form';
 // 输入框
 export { default as VbInput } from './packages/input';
 // 密文框

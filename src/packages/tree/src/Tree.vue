@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, h, ref, type VNode, watchEffect } from 'vue';
-import { isTruthy } from '../../utils';
+import { isTruthy } from '../../../utils';
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 
 export default defineComponent({

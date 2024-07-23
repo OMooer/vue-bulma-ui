@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { computed, ref, watch } from 'vue';
-import { useTellMe } from '../../action/inform';
+import { useTellMe } from '../../../actions/inform';
 
 const emit = defineEmits(['remove', 'hover']);
 const props = defineProps({

@@ -7,6 +7,7 @@ declare module "@vue/runtime-core" {
 	export interface GlobalComponents {
 		VbAvatar: typeof import("../src/components")["VbAvatar"];
 		VbBack: typeof import("../src/components")["VbBack"];
+		VbTLBack: typeof import("../src/components")["VbTLBack"];
 		VbCascade: typeof import("../src/components")["VbCascade"];
 		VbCollapse: typeof import("../src/components")["VbCollapse"];
 		VbCollapsePanel: typeof import("../src/components")["VbCollapsePanel"];
@@ -14,22 +15,20 @@ declare module "@vue/runtime-core" {
 		VbDialog: typeof import("../src/components")["VbDialog"];
 		VbDropdown: typeof import("../src/components")["VbDropdown"];
 		VbDualInput: typeof import("../src/components")["VbDualInput"];
-		VbElement: typeof import("../src/components")["VbElement"];
 		VbEmpty: typeof import("../src/components")["VbEmpty"];
 		VbForm: typeof import("../src/components")["VbForm"];
+		VbFormItem: typeof import("../src/components")["VbFormItem"];
 		VbInput: typeof import("../src/components")["VbInput"];
 		VbModal: typeof import("../src/components")["VbModal"];
-		VbPagination: typeof import("../src/components")["VbPagination"];
 		VbPassword: typeof import("../src/components")["VbPassword"];
 		VbPreview: typeof import("../src/components")["VbPreview"];
 		VbSelect: typeof import("../src/components")["VbSelect"];
 		VbSelectNative: typeof import("../src/components")["VbSelectNative"];
 		VbSidePage: typeof import("../src/components")["VbSidePage"];
 		VbSort: typeof import("../src/components")["VbSort"];
-		VbStepLine: typeof import("../src/components")["VbStepLine"];
+		VbSteps: typeof import("../src/components")["VbSteps"];
 		VbSwitch: typeof import("../src/components")["VbSwitch"];
 		VbTabs: typeof import("../src/components")["VbTabs"];
-		VbTable: typeof import("../src/components")["VbTable"];
 		VbTags: typeof import("../src/components")["VbTags"];
 		VbTell: typeof import("../src/components")["VbTell"];
 		VbTips: typeof import("../src/components")["VbTips"];

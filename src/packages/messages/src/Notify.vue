@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue';
-import { useTellMe } from '../../action/inform';
+import { useTellMe } from '../../../actions/inform';
 
 const emit = defineEmits(['remove']);
 const props = defineProps({

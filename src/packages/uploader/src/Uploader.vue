@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { abbrNumber, isTruthy } from '../../utils';
-import PreviewSource from '../data/PreviewSource.vue';
+import { abbrNumber, isTruthy } from '../../../utils';
+import PreviewSource from './PreviewSource.vue';
 
 defineOptions({
 	inheritAttrs: false

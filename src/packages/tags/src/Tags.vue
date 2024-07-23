@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
-import { isTruthy } from '../../utils';
+import { isTruthy } from '../../../utils';
 
 const props = withDefaults(defineProps<{
 	modelValue?: any;
