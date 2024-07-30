@@ -38,6 +38,7 @@ export { Toast as VbToast } from './packages/messages';
 // 通知统一组件
 export { Tell as VbTell } from './packages/messages';
 // 分页
+export { default as VbPagination } from './packages/pagination';
 // 下拉选择器
 export { default as VbSelect } from './packages/select';
 export { SelectorNative as VbSelectNative } from './packages/select';

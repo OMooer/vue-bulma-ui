@@ -20,6 +20,7 @@ declare module "@vue/runtime-core" {
 		VbFormItem: typeof import("../src/components")["VbFormItem"];
 		VbInput: typeof import("../src/components")["VbInput"];
 		VbModal: typeof import("../src/components")["VbModal"];
+		VbPagination: typeof import("../src/components")["VbPagination"];
 		VbPassword: typeof import("../src/components")["VbPassword"];
 		VbPreview: typeof import("../src/components")["VbPreview"];
 		VbSelect: typeof import("../src/components")["VbSelect"];
