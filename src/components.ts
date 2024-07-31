@@ -50,9 +50,10 @@ export { default as VbSort } from './packages/sort';
 export { default as VbSteps } from './packages/steps';
 // switch 开关
 export { default as VbSwitch } from './packages/switch';
+// 表格
+export { default as VbTable } from './packages/table';
 // tabs
 export { default as VbTabs } from './packages/tabs';
-// 表格
 // 多标签选择器
 export { default as VbTags } from './packages/tags';
 // 工具提示组件

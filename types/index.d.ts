@@ -29,6 +29,7 @@ declare module "@vue/runtime-core" {
 		VbSort: typeof import("../src/components")["VbSort"];
 		VbSteps: typeof import("../src/components")["VbSteps"];
 		VbSwitch: typeof import("../src/components")["VbSwitch"];
+		VbTable: typeof import("../src/components")["VbTable"];
 		VbTabs: typeof import("../src/components")["VbTabs"];
 		VbTags: typeof import("../src/components")["VbTags"];
 		VbTell: typeof import("../src/components")["VbTell"];
@@ -50,10 +51,10 @@ declare module "vue3-bulma-ui" {
 	const _default: Plugin<[]>;
 	export default _default;
 	export const {
-		$alert,
-		$confirm,
-		$dialog,
-	}: { $alert: OP.Alert; $confirm: OP.Confirm; $dialog: OP.Dialog };
+		             $alert,
+		             $confirm,
+		             $dialog,
+	             }: { $alert: OP.Alert; $confirm: OP.Confirm; $dialog: OP.Dialog };
 }
 
 export {};

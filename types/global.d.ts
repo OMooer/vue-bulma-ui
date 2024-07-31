@@ -65,3 +65,22 @@ declare namespace OP {
 	type Confirm = (msg: string, options?: FastDialogOpt) => Promise<unknown>
 }
 
+declare namespace Normal {
+	type AnyObj = { [key: string]: any };
+}
+
+declare namespace VbTable {
+	type Column = {
+		field: string;
+		label: string;
+		sort?: boolean;
+		sticky?: boolean;
+		style?: Normal.AnyObj | string;
+		slot?: string;
+	}
+
+	interface Config {
+		showSelectColumn: boolean;
+		columns: Column[]
+	}
+}
