@@ -9,6 +9,10 @@ declare module "@vue/runtime-core" {
 		VbBack: typeof import("../src/components")["VbBack"];
 		VbTLBack: typeof import("../src/components")["VbTLBack"];
 		VbCascade: typeof import("../src/components")["VbCascade"];
+		VbCharts: typeof import("../src/components")["VbCharts"];
+		VbChartsBar: typeof import("../src/components")["VbChartsBar"];
+    VbChartsLine: typeof import("../src/components")["VbChartsLine"];
+    VbChartsPie: typeof import("../src/components")["VbChartsPie"];
 		VbCollapse: typeof import("../src/components")["VbCollapse"];
 		VbCollapsePanel: typeof import("../src/components")["VbCollapsePanel"];
 		VbDatetime: typeof import("../src/components")["VbDatetime"];

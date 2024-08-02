@@ -5,6 +5,11 @@ export { TLBack as VbTLBack } from './packages/back'
 export { default as VbBack } from './packages/back';
 // 级联选择器
 export { default as VbCascade } from './packages/cascade';
+// 图表
+export { default as VbCharts } from './packages/charts';
+export { Bar as VbChartsBar } from './packages/charts';
+export { Line as VbChartsLine } from './packages/charts';
+export { Pie as VbChartsPie } from './packages/charts';
 // 折叠面板
 export { default as VbCollapse } from './packages/collapse';
 export { CollapsePanel as VbCollapsePanel } from './packages/collapse';
@@ -16,7 +21,6 @@ export { default as VbDatetime } from './packages/datetimePicker';
 export { default as VbDropdown } from './packages/dropdown';
 // 双态输入框
 export { default as VbDualInput } from './packages/dualInput';
-// 图表
 // 空白状态
 export { default as VbEmpty } from './packages/empty';
 // 表单容器
