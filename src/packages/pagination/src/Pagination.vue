@@ -17,15 +17,15 @@ const props = defineProps({
 	},
 	pageSizes      : {
 		type   : Array,
-		default: [10, 20, 30, 50, 100]
+		default: () => [10, 20, 30, 50, 100]
 	},
 	prevText       : {
 		type   : String,
-		default: '上一页'
+		default: '\u2039'
 	},
 	nextText       : {
 		type   : String,
-		default: '下一页'
+		default: '\u203A'
 	},
 	showStepButtons: {
 		type   : Boolean,

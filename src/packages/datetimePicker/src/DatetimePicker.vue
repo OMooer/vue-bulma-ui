@@ -4,9 +4,9 @@ import { h, defineComponent, ref, watch, computed, withDirectives } from 'vue';
 import { isTruthy } from '../../../utils';
 
 function dateFormat(d: Date, f: string = 'YYYY-MM-DD hh:mm:ss') {
-	const year = d.getFullYear(),
-			month = d.getMonth() + 1,
-			day = d.getDate();
+	const year  = d.getFullYear(),
+	      month = d.getMonth() + 1,
+	      day   = d.getDate();
 	return `${ year }-${ month.toString().padStart(2, '0') }-${ day.toString().padStart(2, '0') }`;
 }
 
@@ -251,6 +251,11 @@ export default defineComponent({
 		[role=calendar] {
 			line-height: 1.5;
 			font-size: 0.75rem;
+
+			&[data-range=true] {
+				line-height: 1.5;
+				font-size: 0.75rem;
+			}
 		}
 
 		[role=calendar][data-range=true] {

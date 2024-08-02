@@ -11,7 +11,7 @@ const props = defineProps({
 	},
 	list   : {
 		type   : Array,
-		default: []
+		default: () => []
 	}
 });
 const {add, remove, list} = useTellMe();

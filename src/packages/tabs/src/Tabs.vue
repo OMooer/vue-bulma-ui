@@ -4,7 +4,7 @@ import { ref } from 'vue';
 defineProps({
 	list: {
 		type   : Array,
-		default: []
+		default: () => []
 	}
 });
 const emit = defineEmits(['change']);
