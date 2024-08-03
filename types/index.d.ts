@@ -11,8 +11,8 @@ declare module "@vue/runtime-core" {
 		VbCascade: typeof import("../src/components")["VbCascade"];
 		VbCharts: typeof import("../src/components")["VbCharts"];
 		VbChartsBar: typeof import("../src/components")["VbChartsBar"];
-    VbChartsLine: typeof import("../src/components")["VbChartsLine"];
-    VbChartsPie: typeof import("../src/components")["VbChartsPie"];
+		VbChartsLine: typeof import("../src/components")["VbChartsLine"];
+		VbChartsPie: typeof import("../src/components")["VbChartsPie"];
 		VbCollapse: typeof import("../src/components")["VbCollapse"];
 		VbCollapsePanel: typeof import("../src/components")["VbCollapsePanel"];
 		VbDatetime: typeof import("../src/components")["VbDatetime"];
@@ -23,6 +23,10 @@ declare module "@vue/runtime-core" {
 		VbForm: typeof import("../src/components")["VbForm"];
 		VbFormItem: typeof import("../src/components")["VbFormItem"];
 		VbInput: typeof import("../src/components")["VbInput"];
+		VbLoading: typeof import("../src/components")["VbLoading"];
+		VbLoadingBall: typeof import("../src/components")["VbLoadingBall"];
+		VbLoadingBar: typeof import("../src/components")["VbLoadingBar"];
+		VbLoadingDot: typeof import("../src/components")["VbLoadingDot"];
 		VbModal: typeof import("../src/components")["VbModal"];
 		VbPagination: typeof import("../src/components")["VbPagination"];
 		VbPassword: typeof import("../src/components")["VbPassword"];

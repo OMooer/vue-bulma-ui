@@ -31,6 +31,11 @@ export { FormElement as VbFormItem } from './packages/form';
 export { default as VbInput } from './packages/input';
 // 密文框
 export { PasswordInput as VbPassword } from './packages/input';
+// 加载动画
+export { default as VbLoading } from './packages/loading';
+export { AnimateBall as VbLoadingBall } from './packages/loading';
+export { ProgressBar as VbLoadingBar } from './packages/loading';
+export { AnimateDot as VbLoadingDot } from './packages/loading';
 // 弹框容器
 export { default as VbModal } from './packages/modal';
 // notify

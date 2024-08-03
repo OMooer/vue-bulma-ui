@@ -1,0 +1,160 @@
+<script setup lang="ts">
+import { onMounted, onUnmounted, provide, ref, watch } from 'vue';
+
+const emit = defineEmits(['dismiss']);
+const props = defineProps(['finished']);
+const percent = ref(0);
+const status = ref('load');
+const isEnd = ref(false);
+let timer: any;
+
+onMounted(() => {
+	runBar();
+});
+onUnmounted(() => {
+	percent.value = 0;
+	status.value = 'load';
+});
+
+watch(() => props.finished, () => {
+	if (props.finished) {
+		// 如果异步数据已经加载完成，但进度条还在执行，则设置标识
+		if (percent.value < 90) {
+			isEnd.value = true;
+		}
+		// 否则直接执行完成操作
+		else {
+			finish();
+		}
+	}
+}, {immediate: true});
+
+function runBar() {
+	// 启动模拟进度条定时器
+	if (timer) {
+		clearInterval(timer);
+	}
+	timer = setInterval(() => {
+		percent.value += 1;
+		// 模拟进度条只模拟到90%，剩下的等待异步结果或者设置超时
+		if (percent.value >= 90) {
+			clearInterval(timer);
+			// 如果存在完成标识则执行完成操作
+			if (isEnd.value) {
+				finish();
+			}
+			// 否则设置等待超时操作
+			else {
+				timeout();
+			}
+		}
+	}, 40);
+}
+
+function timeout() {
+	// 超时关闭进度条
+	timer = setTimeout(() => {
+		percent.value = 100;
+		status.value = 'error';
+		dismiss();
+	}, 10000);
+}
+
+function finish() {
+	percent.value = 100;
+	status.value = 'success';
+	dismiss();
+}
+
+function dismiss() {
+	if (timer) {
+		clearInterval(timer);
+		clearTimeout(timer);
+		timer = null;
+	}
+	setTimeout(() => {
+		emit('dismiss');
+	}, 300);
+}
+
+provide('dismiss', dismiss);
+provide('percent', percent);
+provide('status', status);
+</script>
+
+<template>
+	<div class="vb-loading">
+		<slot>
+			<p class="normal"></p>
+		</slot>
+	</div>
+</template>
+
+<style scoped lang="scss">
+@property --text-ani {
+	syntax: '<string>';
+	inherits: false;
+	initial-value: '';
+}
+
+@keyframes loading-text {
+	0% {
+		--text-ani: 'loading...';
+	}
+	10% {
+		--text-ani: 'Loading...';
+	}
+	20% {
+		--text-ani: 'LOading...';
+	}
+	30% {
+		--text-ani: 'LOAding...';
+	}
+	40% {
+		--text-ani: 'LOADing...';
+	}
+	50% {
+		--text-ani: 'LOADIng...';
+	}
+	60% {
+		--text-ani: 'LOADINg...';
+	}
+	70% {
+		--text-ani: 'LOADING...';
+	}
+	80% {
+		--text-ani: 'LOADING·..';
+	}
+	90% {
+		--text-ani: 'LOADING··.';
+	}
+	100% {
+		--text-ani: 'LOADING···';
+	}
+}
+
+.vb-loading {
+	.normal {
+		margin: 2rem 0;
+		user-select: none;
+		text-align: center;
+		line-height: 4;
+		font-family: monospace;
+		font-size: .875rem;
+		color: $grey;
+		animation: loading-text 1.2s ease-in-out alternate-reverse infinite;
+
+		&::before {
+			content: var(--text-ani);
+		}
+	}
+
+	&.top-loading {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		z-index: 9999;
+	}
+}
+</style>
