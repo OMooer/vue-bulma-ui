@@ -1,6 +1,6 @@
 # VUE 3 BULMA UI
 
-![version](https://img.shields.io/badge/Version-1.4.0-blue?style=flat)
+![version](https://img.shields.io/badge/Version-0.1.0-blue?style=flat)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat)
 ![Vue](https://img.shields.io/badge/Vue-35495E?style=flat&logo=vue.js)
 ![Bulma](https://img.shields.io/badge/Bulma-000000?style=flat&logo=bulma)
