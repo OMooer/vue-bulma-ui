@@ -10,25 +10,26 @@ const props = defineProps({
 	dark  : Boolean
 });
 const echarts = inject('echarts');
-const lineRef = ref();
+const radarRef = ref();
 const eChartsInstance = ref<any>(null);
 const theme = computed(() => {
 	return props.dark ? 'dark' : 'macarons';
 });
 const seriesData = computed(() => {
-	return props.data.series.map((item: any) => {
-		return {
-			name : item.name,
-			type : 'line',
-			data : item.data,
-			label: {
-				show: true
-			}
+	const _data: Normal.AnyObj[] = [];
+	props.data.xData.forEach((item: any, index: number) => {
+		if (item !== 'Indicator') {
+			_data.push({
+				name : item,
+				value: props.data.series.map((val: any) => val.data[index])
+			});
 		}
 	});
+	return _data;
 });
-const legendData = computed(() => props.data.legend.map((item: any) => {
-	return {name: item, icon: 'roundRect'};
+const indicatorData = computed(() => props.data.series.map((item: any) => {
+	const IndicatorIndex = props.data.xData.indexOf('Indicator');
+	return {name: item.name, max: item.data[IndicatorIndex]};
 }));
 // 主题更改的话，需要重新初始化
 watch(() => theme.value, () => {
@@ -53,41 +54,17 @@ function drawChart() {
 	const chartOption: any = {
 		color  : props.colors,
 		tooltip: {
-			trigger    : 'axis',
-			axisPointer: {
-				type: 'cross'
-			}
+			trigger: 'axis'
 		},
-		legend : {
-			type      : 'scroll',
-			left      : '5%',
-			itemWidth : 15,
-			itemHeight: 15,
-			itemGap   : 25,
-			data      : []
+		radar  : {
+			indicator: indicatorData.value
 		},
-		grid   : {
-			left        : '3%',
-			right       : '4%',
-			bottom      : '3%',
-			containLabel: true
-		},
-		xAxis  : [
-			{
-				type       : 'category',
-				boundaryGap: false,
-				data       : []
-			}
-		],
-		yAxis  : [
-			{type: 'value'}
-		],
 		series : []
 	};
 
 	nextTick(() => {
 		// @ts-ignore
-		eChartsInstance.value = echarts?.init(lineRef.value, theme.value);
+		eChartsInstance.value = echarts?.init(radarRef.value, theme.value);
 		eChartsInstance.value.setOption(chartOption);
 		updateData();
 	});
@@ -95,11 +72,18 @@ function drawChart() {
 
 function updateData() {
 	eChartsInstance.value?.setOption({
-		legend: {data: legendData.value},
-		series: seriesData.value,
-		xAxis : [
+		legend: {
+			right: 0,
+			data : props.data.xData
+		},
+		series: [
 			{
-				data: props.data.xData
+				type     : 'radar',
+				tooltip  : {
+					trigger: 'item'
+				},
+				areaStyle: {},
+				data     : seriesData.value,
 			}
 		]
 	});
@@ -107,13 +91,13 @@ function updateData() {
 </script>
 
 <template>
-	<div ref="lineRef" class="line-chart">
+	<div ref="radarRef" class="radar-chart">
 		<slot/>
 	</div>
 </template>
 
 <style scoped lang="scss">
-.line-chart {
+.radar-chart {
 	display: flex;
 	align-items: center;
 	justify-content: center;

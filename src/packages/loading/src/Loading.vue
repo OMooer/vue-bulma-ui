@@ -48,7 +48,7 @@ function runBar() {
 				timeout();
 			}
 		}
-	}, 40);
+	}, 10);
 }
 
 function timeout() {
@@ -73,7 +73,7 @@ function dismiss() {
 		timer = null;
 	}
 	setTimeout(() => {
-		emit('dismiss');
+		emit('dismiss', status.value);
 	}, 300);
 }
 

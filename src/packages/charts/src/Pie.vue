@@ -122,3 +122,11 @@ function updateData() {
 		<slot/>
 	</div>
 </template>
+
+<style scoped lang="scss">
+.pie-chart {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+</style>
