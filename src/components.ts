@@ -8,8 +8,10 @@ export { default as VbCascade } from './packages/cascade';
 // 图表
 export { default as VbCharts } from './packages/charts';
 export { Bar as VbChartsBar } from './packages/charts';
+export { Gauge as VbChartsGauge } from './packages/charts';
 export { Line as VbChartsLine } from './packages/charts';
 export { Pie as VbChartsPie } from './packages/charts';
+export { Radar as VbChartsRadar } from './packages/charts';
 // 折叠面板
 export { default as VbCollapse } from './packages/collapse';
 export { CollapsePanel as VbCollapsePanel } from './packages/collapse';

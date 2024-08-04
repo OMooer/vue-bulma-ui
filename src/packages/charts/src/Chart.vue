@@ -5,8 +5,10 @@ import { chartColors } from './colors';
 import DatetimePicker from '../../datetimePicker';
 import Loading from '../../loading';
 import Bar from './Bar.vue';
+import Gauge from './Gauge.vue';
 import Line from './Line.vue';
 import Pie from './Pie.vue';
+import Radar from './Radar.vue';
 
 const emit = defineEmits(['fetch']);
 const slots = defineSlots();
@@ -64,7 +66,9 @@ const echartsReady = ref(false);
 const chartChildren = shallowRef<any>({
 	pieChart : Pie,
 	lineChart: Line,
-	barChart : Bar
+	barChart : Bar,
+	radarChart: Radar,
+	gaugeChart: Gauge
 });
 // 根据图表类型获取对应的子组件
 const childChart = computed(() => {
