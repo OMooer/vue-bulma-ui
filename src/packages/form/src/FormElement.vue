@@ -2,11 +2,11 @@
 import { computed, ref, watchEffect } from 'vue';
 
 const props = defineProps({
-	label    : String,
-	tips     : String,
-	required : Boolean,
-	group    : Boolean,
-	floatTips: Boolean,
+	label     : String,
+	tips      : String,
+	group     : Boolean,
+	floatTips : Boolean,
+	floatLabel: Boolean
 });
 
 const isError = ref(false);
@@ -48,8 +48,8 @@ defineExpose({
 </script>
 
 <template>
-	<div class="field" :class="{'is-float-tips': floatTips}">
-		<label class="label" :class="{'required': required}" v-if="label">{{ label }}</label>
+	<div class="field" :class="{'is-float-tips': floatTips, 'is-float-form': floatLabel}">
+		<label class="label form-el-label" v-if="label">{{ label }}</label>
 		<div
 				:data-tips="wrapTips" class="field"
 				:class="{
@@ -71,6 +71,52 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
+.field {
+	&:has([required]) {
+		.form-el-label {
+			&::before {
+				content: '*';
+				color: $danger;
+				vertical-align: middle;
+			}
+		}
+	}
+}
+
+.is-float-form:has(input) {
+	.form-el-label {
+		position: relative;
+		z-index: 10;
+		float: left;
+		margin-bottom: -2.5em;
+		padding: .5em .75em;
+		pointer-events: none;
+		font-weight: normal;
+		color: rgba($grey-darker, .3);
+		height: 2.5em;
+		transition: transform .2s ease-in-out;
+	}
+
+	:deep(input::placeholder) {
+		color: transparent;
+		font-size: .875em;
+	}
+
+	&:focus-within, &:has(input:not(:placeholder-shown)) {
+		.form-el-label {
+			background-clip: content-box;
+			background-color: $white;
+			color: $grey;
+			//font-weight: bold;
+			transform: translate(-.75em, -50%) scale(.9);
+		}
+
+		:deep(input::placeholder) {
+			color: rgba($grey-darker, .3);
+		}
+	}
+}
+
 .is-float-tips > .field:first-of-type {
 	&::before, &::after {
 		content: "";
@@ -80,7 +126,7 @@ defineExpose({
 	}
 
 	&:has(:focus-visible) {
-	//&:focus-within {
+		//&:focus-within {
 		position: relative;
 
 		&::before {
