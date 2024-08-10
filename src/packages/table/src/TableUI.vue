@@ -4,7 +4,11 @@ import Empty from '../../empty';
 import SortUI from '../../sort';
 
 const emit = defineEmits(['sort', 'select']);
-const props = defineProps(['tableConfig', 'tableData']);
+const props = withDefaults(defineProps<{
+	tableConfig: VbTable.Config;
+	tableData: Normal.AnyObj[];
+	emptyText?: string;
+}>(), {emptyText: '无数据'});
 // 是否显示可勾选
 const showCheck = computed(() => {
 	return props.tableConfig?.showSelectColumn;
@@ -52,7 +56,6 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				return acc;
 			}, {});
 	emit('sort', sortCond);
-	console.log('table order by', sortCond);
 }
 </script>
 
@@ -98,7 +101,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 			</tr>
 			<tr v-if="!tableData?.length">
 				<td :colspan="columnCount">
-					<Empty text="无数据"/>
+					<Empty :text="emptyText"/>
 				</td>
 			</tr>
 			</tbody>

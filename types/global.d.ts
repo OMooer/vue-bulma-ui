@@ -80,7 +80,7 @@ declare namespace VbTable {
 	}
 
 	interface Config {
-		showSelectColumn: boolean;
+		showSelectColumn?: boolean;
 		columns: Column[]
 	}
 }
