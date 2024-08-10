@@ -11,12 +11,14 @@ declare module "@vue/runtime-core" {
 		VbCascade: typeof import("../src/components")["VbCascade"];
 		VbCharts: typeof import("../src/components")["VbCharts"];
 		VbChartsBar: typeof import("../src/components")["VbChartsBar"];
-    VbChartsGauge: typeof import("../src/components")["VbChartsGauge"];
+		VbChartsGauge: typeof import("../src/components")["VbChartsGauge"];
 		VbChartsLine: typeof import("../src/components")["VbChartsLine"];
 		VbChartsPie: typeof import("../src/components")["VbChartsPie"];
-    VbChartsRadar: typeof import("../src/components")["VbChartsRadar"];
+		VbChartsRadar: typeof import("../src/components")["VbChartsRadar"];
 		VbCollapse: typeof import("../src/components")["VbCollapse"];
 		VbCollapsePanel: typeof import("../src/components")["VbCollapsePanel"];
+		VbCountdown: typeof import("../src/components")["VbCountdown"];
+		VbCountdownBar: typeof import("../src/components")["VbCountdownBar"];
 		VbDatetime: typeof import("../src/components")["VbDatetime"];
 		VbDialog: typeof import("../src/components")["VbDialog"];
 		VbDropdown: typeof import("../src/components")["VbDropdown"];

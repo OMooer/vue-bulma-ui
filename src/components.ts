@@ -15,6 +15,9 @@ export { Radar as VbChartsRadar } from './packages/charts';
 // 折叠面板
 export { default as VbCollapse } from './packages/collapse';
 export { CollapsePanel as VbCollapsePanel } from './packages/collapse';
+// 倒计时
+export { default as VbCountdown } from './packages/countdown';
+export { CountdownBar as VbCountdownBar } from './packages/countdown';
 // 对话容器
 export { default as VbDialog } from './packages/dialog';
 // 日期选择器
