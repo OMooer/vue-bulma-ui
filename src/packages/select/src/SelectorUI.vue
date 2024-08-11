@@ -97,7 +97,7 @@ defineExpose({
 </script>
 
 <template>
-	<div ref="entity" :class="classList">
+	<div ref="entity" :class="classList" :data-required="required">
 		<select
 				class="entity-shadow" tabindex="-1" aria-hidden="true" required
 				@focus="frontFocus" v-if="!modelValue && required"></select>

@@ -169,7 +169,7 @@ function toggleShow(ev: Event) {
 </script>
 
 <template>
-	<div class="vb-tags" :class="{'is-active': isOpen, 'is-small': isSmall, 'is-disabled': disabled}" @click="toggleShow">
+	<div class="vb-tags" :class="{'is-active': isOpen, 'is-small': isSmall, 'is-disabled': disabled}" :data-required="required" @click="toggleShow">
 		<span class="icon is-small">
 			<FasIcon icon="angle-down" aria-hidden="true"/>
 		</span>

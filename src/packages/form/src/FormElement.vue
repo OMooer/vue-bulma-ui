@@ -73,7 +73,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .field {
-	&:has([required]) {
+	&:has([required],[data-required]) {
 		.form-el-label {
 			&::before {
 				content: '*';
