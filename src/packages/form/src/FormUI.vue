@@ -1,37 +1,146 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watchEffect } from "vue";
+import DatetimePicker from '../../datetimePicker';
+import InputUI from '../../input';
+import SelectorUI from '../../select';
+import SwitchUI from '../../switch';
+import Tags from '../../tags';
+import FormElement from './FormElement.vue';
 
-const emit = defineEmits(["update:formData", "submit"]);
-
+const emit = defineEmits(['submit', 'reset']);
+const props = withDefaults(defineProps<{
+	config?: VbForm.Config;
+	submitText?: string;
+}>(), {submitText: '提交'});
+const modelValue = defineModel<Normal.AnyObj>();
+const innerValue = ref<Normal.AnyObj>({});
+const formValue = computed(() => {
+	return modelValue.value || innerValue.value;
+});
+watchEffect(() => {
+	if (props.config) {
+		// 根据配置设置默认值
+		props.config?.items?.forEach((item: any) => {
+			if (!(item.name in formValue.value)) {
+				formValue.value[item.name] = item.value;
+			}
+		});
+	}
+});
+const hasConfigItems = computed(() => !!props.config?.items?.length);
+const isSmall = computed(() => props.config?.isSmall || false);
 const classList = computed(() => {
 	return {
-		"vb-form": true,
+		"vb-form"     : true,
+		'columns'     : hasConfigItems.value,
+		'is-multiline': hasConfigItems.value,
+		'is-variable' : hasConfigItems.value,
+		'is-1'        : hasConfigItems.value
 	};
+});
+
+const colClassName = computed(() => {
+	return props.config?.rowCols ? 'is-' + Math.round(12 / props.config?.rowCols) : 'is-full';
 });
 
 //表单提交
 function submit(e: any) {
 	emit("submit", e);
 }
+
+// 表单重置
+function reset() {
+	props.config?.items?.forEach((item: any) => {
+		formValue.value[item.name] = item.value;
+	});
+	emit("reset");
+}
 </script>
 
 <template>
-	<form action="" @submit.prevent="submit" :class="classList">
+	<form action="" @submit.prevent="submit" @reset.prevent="reset" :class="classList">
+		<!-- 配置表单项 -->
+		<template v-for="item in config?.items" v-if="hasConfigItems">
+			<slot :name="item.slot" v-if="'slot' in item"/>
+			<FormElement
+					class="column mb-0" :class="[item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]" :isSmall
+					:label="item.label"
+					v-else>
+				<!-- 输入框 -->
+				<template v-if="['input','number'].includes(item.type)">
+					<InputUI
+							:type="item.type"
+							:name="item.name"
+							:required="item.required"
+							:disabled="item.disabled"
+							:placeholder="item.placeholder"
+							:class="{'is-small':  isSmall}"
+							v-model="formValue[item.name]"/>
+				</template>
+				<!-- 日期 -->
+				<DatetimePicker
+						type="datetime-local" auto-close
+						:class="{'is-small': isSmall}"
+						:required="item.required"
+						:min="item.min"
+						:max="item.max"
+						v-model="formValue[item.name]"
+						v-if="item.type==='datetime'"/>
+				<DatetimePicker
+						is-range
+						:class="{'is-small': isSmall}"
+						:required="item.required"
+						:min="item.min"
+						:max="item.max"
+						:messages="{'zh-cn':{calendar:{rangeStart:item.rangeText?.[0], rangeEnd:item.rangeText?.[1]}}}"
+						v-model="formValue[item.name]"
+						v-else-if="item.type==='dateRange'"/>
+				<DatetimePicker
+						auto-close
+						:class="{'is-small': isSmall}"
+						:required="item.required"
+						:min="item.min"
+						:max="item.max"
+						v-model="formValue[item.name]"
+						v-else-if="item.type==='date'"/>
+				<!-- tags -->
+				<template v-else-if="item.type === 'tags'">
+					<Tags
+							:list="item.options" :isSmall :required="item.required" :disabled="item.disabled"
+							:placeholder="item.placeholder"
+							:collapse="item.collapse" v-model="formValue[item.name]"/>
+				</template>
+				<!-- 下拉框 -->
+				<template v-else-if="item.type === 'select'">
+					<SelectorUI
+							:class="{'is-small': isSmall}"
+							:list="item.options"
+							:placeholder="item.placeholder"
+							:required="item.required"
+							:disabled="item.disabled"
+							v-model="formValue[item.name]"/>
+				</template>
+				<!-- switch -->
+				<template v-else-if="item.type==='switch'">
+					<SwitchUI :class="{'is-small': isSmall}" v-model="formValue[item.name]"/>
+				</template>
+			</FormElement>
+		</template>
 		<!-- 默认插槽 -->
-		<slot/>
+		<slot v-else/>
 		<slot name="formFooter">
-			<div class="field is-grouped">
+			<div class="field is-grouped" :class="{'column': hasConfigItems}">
 				<slot name="buttons">
-					<div class="control">
-						<button type="submit" class="button is-success">Submit</button>
+					<template v-if="config?.buttons.length">
+						<div class="control" v-for="btn in config.buttons">
+							<button :type="btn.type" :class="btn.class" @click="btn?.handler">{{ btn.text }}</button>
+						</div>
+					</template>
+					<div class="control" v-else>
+						<button type="submit" class="button is-success">{{ submitText }}</button>
 					</div>
 				</slot>
 			</div>
 		</slot>
 	</form>
 </template>
-
-<style scoped lang="scss">
-.vb-form {
-}
-</style>

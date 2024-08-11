@@ -84,3 +84,72 @@ declare namespace VbTable {
 		columns: Column[]
 	}
 }
+
+declare namespace VbForm {
+	type Btn = {
+		text: string;
+		type: 'submit' | 'reset' | 'button',
+		class?: string;
+		handler?: () => void;
+	}
+
+	type ListItem = {
+		type: 'select';
+		options: TVO.List;
+		value: any;
+	}
+
+	type TagItem = {
+		type: 'tags';
+		options: TVO.List;
+		collapse?: number;
+		value: any[];
+	}
+
+	type Datetime = {
+		type: 'datetime' | 'date';
+		value: string;
+	}
+	type DateRange = {
+		type: 'dateRange';
+		rangeText?: [string, string];
+		value: [string, string];
+	}
+	type DateItem = (Datetime | DateRange) & {
+		min?: string;
+		max?: string;
+	}
+
+	type SwitchItem = {
+		type: 'switch';
+		value: boolean;
+	}
+
+	type InputItem = {
+		type: 'input' | 'number';
+		value: string | number;
+	}
+
+	type SlotItem = {
+		slot: string;
+	}
+
+	type FormItem = ListItem | TagItem | DateItem | SwitchItem | InputItem | SlotItem;
+
+	type Item = FormItem & {
+		label?: string;
+		name: string;
+		placeholder?: string;
+		required?: boolean;
+		disabled?: boolean;
+		readonly?: boolean;
+		colspan?: number;
+	}
+
+	interface Config {
+		rowCols?: number;
+		isSmall?: boolean;
+		items: Item[];
+		buttons: Btn[];
+	}
+}
