@@ -40,7 +40,8 @@ const props = defineProps({
 	limit      : {
 		type   : Number,
 		default: 0 // 不限制
-	}
+	},
+	isSmall    : Boolean
 });
 const emit = defineEmits(['update:modelValue', 'start', 'error', 'status']);
 // 上传队列
@@ -270,7 +271,9 @@ defineExpose({
 								:source="item" canDelete @delete="remove(index)" :key="item" v-for="(item, index) in modelValue"/>
 					</slot>
 				</div>
-				<div class="file" :class="{'is-danger': uploadError}" v-if="!hasValue || isTruthy(multiple)">
+				<div
+						class="file" :class="{'is-danger': uploadError, 'is-small': isSmall}"
+						v-if="!hasValue || isTruthy(multiple)">
 					<div class="file-label">
 						<span class="file-cta">
 							<span class="file-icon">

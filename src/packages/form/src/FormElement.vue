@@ -6,7 +6,8 @@ const props = defineProps({
 	tips      : String,
 	group     : Boolean,
 	floatTips : Boolean,
-	floatLabel: Boolean
+	floatLabel: Boolean,
+	isSmall   : Boolean
 });
 
 const isError = ref(false);
@@ -49,7 +50,7 @@ defineExpose({
 
 <template>
 	<div class="field" :class="{'is-float-tips': floatTips, 'is-float-form': floatLabel}">
-		<label class="label form-el-label" v-if="label">{{ label }}</label>
+		<label class="label form-el-label" :class="{'is-small': isSmall}" v-if="label">{{ label }}</label>
 		<div
 				:data-tips="wrapTips" class="field"
 				:class="{
@@ -78,6 +79,7 @@ defineExpose({
 				content: '*';
 				color: $danger;
 				vertical-align: middle;
+				line-height: 1;
 			}
 		}
 	}
