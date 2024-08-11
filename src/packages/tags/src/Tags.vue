@@ -285,6 +285,10 @@ function toggleShow(ev: Event) {
 
 		.control {
 			margin-bottom: .25rem !important;
+
+			.tag {
+				height: 1.875em;
+			}
 		}
 	}
 
