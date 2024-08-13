@@ -31,6 +31,8 @@ declare module "@vue/runtime-core" {
 		VbLoadingBall: typeof import("../src/components")["VbLoadingBall"];
 		VbLoadingBar: typeof import("../src/components")["VbLoadingBar"];
 		VbLoadingDot: typeof import("../src/components")["VbLoadingDot"];
+		VbMenu: typeof import("../src/components")["VbMenu"];
+		VbLink: typeof import("../src/components")["VbLink"];
 		VbModal: typeof import("../src/components")["VbModal"];
 		VbPagination: typeof import("../src/components")["VbPagination"];
 		VbPassword: typeof import("../src/components")["VbPassword"];

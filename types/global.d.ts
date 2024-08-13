@@ -153,3 +153,19 @@ declare namespace VBForm {
 		buttons: Btn[];
 	}
 }
+
+declare namespace VBMenu {
+	type TitleLang = {
+		[propName: string]: string;
+	}
+
+	type Item = {
+		name: string;
+		title: string | TitleLang;
+		icon?: string;
+		url: string;
+		children?: Item[];
+		folded?: boolean;
+		external?: boolean;
+	}
+}
