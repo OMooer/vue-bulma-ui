@@ -32,8 +32,14 @@ menuList.value.forEach(item => {
 					:to="item.external ? item.url : {name: item.name}"
 					:title="item.title"
 					@state="item.folded =! $event">
-				<span class="menu-title">{{ item.title }}</span>
-				<span class="icon" :class="{'roll-down': !item?.folded}" v-if="item.children?.length">
+				<div class="menu-title">
+					<span class="icon" v-if="item.icon">
+						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
+						<Component :is="item.icon" v-else/>
+					</span>
+					<span class="text">{{ item.title }}</span>
+				</div>
+				<span class="icon next-icon" :class="{'roll-down': !item?.folded}" v-if="item.children?.length">
 					<FasIcon icon="angle-right"/>
 				</span>
 			</Link>
@@ -55,6 +61,16 @@ ul {
 		align-items: center;
 		justify-content: space-between;
 		padding-left: .5em;
+
+		.menu-title {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+
+			.icon {
+				margin-right: .25em;
+			}
+		}
 	}
 
 	> li {
@@ -62,7 +78,7 @@ ul {
 		padding: 0;
 		list-style: none;
 
-		.icon {
+		.next-icon {
 			transition: transform .3s ease;
 
 			&.roll-down {

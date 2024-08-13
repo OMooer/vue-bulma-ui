@@ -1,3 +1,5 @@
+import type { Component } from 'vue';
+
 declare namespace TVO {
 	type Value = string | number;
 	type Item = {
@@ -162,7 +164,7 @@ declare namespace VBMenu {
 	type Item = {
 		name: string;
 		title: string | TitleLang;
-		icon?: string;
+		icon?: string | Component;
 		url: string;
 		children?: Item[];
 		folded?: boolean;
