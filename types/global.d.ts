@@ -1,5 +1,3 @@
-import type { Component } from 'vue';
-
 declare namespace TVO {
 	type Value = string | number;
 	type Item = {
@@ -157,6 +155,8 @@ declare namespace VBForm {
 }
 
 declare namespace VBMenu {
+	import type { Component } from 'vue';
+
 	type TitleLang = {
 		[propName: string]: string;
 	}
