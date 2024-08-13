@@ -1,4 +1,3 @@
-
 /**
  * 分割卡片有效期
  * @param value
@@ -44,7 +43,7 @@ export function moneyFormat(value: number, currency: string = 'USD'): string {
  * @param [format]
  */
 export function abbrNumber(value: number, format?: string): string {
-	const _iteration = function (num: number, unit: number, levelList: string[]) {
+	const _iteration = function(num: number, unit: number, levelList: string[]) {
 		let _diff = num;
 		for (let i = 0; i < levelList.length; i++) {
 			_diff = _diff / unit;
@@ -79,4 +78,13 @@ export function takeSeparate(text: string, opts?: { long?: number; sep?: string;
 		}
 	});
 	return charArray.join('');
+}
+
+/**
+ * 获取数据对象的多语言值
+ * @param data 一个数据对象，例如：{"en": "English", "zh-cn": "中文"}
+ * @param locale=zh-cn 语言标识
+ */
+export function getI18nData(data: { [propName: string]: string }, locale: string = 'zh-cn') {
+	return data[locale] || data['zh-cn'] || data[Object.keys(data)[0]];
 }

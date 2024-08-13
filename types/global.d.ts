@@ -69,7 +69,7 @@ declare namespace Normal {
 	type AnyObj = { [key: string]: any };
 }
 
-declare namespace VbTable {
+declare namespace VBTable {
 	type Column = {
 		field: string;
 		label: string;
@@ -85,7 +85,7 @@ declare namespace VbTable {
 	}
 }
 
-declare namespace VbForm {
+declare namespace VBForm {
 	type Btn = {
 		text: string;
 		type: 'submit' | 'reset' | 'button',

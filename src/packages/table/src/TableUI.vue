@@ -5,7 +5,7 @@ import SortUI from '../../sort';
 
 const emit = defineEmits(['sort', 'select']);
 const props = withDefaults(defineProps<{
-	tableConfig: VbTable.Config;
+	tableConfig: VBTable.Config;
 	tableData: Normal.AnyObj[];
 	emptyText?: string;
 }>(), {emptyText: '无数据'});

@@ -9,7 +9,7 @@ import FormElement from './FormElement.vue';
 
 const emit = defineEmits(['submit', 'reset']);
 const props = withDefaults(defineProps<{
-	config?: VbForm.Config;
+	config?: VBForm.Config;
 	submitText?: string;
 }>(), {submitText: '提交'});
 const modelValue = defineModel<Normal.AnyObj>();
