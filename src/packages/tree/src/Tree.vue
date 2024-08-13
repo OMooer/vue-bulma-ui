@@ -251,6 +251,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../../../scss/variables";
+
 .vb-tree {
 	li {
 		position: relative;
@@ -277,7 +279,7 @@ export default defineComponent({
 			background-color: $white;
 			color: $black;
 
-			#app.dark-mode & {
+			.dark-mode & {
 				background-color: $black;
 				color: $white;
 			}
@@ -293,7 +295,7 @@ export default defineComponent({
 		padding-left: 1.5em;
 		border-left: solid 1px $black;
 
-		#app.dark-mode & {
+		.dark-mode & {
 			border-left: solid 1px $white-bis;
 		}
 

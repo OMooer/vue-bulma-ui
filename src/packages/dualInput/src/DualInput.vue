@@ -56,6 +56,8 @@ defineExpose({
 </template>
 
 <style lang="scss">
+@import "../../../scss/variables";
+
 .dual-input {
 	display: flex;
 	align-items: center;

@@ -14,20 +14,8 @@ defineProps(['text']);
 </template>
 
 <style scoped lang="scss">
-@keyframes loading {
-	33% {
-		opacity: .5;
-		transform: scale(1.8);
-	}
-	66% {
-		opacity: 1;
-		transform: scale(1);
-	}
-	100% {
-		opacity: 1;
-		transform: scale(1);
-	}
-}
+@import "../../../scss/variables";
+@import "../../../scss/animates";
 
 .vb-loading.top-loading {
 	.dot-loading {
@@ -69,15 +57,15 @@ defineProps(['text']);
 			height: $pointSize;
 
 			&:first-child {
-				animation: loading 1s ease-in-out infinite;
+				animation: scaleInOut 1s ease-in-out infinite;
 			}
 
 			&:nth-child(2) {
-				animation: loading 1s ease-in-out 0.2s infinite;
+				animation: scaleInOut 1s ease-in-out 0.2s infinite;
 			}
 
 			&:last-child {
-				animation: loading 1s ease-in-out 0.6s infinite;
+				animation: scaleInOut 1s ease-in-out 0.6s infinite;
 			}
 		}
 	}

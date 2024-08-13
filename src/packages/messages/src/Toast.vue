@@ -77,6 +77,8 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/animates";
+
 .vb-toasts {
 	position: fixed;
 	left: 0;

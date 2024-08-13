@@ -9,33 +9,8 @@
 </template>
 
 <style scoped lang="scss">
-// 动画
-@keyframes ball {
-	0% {
-		transform: translateY(0);
-	}
-	50% {
-		transform: translateY(-2em);
-	}
-	100% {
-		transform: translateY(0);
-	}
-}
-
-@keyframes blur {
-	0% {
-		filter: blur(2px);
-		transform: scale(1);
-	}
-	50% {
-		filter: blur(1px);
-		transform: scale(.5);
-	}
-	100% {
-		filter: blur(2px);
-		transform: scale(1);
-	}
-}
+@import "../../../scss/variables";
+@import "../../../scss/animates";
 
 .vb-loading.top-loading {
 	.ball-loading {

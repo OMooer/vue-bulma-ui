@@ -89,6 +89,8 @@ function menuClicked(e: any) {
 </template>
 
 <style lang="scss">
+@import "../../../scss/variables";
+
 .vb-dropdown {
 	&.is-small {
 		.button, .input, .dropdown-item {

@@ -29,6 +29,8 @@ defineProps(['isQuestion', 'tips', 'inline']);
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .vb-tips.icon {
 	display: inline-flex;
 	align-items: flex-end;

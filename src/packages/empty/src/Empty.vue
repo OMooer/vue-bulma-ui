@@ -64,6 +64,8 @@ ZXRyaWNJbnRlcnByZXRhdGlvbgAyI8IwkAAAAABJRU5ErkJggg==" alt="empty data">
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .vb-empty {
 	display: flex;
 	flex-direction: column;

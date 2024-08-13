@@ -145,6 +145,8 @@ defineExpose({
 </template>
 
 <style lang="scss">
+@import "../../../scss/variables";
+
 .vb-select {
 	&.is-small {
 		.button, .input, .dropdown-item {

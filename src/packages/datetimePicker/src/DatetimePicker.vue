@@ -235,6 +235,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../../../scss/variables";
+
 .vb-datetime {
 
 	input[type="text"],

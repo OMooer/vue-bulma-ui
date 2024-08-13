@@ -110,6 +110,8 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .vb-table {
 	margin: 2em 0;
 	overflow-x: auto;

@@ -91,6 +91,8 @@ const isArrowStart = computed(() => {
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .card {
 	header {
 		display: flex;

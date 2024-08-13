@@ -40,6 +40,8 @@ function changeSort() {
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .sort-btn {
 	margin: 0 .2em;
 	cursor: pointer;

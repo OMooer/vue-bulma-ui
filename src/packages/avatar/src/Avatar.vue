@@ -39,7 +39,7 @@ function noImage() {
 <style scoped lang="scss">
 .avatar {
 	display: block;
-	background-color: $grey;
+	background-color: #777;
 	border-radius: 50%;
 	font-size: .75rem;
 	width: 2em;

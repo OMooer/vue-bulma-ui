@@ -79,6 +79,8 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/animates";
+
 .vb-notify {
 	position: fixed;
 	right: 0;

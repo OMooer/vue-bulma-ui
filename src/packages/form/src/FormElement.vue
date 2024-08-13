@@ -72,6 +72,8 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
+@import "../../../scss/variables";
+
 .field {
 	&:has([required],[data-required]) {
 		.form-el-label {

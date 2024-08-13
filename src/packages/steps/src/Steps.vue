@@ -127,6 +127,8 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .steps {
 	display: flex;
 	align-items: center;

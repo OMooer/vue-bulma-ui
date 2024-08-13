@@ -76,6 +76,8 @@ function deleteSource() {
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .image-source, .file-source {
 	margin-bottom: .25rem;
 }

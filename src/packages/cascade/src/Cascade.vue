@@ -298,6 +298,8 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .vb-cascade {
 	// combo style
 

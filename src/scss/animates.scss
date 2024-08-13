@@ -58,6 +58,48 @@
   }
 }
 
+@keyframes ball {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2em);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes blur {
+  0% {
+    filter: blur(2px);
+    transform: scale(1);
+  }
+  50% {
+    filter: blur(1px);
+    transform: scale(.5);
+  }
+  100% {
+    filter: blur(2px);
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleInOut {
+  33% {
+    opacity: .5;
+    transform: scale(1.8);
+  }
+  66% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .animate {
   &-fade {
     &-enter-active {

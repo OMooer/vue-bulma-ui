@@ -20,6 +20,8 @@ watchEffect(() => {
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .vb-switch {
 	position: relative;
 	display: inline-flex;

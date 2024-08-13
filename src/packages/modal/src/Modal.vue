@@ -65,8 +65,9 @@ defineExpose({
 					</footer>
 				</template>
 				<div class="card" v-else>
-					<button type="button" class="delete is-right" aria-label="close" @click="dismiss"
-					        v-if="isTruthy(hasClose)"></button>
+					<button
+							type="button" class="delete is-right" aria-label="close" @click="dismiss"
+							v-if="isTruthy(hasClose)"></button>
 					<div class="card-content">
 						<slot/>
 					</div>
@@ -78,6 +79,8 @@ defineExpose({
 </template>
 
 <style lang="scss">
+@import "../../../scss/animates";
+
 .vb-modal.modal {
 	.modal-card-title {
 		font-size: .94rem;

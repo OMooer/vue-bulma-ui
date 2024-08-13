@@ -224,6 +224,8 @@ function toggleShow(ev: Event) {
 </template>
 
 <style lang="scss">
+@import "../../../scss/variables";
+
 .vb-tags {
 	display: flex;
 	align-items: center;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onBeforeMount, ref} from "vue";
+import { onBeforeMount, ref } from "vue";
 
 defineEmits(['close']);
 
@@ -15,7 +15,7 @@ function dismiss() {
 
 <template>
 	<div class="side-page" @click="dismiss">
-		<transition name="animate-slide-left" @after-leave="$emit('close')" appear>
+		<Transition name="animate-slide-left" @after-leave="$emit('close')" appear>
 			<div class="sp-container" @click.stop v-show="ready">
 				<!-- 关闭按钮 -->
 				<a class="delete is-medium" aria-label="Close" @click="dismiss"></a>
@@ -23,11 +23,14 @@ function dismiss() {
 					<slot/>
 				</div>
 			</div>
-		</transition>
+		</Transition>
 	</div>
 </template>
 
 <style lang="scss">
+@import "../../../scss/variables";
+@import "../../../scss/animates";
+
 .side-page {
 	position: fixed;
 	background: rgba(255, 255, 255, .2);
@@ -36,7 +39,7 @@ function dismiss() {
 	left: 0;
 	right: 0;
 	z-index: 39;
-	
+
 	.sp-container {
 		position: absolute;
 		background: $white;
@@ -48,14 +51,14 @@ function dismiss() {
 		bottom: 0;
 		width: 45%;
 		height: 100%;
-		
+
 		> .delete {
 			position: absolute;
 			top: 1rem;
 			left: 0;
 			transform: translateX(-60%);
 		}
-		
+
 		.sp-scroll-view {
 			overflow: auto;
 			padding: 1rem 0;

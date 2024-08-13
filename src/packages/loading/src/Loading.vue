@@ -91,6 +91,8 @@ provide('status', status);
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 @property --text-ani {
 	syntax: '<string>';
 	inherits: false;

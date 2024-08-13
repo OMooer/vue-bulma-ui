@@ -149,6 +149,8 @@ function remove() {
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .special-upload {
 	overflow: hidden;
 	margin: .5rem 0;

@@ -103,6 +103,8 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
+@import "../../../scss/variables";
+
 .vb-popup.box {
 	position: fixed;
 	bottom: 1.5rem;
