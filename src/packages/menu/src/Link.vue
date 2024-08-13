@@ -19,7 +19,7 @@ const isPathMatched = ref(false);
 const isRouteActive = computed(() => isActive.value || isPathMatched.value);
 watchEffect(() => {
 	// 组件不是以子组件存在于父级路由下面，但是路由地址存在从属关系的将在此匹配（排除根路径，否则所有的都会被匹配）
-	isPathMatched.value = currentRoute.fullPath.startsWith(route.value.fullPath) && route.value.fullPath !== '/';
+	isPathMatched.value = currentRoute.fullPath.startsWith(route.value.fullPath + '/') && route.value.fullPath !== '/';
 });
 // 更新路由命中状态
 watchEffect(() => {
