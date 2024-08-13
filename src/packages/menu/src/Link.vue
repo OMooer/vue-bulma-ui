@@ -4,9 +4,9 @@ import { RouterLink, useLink, useRoute } from 'vue-router';
 
 const emit = defineEmits(['state']);
 const props = defineProps({
-	exactClass:{
-		type: String,
-    default: 'is-exact-link'
+	exactClass: {
+		type   : String,
+		default: 'is-exact-link'
 	},
 	// @ts-ignore
 	...RouterLink.props
@@ -64,6 +64,7 @@ a[target=_blank] {
 		border: 1px solid;
 		border-radius: 2px;
 		line-height: 1;
+		font-family: "system-ui", -apple-system, "Helvetica Neue", Arial, sans-serif;
 		font-size: smaller;
 		width: 1em;
 		height: 1em;
