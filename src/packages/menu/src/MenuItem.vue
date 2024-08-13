@@ -37,7 +37,7 @@ menuList.value.forEach(item => {
 						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
 						<Component :is="item.icon" v-else/>
 					</span>
-					<span class="text">{{ item.title }}</span>
+					<span class="text" :data-code="item.title.substring(0,1)">{{ item.title }}</span>
 				</div>
 				<span class="icon next-icon" :class="{'roll-down': !item?.folded}" v-if="item.children?.length">
 					<FasIcon icon="angle-right"/>
