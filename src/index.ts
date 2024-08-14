@@ -9,7 +9,6 @@ import {
 	faAngleRight, faAngleLeft, faSpinner, faRotate, faAngleUp
 } from '@fortawesome/free-solid-svg-icons';
 import type { App } from 'vue';
-import 'bulma';
 import { useDialog } from './actions/dialog';
 import * as components from './components';
 
