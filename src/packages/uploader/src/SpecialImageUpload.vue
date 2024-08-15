@@ -152,11 +152,11 @@ function remove() {
 @import "../../../scss/variables";
 
 .special-upload {
+	@include file-bg-color();
 	overflow: hidden;
 	margin: .5rem 0;
-	background-color: $white-bis;
 	border-radius: $radius;
-	border: dashed 1px $grey-lighter;
+	border: dashed 1px $split-color;
 
 	&:hover {
 		border-color: $link;

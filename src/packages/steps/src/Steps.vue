@@ -174,7 +174,7 @@ defineExpose({
 			font-weight: bold;
 
 			a {
-				color: $black;
+				color: var(--bulma-body-color);
 			}
 
 			&::before {
@@ -190,14 +190,14 @@ defineExpose({
 
 			~ li {
 				a {
-					color: $black;
+					color: var(--bulma-body-color);
 				}
 
 				&::before {
 					content: counter(stepList);
 					background-color: transparent;
 					border-color: $grey-lighter;
-					color: $black;
+					color: var(--bulma-body-color);
 				}
 
 				&::after {

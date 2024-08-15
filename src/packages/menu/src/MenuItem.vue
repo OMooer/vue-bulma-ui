@@ -60,7 +60,7 @@ ul {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding-left: .5em;
+		padding: 0 .25em;
 
 		.menu-title {
 			display: flex;
@@ -69,6 +69,7 @@ ul {
 
 			.icon {
 				margin-right: .25em;
+				transition: none;
 			}
 		}
 	}

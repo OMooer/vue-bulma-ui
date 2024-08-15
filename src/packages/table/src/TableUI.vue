@@ -115,7 +115,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 .vb-table {
 	margin: 2em 0;
 	overflow-x: auto;
-	border: solid $grey-lighter;
+	border: solid $split-color;
 	border-width: 0 1px;
 	min-width: 100%;
 
@@ -130,15 +130,15 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 
 			tr th {
 				border-bottom-width: 2px;
-				border-bottom-color: $grey-light;
+				border-bottom-color: $split-color;
 				font-weight: bold;
 			}
 		}
 
 		tr.is-checked {
 			td {
-				background-color: $info;
-				color: $white;
+				//background-color: lighten($info, 25%);
+				background-color: hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-scheme-main-ter-l));
 			}
 		}
 
@@ -148,8 +148,8 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 			&.is-sticky {
 				position: sticky;
 				z-index: 10;
-				background-color: $white;
-				box-shadow: -1px 0 0 0 $grey-lighter inset, 1px 0 0 0 $grey-lighter inset;
+				background-color: var(--bulma-table-background-color);
+				box-shadow: -1px 0 0 0 $split-color inset, 1px 0 0 0 $split-color inset;
 				border-right: 0;
 
 				& + th, & + td {
@@ -157,11 +157,11 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				}
 
 				&:first-child {
-					box-shadow: -1px 0 0 0 $grey-lighter inset;
+					box-shadow: -1px 0 0 0 $split-color inset;
 				}
 
 				&:last-child {
-					box-shadow: 1px 0 0 0 $grey-lighter inset;
+					box-shadow: 1px 0 0 0 $split-color inset;
 				}
 			}
 
@@ -186,7 +186,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 			tr:nth-child(even):not(.is-checked) {
 				td {
 					&.is-sticky {
-						background-color: $white-bis;
+						background-color: var(--bulma-table-striped-row-even-background-color);
 					}
 				}
 			}
@@ -197,7 +197,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				&:nth-child(odd) {
 					td {
 						&.is-sticky {
-							background-color: $white-bis;
+							background-color: var(--bulma-table-striped-row-even-background-color);
 						}
 					}
 				}
@@ -205,7 +205,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				&:nth-child(even) {
 					td {
 						&.is-sticky {
-							background-color: $white-ter;
+							background-color: var(--bulma-table-striped-row-even-hover-background-color);
 						}
 					}
 				}

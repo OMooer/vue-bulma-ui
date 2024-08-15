@@ -1,12 +1,11 @@
-import { onBeforeUnmount, useAttrs } from 'vue';
+import { useAttrs } from 'vue';
 
-export const useBack = ($emit: any, $router: any) => {
+export const useBack = (
+		$emit: any,
+		$router: any,
+		{home, login}: { home: string; login: string } = {home: 'home', login: 'login'}
+) => {
 	const attrs = useAttrs();
-	let timer: number;
-
-	onBeforeUnmount(() => {
-		window.clearTimeout(timer);
-	});
 
 	function back() {
 		// 如果存在自定义事件则只执行自定义事件
@@ -16,29 +15,32 @@ export const useBack = ($emit: any, $router: any) => {
 		}
 
 		if (!$router) {
+			console.warn('组件需要传入 $router');
 			return;
 		}
 
+		// 如果当前只有一条访问历史记录，则回退到首页
 		if (window.history.length <= 1) {
-			$router.push({name: 'home'});
-			return false;
+			$router.push({name: home});
+			return;
+		}
+
+		// 如果当前 history.state.back 不存在
+		// 则表示上一页并非同一网站或没有上一页
+		// 直接回退首页
+		if (!window.history.state?.back) {
+			$router.push({name: home});
+			return;
 		}
 
 		// 正常回退，如果回退是登录页的话将转为首页
 		const stopBackGuard = $router?.beforeEach((to: any) => {
 			stopBackGuard();
-			if (to.name === 'login') {
-				return {name: 'home'};
+			if (to.name === login) {
+				return {name: home};
 			}
 		});
 		$router.back();
-
-		// 如果点击回退之后还停留在当页，代表 back() 失败，
-		// 存在向前的页面但没有回退页面
-		// 将跳到首页
-		timer = window.setTimeout(() => {
-			$router.push({name: 'home'});
-		}, 500);
 	}
 
 	return back;

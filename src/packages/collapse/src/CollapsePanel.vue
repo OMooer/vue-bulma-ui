@@ -94,6 +94,8 @@ const isArrowStart = computed(() => {
 @import "../../../scss/variables";
 
 .card {
+	--bulma-block-spacing: 0;
+
 	header {
 		display: flex;
 		align-items: flex-start;
@@ -110,6 +112,7 @@ const isArrowStart = computed(() => {
 
 			strong {
 				line-height: 1.875;
+
 				&:not(:only-child) {
 					margin-bottom: .25rem;
 				}
@@ -145,7 +148,7 @@ const isArrowStart = computed(() => {
 
 	.card-body {
 		margin: 0 .75rem;
-		border-top: solid 1px $white-ter;
+		border-top: solid 1px $split-color;
 		transition: height .3s ease-in, opacity .3s ease-in, border .3s ease-in;
 
 		.panel-content {

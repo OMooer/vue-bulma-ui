@@ -202,7 +202,7 @@ defineExpose({
 
 	&:hover {
 		.dropdown-trigger .icon {
-			color: $black;
+			color: var(--bulma-body-color);
 		}
 	}
 
@@ -215,6 +215,10 @@ defineExpose({
 	}
 
 	.dropdown-trigger {
+		.button {
+			box-shadow: none;
+		}
+
 		.icon {
 			color: $link;
 			transition: transform .3s ease;

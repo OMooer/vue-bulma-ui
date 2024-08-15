@@ -311,6 +311,12 @@ defineExpose({
 		z-index: 0;
 	}
 
+	.dropdown-trigger {
+		.button {
+			box-shadow: none;
+		}
+	}
+
 	.dropdown-menu {
 		.dropdown-content {
 			display: flex;
@@ -322,7 +328,7 @@ defineExpose({
 				max-height: 15rem;
 
 				&:not(:last-child) {
-					border-right: solid 1px $grey-lightest;
+					border-right: solid 1px $split-color;
 				}
 
 				> .dropdown-item {

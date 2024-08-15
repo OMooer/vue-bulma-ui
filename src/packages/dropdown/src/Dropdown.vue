@@ -133,7 +133,7 @@ function menuClicked(e: any) {
 
 	&:hover {
 		.dropdown-trigger .icon {
-			color: $black;
+			color: var(--bulma-body-color);
 		}
 	}
 

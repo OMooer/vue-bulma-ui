@@ -78,7 +78,7 @@ defineExpose({
 	}
 	
 	&:hover {
-		background-color: $white-ter;
+		@include file-bg-color();
 		cursor: text;
 	}
 	

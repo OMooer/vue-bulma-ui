@@ -275,13 +275,14 @@ export default defineComponent({
 		justify-content: space-between;
 		padding: calc(.5em - 1px) calc(.75em - 1px);
 		box-sizing: border-box;
-		border: solid 1px $grey-lighter;
+		border: solid 1px $input-border-color;
 		border-radius: 4px;
 		cursor: default;
 		line-height: 20px;
 		font-size: 1rem;
 		height: 2.5em;
 		width: 100%;
+		transition: border var(--bulma-duration);
 
 		&:before {
 			content: attr(data-split);
@@ -289,7 +290,7 @@ export default defineComponent({
 		}
 
 		&:hover {
-			border-color: $grey-light;
+			--bulma-input-border-l-delta: var(--bulma-input-hover-border-l-delta);
 		}
 
 		input[type="text"],
@@ -352,6 +353,8 @@ export default defineComponent({
 		a {
 			display: block;
 			padding: 2px;
+			color: var(--bulma-link-text);
+			fill: var(--bulma-link-text);
 		}
 
 		svg {
@@ -451,6 +454,7 @@ export default defineComponent({
 
 		.calendar-body {
 			flex-direction: column;
+			gap: 1rem;
 
 			dl {
 				width: 100%;

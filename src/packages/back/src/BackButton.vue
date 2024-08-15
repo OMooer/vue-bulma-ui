@@ -3,12 +3,20 @@ import { useBack } from './navigationBack';
 
 const emit = defineEmits();
 const props = defineProps({
-	router: {
+	router   : {
 		type    : null,
 		required: true
+	},
+	indexName: {
+		type   : String,
+		default: 'home'
+	},
+	loginName: {
+		type   : String,
+		default: 'login'
 	}
 });
-const back = useBack(emit, props.router);
+const back = useBack(emit, props.router, {home: props.indexName, login: props.loginName});
 </script>
 
 <template>
@@ -16,7 +24,3 @@ const back = useBack(emit, props.router);
 		<slot>返回</slot>
 	</button>
 </template>
-
-<style scoped lang="scss">
-
-</style>

@@ -88,6 +88,8 @@ defineExpose({
 }
 
 .is-float-form:has(input) {
+	margin-top: .5rem;
+
 	.form-el-label {
 		position: relative;
 		z-index: 10;
@@ -96,7 +98,7 @@ defineExpose({
 		padding: .5em .75em;
 		pointer-events: none;
 		font-weight: normal;
-		color: rgba($grey-darker, .3);
+		color: $placeholder-color;
 		height: 2.5em;
 		transition: transform .2s ease-in-out;
 	}
@@ -109,14 +111,14 @@ defineExpose({
 	&:focus-within, &:has(input:not(:placeholder-shown)) {
 		.form-el-label {
 			background-clip: content-box;
-			background-color: $white;
-			color: $grey;
+			background-color: var(--bulma-body-background-color);
+			color: var(--bulma-body-color);
 			//font-weight: bold;
 			transform: translate(-.75em, -50%) scale(.9);
 		}
 
 		:deep(input::placeholder) {
-			color: rgba($grey-darker, .3);
+			color: $placeholder-color;
 		}
 	}
 }

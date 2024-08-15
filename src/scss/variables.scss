@@ -1,2 +1,22 @@
-@import 'bulma/sass/utilities/initial-variables.sass';
-@import 'bulma/sass/utilities/derived-variables.sass';
+@use 'bulma/sass/utilities/css-variables' as cv;
+@import 'bulma/sass/utilities/initial-variables';
+@import 'bulma/sass/utilities/derived-variables';
+
+$shadow: cv.getVar('shadow');
+$primary-dark: darken($primary, 10%);
+$warning-light: lighten($warning, 10%);
+$warning-dark: darken($warning, 10%);
+$link-dark: darken($link, 10%);
+$danger-light: lighten($danger, 10%);
+
+$split-color: cv.getVar("border-weak");
+$input-border-color: hsl(var(--bulma-input-h), var(--bulma-input-s), calc(var(--bulma-input-border-l) + var(--bulma-input-border-l-delta)));
+$placeholder-color: cv.getVar("input-placeholder-color");
+
+@mixin file-bg-color() {
+	--bulma-file-h: var(--bulma-scheme-h);
+	--bulma-file-s: var(--bulma-scheme-s);
+	--bulma-file-background-l: var(--bulma-scheme-main-ter-l);
+	--bulma-file-background-l-delta: 0%;
+	background-color: hsl(var(--bulma-file-h), var(--bulma-file-s), calc(var(--bulma-file-background-l) + var(--bulma-file-background-l-delta)));
+}

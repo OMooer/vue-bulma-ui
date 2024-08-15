@@ -58,9 +58,9 @@ watchEffect(() => {
 		setTimeout(() => {
 			useList.value = (props?.list || []).map((item: TVO.Item) => {
 				return {
-					title   : item.title,
-					value   : item.value,
-					icon    : item.icon,
+					title: item.title,
+					value: item.value,
+					icon: item.icon,
 					disabled: item.disabled
 				}
 			});
@@ -169,7 +169,9 @@ function toggleShow(ev: Event) {
 </script>
 
 <template>
-	<div class="vb-tags" :class="{'is-active': isOpen, 'is-small': isSmall, 'is-disabled': disabled}" :data-required="required" @click="toggleShow">
+	<div
+			class="vb-tags" :class="{'is-active': isOpen, 'is-small': isSmall, 'is-disabled': disabled}"
+			:data-required="required" @click="toggleShow">
 		<span class="icon is-small">
 			<FasIcon icon="angle-down" aria-hidden="true"/>
 		</span>
@@ -230,15 +232,16 @@ function toggleShow(ev: Event) {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border: solid 1px $grey-lighter;
+	border: solid 1px $input-border-color;
 	border-radius: 4px;
 	cursor: default;
+	transition: border var(--bulma-duration);
 
 	&:hover {
-		border-color: $grey-light;
+		--bulma-input-border-l-delta: var(--bulma-input-hover-border-l-delta);
 
 		> .icon {
-			color: $black;
+			color: var(--bulma-body-color);
 		}
 	}
 
@@ -282,6 +285,7 @@ function toggleShow(ev: Event) {
 	}
 
 	.tag-list {
+		--bulma-block-spacing: 0;
 		overflow: hidden;
 		padding: .25rem .5rem 0;
 
@@ -306,6 +310,7 @@ function toggleShow(ev: Event) {
 			input {
 				border-color: transparent;
 				box-shadow: none;
+				outline: none;
 				height: calc(2.5em - 2px);
 
 				&.is-expanded {

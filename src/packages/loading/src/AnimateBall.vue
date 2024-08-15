@@ -23,7 +23,6 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background-color: rgba(255, 255, 255, .4);
 
 	$ballSize: 26px;
 
