@@ -15,6 +15,7 @@ declare module "@vue/runtime-core" {
 		VbChartsLine: typeof import("../src/components")["VbChartsLine"];
 		VbChartsPie: typeof import("../src/components")["VbChartsPie"];
 		VbChartsRadar: typeof import("../src/components")["VbChartsRadar"];
+		VbChoose: typeof import("../src/components")["VbChoose"];
 		VbCollapse: typeof import("../src/components")["VbCollapse"];
 		VbCollapsePanel: typeof import("../src/components")["VbCollapsePanel"];
 		VbCountdown: typeof import("../src/components")["VbCountdown"];

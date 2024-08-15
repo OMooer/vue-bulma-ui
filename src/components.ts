@@ -12,6 +12,8 @@ export { Gauge as VbChartsGauge } from './packages/charts';
 export { Line as VbChartsLine } from './packages/charts';
 export { Pie as VbChartsPie } from './packages/charts';
 export { Radar as VbChartsRadar } from './packages/charts';
+// 选择项
+export { default as VbChoose } from './packages/choose';
 // 折叠面板
 export { default as VbCollapse } from './packages/collapse';
 export { CollapsePanel as VbCollapsePanel } from './packages/collapse';
