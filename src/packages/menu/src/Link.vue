@@ -4,9 +4,13 @@ import { RouterLink, useLink, useRoute } from 'vue-router';
 
 const emit = defineEmits(['state']);
 const props = defineProps({
-	exactClass: {
+	exactClass    : {
 		type   : String,
 		default: 'is-exact-link'
+	},
+	noExternalIcon: {
+		type   : Boolean,
+		default: false
 	},
 	// @ts-ignore
 	...RouterLink.props
@@ -38,7 +42,7 @@ const isExternalLink = computed(() => {
 </script>
 
 <template>
-	<a v-if="isExternalLink" v-bind="$attrs" :href="to" target="_blank" rel="nofollow noreferrer noopener">
+	<a v-if="isExternalLink" v-bind="$attrs" :href="to" :class="{'is-less': noExternalIcon}" target="_blank" rel="nofollow noreferrer noopener">
 		<slot/>
 	</a>
 	<router-link v-else v-bind="$props" custom :to="route.fullPath" v-slot="{isExactActive, href, navigate}">
@@ -54,7 +58,7 @@ const isExternalLink = computed(() => {
 </template>
 
 <style scoped lang="scss">
-a[target=_blank] {
+a:not(.is-less)[target=_blank] {
 	justify-content: flex-start !important;
 
 	&::after {
