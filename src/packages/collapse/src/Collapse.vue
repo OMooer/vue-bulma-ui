@@ -1,6 +1,6 @@
 <script lang="ts">
 import { cloneVNode, computed, defineComponent, h, ref } from 'vue';
-import { flattenVNode, isEmptyElement } from '../../../utils';
+import { flattenVNode, isEmptyElement, isTruthy } from '../../../utils';
 import CollapsePanel from './CollapsePanel.vue';
 
 export default defineComponent({
@@ -61,7 +61,7 @@ export default defineComponent({
 				const item = {
 					key,
 					folded: !activeKeys.value?.includes(key as string),
-					force : !!node.props?.force,
+					force : isTruthy(node.props?.force),
 					name  : node.props?.header,
 				};
 				panelConfig.value.push(item);
