@@ -14,17 +14,19 @@ function dismiss() {
 </script>
 
 <template>
-	<div class="side-page" @click="dismiss">
-		<Transition name="animate-slide-left" @after-leave="$emit('close')" appear>
-			<div class="sp-container" @click.stop v-show="ready">
-				<!-- 关闭按钮 -->
-				<a class="delete is-medium" aria-label="Close" @click="dismiss"></a>
-				<div class="sp-scroll-view">
-					<slot/>
+	<Teleport to="body">
+		<div class="side-page" @click="dismiss">
+			<Transition name="animate-slide-left" @after-leave="$emit('close')" appear>
+				<div class="sp-container" @click.stop v-show="ready">
+					<!-- 关闭按钮 -->
+					<a class="delete is-medium" aria-label="Close" @click="dismiss"></a>
+					<div class="sp-scroll-view">
+						<slot/>
+					</div>
 				</div>
-			</div>
-		</Transition>
-	</div>
+			</Transition>
+		</div>
+	</Teleport>
 </template>
 
 <style lang="scss">

@@ -79,7 +79,7 @@ defineExpose({
 </script>
 
 <template>
-	<transition :name="animate" @afterLeave="removePopup(currentPopup.id)">
+	<Transition :name="animate" @afterLeave="removePopup(currentPopup.id)">
 		<div
 				class="vb-popup box"
 				@mouseover="hoverPopup(currentPopup.id)" @mouseleave="autoClose(currentPopup)"
@@ -99,7 +99,7 @@ defineExpose({
 				<label class="checkbox"><input type="checkbox" v-model="never">不再显示</label>
 			</div>
 		</div>
-	</transition>
+	</Transition>
 </template>
 
 <style scoped lang="scss">

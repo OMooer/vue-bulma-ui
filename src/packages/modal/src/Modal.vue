@@ -47,35 +47,38 @@ defineExpose({
 </script>
 
 <template>
-	<div class="vb-modal modal" :class="[$attrs.class, isMainShow ? 'is-active' : null]">
-		<div class="modal-background" @click="mClose(maskClose)"></div>
-		<Transition name="animate-zoom" @after-leave="afterDismissAnimate" appear>
-			<div :class="[title ? 'modal-card' : 'modal-content']" :style="style" v-show="isShow">
-				<template v-if="title">
-					<header class="modal-card-head">
-						<p class="modal-card-title">{{ title }}</p>
-						<button type="button" class="delete" aria-label="close" @click="dismiss" v-if="isTruthy(hasClose)"></button>
-					</header>
-					<section class="modal-card-body">
-						<slot/>
-					</section>
-					<footer class="modal-card-foot">
-						<slot name="primary-buttons"/>
-						<button type="button" class="button" @click="dismiss" v-if="isTruthy(hasCancel)">Cancel</button>
-					</footer>
-				</template>
-				<div class="card" v-else>
-					<button
-							type="button" class="delete is-right" aria-label="close" @click="dismiss"
-							v-if="isTruthy(hasClose)"></button>
-					<div class="card-content">
-						<slot/>
+	<Teleport to="body">
+		<div class="vb-modal modal" :class="[$attrs.class, isMainShow ? 'is-active' : null]">
+			<div class="modal-background" @click="mClose(maskClose)"></div>
+			<Transition name="animate-zoom" @after-leave="afterDismissAnimate" appear>
+				<div :class="[title ? 'modal-card' : 'modal-content']" :style="style" v-show="isShow">
+					<template v-if="title">
+						<header class="modal-card-head">
+							<p class="modal-card-title">{{ title }}</p>
+							<button
+									type="button" class="delete" aria-label="close" @click="dismiss" v-if="isTruthy(hasClose)"></button>
+						</header>
+						<section class="modal-card-body">
+							<slot/>
+						</section>
+						<footer class="modal-card-foot">
+							<slot name="primary-buttons"/>
+							<button type="button" class="button" @click="dismiss" v-if="isTruthy(hasCancel)">Cancel</button>
+						</footer>
+					</template>
+					<div class="card" v-else>
+						<button
+								type="button" class="delete is-right" aria-label="close" @click="dismiss"
+								v-if="isTruthy(hasClose)"></button>
+						<div class="card-content">
+							<slot/>
+						</div>
+						<slot name="footer"/>
 					</div>
-					<slot name="footer"/>
 				</div>
-			</div>
-		</Transition>
-	</div>
+			</Transition>
+		</div>
+	</Teleport>
 </template>
 
 <style lang="scss">
