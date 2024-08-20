@@ -8,7 +8,8 @@ const props = defineProps({
 	'panel'       : null,
 	'gap'         : {type: Number, default: 0},
 	'showArrow'   : {type: Boolean, default: true},
-	'iconPosition': {type: String, default: 'end'}
+	'iconPosition': {type: String, default: 'end'},
+	'force'       : Boolean
 });
 const panelRef = ref();
 const panelHeight = ref(0);
