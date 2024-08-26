@@ -59,10 +59,10 @@ defineExpose({
 									type="button" class="delete" aria-label="close" @click="dismiss" v-if="isTruthy(hasClose)"></button>
 						</header>
 						<section class="modal-card-body">
-							<slot/>
+							<slot :dismiss="dismiss"/>
 						</section>
 						<footer class="modal-card-foot">
-							<slot name="primary-buttons"/>
+							<slot name="primary-buttons" :dismiss="dismiss"/>
 							<button type="button" class="button" @click="dismiss" v-if="isTruthy(hasCancel)">Cancel</button>
 						</footer>
 					</template>
@@ -73,7 +73,7 @@ defineExpose({
 						<div class="card-content">
 							<slot/>
 						</div>
-						<slot name="footer"/>
+						<slot name="footer" :dismiss="dismiss"/>
 					</div>
 				</div>
 			</Transition>

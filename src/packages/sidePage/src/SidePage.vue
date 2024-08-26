@@ -1,7 +1,36 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 
 defineEmits(['close']);
+const props = defineProps({
+	direction: {type: String, default: 'right'},
+	hasClose : {type: Boolean, default: true},
+});
+
+const contClassName = computed(() => {
+	switch (props.direction) {
+		case 'top':
+			return 'is-top';
+		case 'bottom':
+			return 'is-bottom';
+		case 'left':
+			return 'is-left';
+		default:
+			return 'is-right';
+	}
+});
+const animateName = computed(() => {
+	switch (props.direction) {
+		case 'top':
+			return 'animate-slide-down';
+		case 'bottom':
+			return 'animate-slide-up';
+		case 'left':
+			return 'animate-slide-right';
+		default:
+			return 'animate-slide-left';
+	}
+});
 
 const ready = ref(false);
 onBeforeMount(() => {
@@ -16,10 +45,10 @@ function dismiss() {
 <template>
 	<Teleport to="body">
 		<div class="side-page" @click="dismiss">
-			<Transition name="animate-slide-left" @after-leave="$emit('close')" appear>
-				<div class="sp-container" @click.stop v-show="ready">
+			<Transition :name="animateName" @after-leave="$emit('close')" appear>
+				<div class="sp-container" :class="contClassName" @click.stop v-show="ready">
 					<!-- 关闭按钮 -->
-					<a class="delete is-medium" aria-label="Close" @click="dismiss"></a>
+					<a class="delete is-medium" aria-label="Close" @click="dismiss" v-if="hasClose"></a>
 					<div class="sp-scroll-view">
 						<slot/>
 					</div>
@@ -49,16 +78,61 @@ function dismiss() {
 		border-left: $grey-lightest solid 1px;
 		box-shadow: 0 0 10px $grey-lighter;
 		box-sizing: border-box;
-		right: 0;
-		bottom: 0;
-		width: 45%;
-		height: 100%;
+
+		&.is-left {
+			left: 0;
+			bottom: 0;
+			width: 45%;
+			height: 100%;
+		}
+
+		&.is-right {
+			right: 0;
+			bottom: 0;
+			width: 45%;
+			height: 100%;
+		}
+
+		&.is-top {
+			top: 0;
+			left: 0;
+			right: 0;
+			width: 100%;
+			height: 45%;
+		}
+
+		&.is-bottom {
+			bottom: 0;
+			left: 0;
+			right: 0;
+			width: 100%;
+			height: 45%;
+		}
 
 		> .delete {
 			position: absolute;
 			top: 1rem;
+		}
+
+		&.is-left > .delete {
+			right: 0;
+			transform: translateX(60%);
+		}
+
+		&.is-right > .delete {
 			left: 0;
 			transform: translateX(-60%);
+		}
+
+		&.is-top > .delete {
+			top: 0;
+			right: 0;
+		}
+
+		&.is-bottom > .delete {
+			top: 0;
+			right: 0;
+			transform: translateY(-60%);
 		}
 
 		.sp-scroll-view {
