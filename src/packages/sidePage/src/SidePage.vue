@@ -73,13 +73,14 @@ function dismiss() {
 
 	.sp-container {
 		position: absolute;
-		background: $white;
+		background: var(--bulma-background);
 		padding: 0 1rem;
-		border-left: $grey-lightest solid 1px;
-		box-shadow: 0 0 10px $grey-lighter;
+		border: $split-color solid;
+		box-shadow: $shadow;
 		box-sizing: border-box;
 
 		&.is-left {
+			border-width: 0 0 0 1px;
 			left: 0;
 			bottom: 0;
 			width: 45%;
@@ -87,6 +88,7 @@ function dismiss() {
 		}
 
 		&.is-right {
+			border-width: 0 1px 0 0;
 			right: 0;
 			bottom: 0;
 			width: 45%;
@@ -94,6 +96,7 @@ function dismiss() {
 		}
 
 		&.is-top {
+			border-width: 0 0 1px 0;
 			top: 0;
 			left: 0;
 			right: 0;
@@ -102,6 +105,7 @@ function dismiss() {
 		}
 
 		&.is-bottom {
+			border-width: 1px 0 0 0;
 			bottom: 0;
 			left: 0;
 			right: 0;
