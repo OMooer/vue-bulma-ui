@@ -446,6 +446,10 @@ export default defineComponent({
 			}
 		}
 	}
+
+	.calendar-foot:not(:empty) {
+		margin-top: 1rem;
+	}
 }
 
 @media screen and (max-width: 768px) {

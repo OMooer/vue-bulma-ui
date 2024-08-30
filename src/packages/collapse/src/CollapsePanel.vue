@@ -161,6 +161,10 @@ const isArrowStart = computed(() => {
 	&.is-static {
 		header {
 			cursor: default;
+
+			.card-header-icon {
+				pointer-events: none;
+			}
 		}
 	}
 

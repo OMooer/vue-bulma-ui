@@ -189,7 +189,7 @@ onMounted(() => {
 
 // 刷新数据
 function refresh() {
-	console.log('fetch', props.type);
+	// console.log('fetch', props.type);
 	const toolbarForm = {};
 	const [start = '', end = ''] = dateRange.value;
 	emit('fetch', Object.assign({}, toolbarForm, {start, end}));
