@@ -8,6 +8,10 @@ import {
 	faEyeSlash, faFileArrowDown, faSort, faSortAsc, faSortDesc, faTrashCan, faUpload,
 	faAngleRight, faAngleLeft, faSpinner, faRotate, faAngleUp
 } from '@fortawesome/free-solid-svg-icons';
+import {
+	faSquareMinus,
+	faSquarePlus
+} from '@fortawesome/free-regular-svg-icons';
 import type { App } from 'vue';
 import { useDialog } from './actions/dialog';
 import * as components from './components';
@@ -34,6 +38,8 @@ export default {
 				faSortAsc,
 				faSortDesc,
 				faSpinner,
+				faSquareMinus,
+				faSquarePlus,
 				faTrashCan,
 				faUpload,
 		);

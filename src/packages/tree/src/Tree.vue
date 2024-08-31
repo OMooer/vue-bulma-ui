@@ -198,14 +198,12 @@ export default defineComponent({
 									item.link
 											// 如果数据是带链接的
 											? h('a', {
-												class: {
+												class : {
 													'node-name'        : true,
 													[props.activeClass]: checkActive(item)
 												},
-												attrs: {
-													href  : item.link,
-													target: '_blank'
-												}
+												href  : item.link,
+												target: '_blank'
 											}, item.text)
 											// 不带链接的
 											: h('span', {
@@ -268,21 +266,16 @@ export default defineComponent({
 
 		.node-name {
 			display: inline-block;
-			padding: .02rem .04rem;
+			padding: 0 .3em;
 		}
 
 		.opera-icon {
 			display: none;
 			position: absolute;
-			top: 0;
-			line-height: 1.5;
-			background-color: $white;
-			color: $black;
-
-			.dark-mode & {
-				background-color: $black;
-				color: $white;
-			}
+			top: .25em;
+			line-height: 1;
+			background-color: var(--bulma-body-background-color);
+			color: var(--bulma-text);
 		}
 
 		&:hover > .opera-icon {
@@ -293,11 +286,7 @@ export default defineComponent({
 	.sub-node {
 		margin-left: .27em;
 		padding-left: 1.5em;
-		border-left: solid 1px $black;
-
-		.dark-mode & {
-			border-left: solid 1px $white-bis;
-		}
+		border-left: solid 1px var(--bulma-text);
 
 		&.hide-node {
 			display: none;
