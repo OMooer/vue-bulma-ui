@@ -73,6 +73,8 @@ function reset() {
 							:name="item.name"
 							:required="item.required"
 							:disabled="item.disabled"
+							:min="item.min"
+							:max="item.max"
 							:placeholder="item.placeholder"
 							:class="{'is-small':  isSmall}"
 							v-model="formValue[item.name]"/>

@@ -127,6 +127,8 @@ declare namespace VBForm {
 
 	type InputItem = {
 		type: 'input' | 'number';
+		min?: number;
+		max?: number;
 		value: string | number;
 	}
 
