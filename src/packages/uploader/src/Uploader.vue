@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { abbrNumber, isTruthy } from '../../../utils';
 import PreviewSource from './PreviewSource.vue';
 
 defineOptions({
 	inheritAttrs: false
 });
+const isParentSmall = inject('isSmall', false);
 const props = defineProps({
 	id         : {
 		type   : String,
@@ -272,7 +273,7 @@ defineExpose({
 					</slot>
 				</div>
 				<div
-						class="file" :class="{'is-danger': uploadError, 'is-small': isSmall}"
+						class="file" :class="{'is-danger': uploadError, 'is-small': isSmall || isParentSmall}"
 						v-if="!hasValue || isTruthy(multiple)">
 					<div class="file-label">
 						<span class="file-cta">

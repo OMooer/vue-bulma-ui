@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onUpdated, ref, watch } from 'vue';
+import { computed, inject, onUpdated, ref, watch } from 'vue';
 import Empty from '../../empty';
 
+const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	modelValue?: any;
 	list: TVO.List;
@@ -43,7 +44,8 @@ const classList = computed(() => {
 		'is-disabled': props.disabled,
 		'is-up'      : isUp.value,
 		'is-shake'   : isError.value,
-		'is-danger'  : isError.value
+		'is-danger'  : isError.value,
+		'is-small'   : isParentSmall
 	}
 });
 

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect } from 'vue';
+import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
 import { isTruthy } from '../../../utils';
 
+const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	modelValue?: any;
 	list: TVO.List;
@@ -170,7 +171,7 @@ function toggleShow(ev: Event) {
 
 <template>
 	<div
-			class="vb-tags" :class="{'is-active': isOpen, 'is-small': isSmall, 'is-disabled': disabled}"
+			class="vb-tags" :class="{'is-active': isOpen, 'is-small': isSmall || isParentSmall, 'is-disabled': disabled}"
 			:data-required="required" @click="toggleShow">
 		<span class="icon is-small">
 			<FasIcon icon="angle-down" aria-hidden="true"/>

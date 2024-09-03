@@ -63,8 +63,8 @@ function reset() {
 		<template v-for="item in config?.items" v-if="hasConfigItems">
 			<slot :name="item.slot" v-if="'slot' in item"/>
 			<FormElement
-					class="column mb-0" :class="[item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]" :isSmall
-					:label="item.label"
+					class="column mb-0" :class="[item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]"
+					:label="item.label" :isSmall
 					v-else>
 				<!-- 输入框 -->
 				<template v-if="['input','number'].includes(item.type)">
@@ -76,13 +76,11 @@ function reset() {
 							:min="item.min"
 							:max="item.max"
 							:placeholder="item.placeholder"
-							:class="{'is-small':  isSmall}"
 							v-model="formValue[item.name]"/>
 				</template>
 				<!-- 日期 -->
 				<DatetimePicker
 						type="datetime-local" auto-close
-						:class="{'is-small': isSmall}"
 						:required="item.required"
 						:min="item.min"
 						:max="item.max"
@@ -90,7 +88,6 @@ function reset() {
 						v-if="item.type==='datetime'"/>
 				<DatetimePicker
 						is-range
-						:class="{'is-small': isSmall}"
 						:required="item.required"
 						:min="item.min"
 						:max="item.max"
@@ -99,7 +96,6 @@ function reset() {
 						v-else-if="item.type==='dateRange'"/>
 				<DatetimePicker
 						auto-close
-						:class="{'is-small': isSmall}"
 						:required="item.required"
 						:min="item.min"
 						:max="item.max"
@@ -108,14 +104,13 @@ function reset() {
 				<!-- tags -->
 				<template v-else-if="item.type === 'tags'">
 					<Tags
-							:list="item.options" :isSmall :required="item.required" :disabled="item.disabled"
+							:list="item.options" :required="item.required" :disabled="item.disabled"
 							:placeholder="item.placeholder"
 							:collapse="item.collapse" v-model="formValue[item.name]"/>
 				</template>
 				<!-- 下拉框 -->
 				<template v-else-if="item.type === 'select'">
 					<SelectorUI
-							:class="{'is-small': isSmall}"
 							:list="item.options"
 							:placeholder="item.placeholder"
 							:required="item.required"
@@ -124,7 +119,7 @@ function reset() {
 				</template>
 				<!-- switch -->
 				<template v-else-if="item.type==='switch'">
-					<SwitchUI :class="{'is-small': isSmall}" v-model="formValue[item.name]"/>
+					<SwitchUI v-model="formValue[item.name]"/>
 				</template>
 			</FormElement>
 		</template>
@@ -135,11 +130,11 @@ function reset() {
 				<slot name="buttons">
 					<template v-if="config?.buttons.length">
 						<div class="control" v-for="btn in config.buttons">
-							<button :type="btn.type" :class="btn.class" @click="btn?.handler">{{ btn.text }}</button>
+							<button :type="btn.type" :class="[btn.class, isSmall ? 'is-small' : '']" @click="btn?.handler">{{ btn.text }}</button>
 						</div>
 					</template>
 					<div class="control" v-else>
-						<button type="submit" class="button is-success">{{ submitText }}</button>
+						<button type="submit" class="button is-success" :class="{'is-small': isSmall}">{{ submitText }}</button>
 					</div>
 				</slot>
 			</div>

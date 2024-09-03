@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import Empty from '../../empty';
 import SelectorUI from '../../select';
 
+const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	modelValue?: any[];
 	style?: 'detach' | 'combo';
@@ -221,7 +222,8 @@ const classList = computed(() => {
 		'is-active': isOpen.value,
 		'is-up'    : isUp.value,
 		'is-shake' : isError.value,
-		'is-danger': isError.value
+		'is-danger': isError.value,
+		'is-small' : isParentSmall
 	}
 });
 
@@ -262,7 +264,7 @@ defineExpose({
 										:class="{'is-disabled': node.disabled, 'is-active': cascadeValue.includes(node.value)}"
 										@click="selectLevel(index, node.value)">
 									<span>{{ node.title }}</span>
-									<i class="icon" v-if="node.children">
+									<i class="icon is-small" v-if="node.children">
 										<FasIcon icon="spinner" spin-pulse v-if="current === node.value && isLoading"/>
 										<FasIcon icon="angle-right" v-else/>
 									</i>
@@ -301,6 +303,13 @@ defineExpose({
 @import "../../../scss/variables";
 
 .vb-cascade {
+	.cascade-dropdown.is-small {
+		.button, .input, .dropdown-item {
+			line-height: 1.5;
+			font-size: 0.75rem;
+		}
+	}
+
 	// combo style
 
 	.entity-shadow {
@@ -314,6 +323,16 @@ defineExpose({
 	.dropdown-trigger {
 		.button {
 			box-shadow: none;
+		}
+
+		.icon {
+			color: $link;
+		}
+	}
+
+	&:hover {
+		.dropdown-trigger .icon {
+			color: var(--bulma-body-color);
 		}
 	}
 

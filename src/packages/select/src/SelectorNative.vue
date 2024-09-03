@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
+import { computed, inject, ref, watchEffect } from 'vue';
 
 defineOptions({
 	inheritAttrs: false
 });
+const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	modelValue?: any;
 	list: TVO.List;
@@ -56,7 +57,7 @@ defineExpose({
 </script>
 
 <template>
-	<div class="select is-fullwidth" :class="{'is-small': isSmall, 'is-shake is-danger': isError}">
+	<div class="select is-fullwidth" :class="{'is-small': isSmall || isParentSmall, 'is-shake is-danger': isError}">
 		<select ref="entity" v-bind="$attrs" @change="update" v-model="selectedValue">
 			<option value="" :disabled="isNotNull">{{ placeholder }}</option>
 			<option :value="item.value" :disabled="item.disabled" :key="item.value as string" v-for="item in list">

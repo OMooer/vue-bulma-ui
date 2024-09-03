@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 
+const isParentSmall = inject('isSmall', false);
 const props = defineProps(['modelValue']);
 const emit = defineEmits(['update:modelValue', 'error']);
 const isError = ref(false);
@@ -46,6 +47,6 @@ defineExpose({
 	<input
 			ref="entity" type="text" autocomplete="off"
 			v-model.trim="innerValue" @change="checkInput"
-			:class="['input', isError ? 'is-shake is-danger': null]"
+			:class="['input', isError ? 'is-shake is-danger' : null, isParentSmall ? 'is-small' : null]"
 	>
 </template>

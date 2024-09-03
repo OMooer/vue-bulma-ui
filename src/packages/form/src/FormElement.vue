@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
+import { computed, provide, ref, watchEffect } from 'vue';
 
 const props = defineProps({
 	label     : String,
@@ -43,9 +43,7 @@ function setError(is: boolean, msg?: string) {
 	helpMsg.value = msg || props?.tips || '';
 }
 
-defineExpose({
-	setError
-});
+provide('isSmall', props.isSmall);
 </script>
 
 <template>
@@ -123,53 +121,62 @@ defineExpose({
 	}
 }
 
-.is-float-tips > .field:first-of-type {
-	&::before, &::after {
-		content: "";
-		position: absolute;
-		opacity: 0;
-		transition: opacity .3s ease;
+.is-float-tips {
+	--floatTop: 2.5rem;
+
+	&:has(.is-small) {
+		--floatTop: 1.875rem;
 	}
 
-	&:has(:focus-visible) {
-		//&:focus-within {
-		position: relative;
+	> .field:first-of-type {
+		$bgColor: var(--bulma-body-background-color);
 
-		&::before {
-			content: attr(data-tips);
-			position: absolute;
-			transform: translate(-50%, .5rem);
-			top: 2.5rem;
-			left: 50%;
-			margin-right: -50%;
-			z-index: 10;
-			opacity: 1;
-			padding: .5rem .75rem;
-			background-color: $white;
-			border: solid 1px $grey-lighter;
-			border-radius: $radius;
-			box-shadow: $shadow;
-			word-break: break-all;
-			white-space: pre-wrap;
-			font-size: .75rem;
-			max-width: 100%;
-			min-width: 2rem;
-		}
-
-		&::after {
+		&::before, &::after {
 			content: "";
 			position: absolute;
-			top: 2.5rem;
-			left: 50%;
-			z-index: 11;
-			opacity: 1;
-			margin: .25rem 0 0 0;
-			background-color: $white;
-			border: solid $grey-lighter;
-			border-width: 1px 1px 0 0;
-			width: .5rem;
-			height: .5rem;
-			transform: translateX(-50%) rotate(-45deg);
+			opacity: 0;
+			transition: opacity .3s ease;
+		}
+
+		&:has(:focus-visible) {
+			position: relative;
+
+			&::before {
+				content: attr(data-tips);
+				position: absolute;
+				transform: translate(-50%, .5rem);
+				top: var(--floatTop);
+				left: 50%;
+				margin-right: -50%;
+				z-index: 10;
+				opacity: 1;
+				padding: .5rem .75rem;
+				background-color: $bgColor;
+				border: solid 1px $split-color;
+				border-radius: $radius;
+				box-shadow: $shadow;
+				word-break: break-all;
+				white-space: pre-wrap;
+				font-size: .75rem;
+				max-width: 100%;
+				min-width: 2rem;
+			}
+
+			&::after {
+				content: "";
+				position: absolute;
+				top: var(--floatTop);
+				left: 50%;
+				z-index: 11;
+				opacity: 1;
+				margin: .25rem 0 0 0;
+				background-color: $bgColor;
+				border: solid $split-color;
+				border-width: 1px 1px 0 0;
+				width: .5rem;
+				height: .5rem;
+				transform: translateX(-50%) rotate(-45deg);
+			}
 		}
 	}
 }

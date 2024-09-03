@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, inject, watch } from 'vue';
 
 declare type CheckBox = {
 	type: 'checkbox';
@@ -14,9 +14,10 @@ declare type Prop = (CheckBox | Radio) & {
 	disabled?: boolean;
 	list: TVO.List;
 }
+const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<Prop>(), {name: Math.random().toString(36).slice(2)});
 const modelValue = defineModel({default: () => []});
-const className = computed(() => props.type === 'radio' ? 'radios' : 'checkboxes');
+const className = computed(() => [props.type === 'radio' ? 'radios' : 'checkboxes', isParentSmall ? 'is-small' : '']);
 const innerValue = computed({
 	get() {
 		return modelValue.value;
@@ -61,3 +62,18 @@ function innerRequired(item: any) {
 		</label>
 	</div>
 </template>
+
+<style scoped lang="scss">
+.vb-choose {
+	&.is-small {
+		label {
+			display: inline-flex;
+			font-size: 0.75rem;
+
+			input {
+				margin-right: 0.25rem;
+			}
+		}
+	}
+}
+</style>

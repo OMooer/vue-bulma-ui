@@ -1,6 +1,6 @@
 <script lang="ts">
 import Calendar from 'sa-calendar';
-import { h, defineComponent, ref, watch, computed, withDirectives } from 'vue';
+import { h, defineComponent, ref, watch, computed, withDirectives, inject } from 'vue';
 import { isTruthy } from '../../../utils';
 
 function dateFormat(d: Date, f: string = 'YYYY-MM-DD hh:mm:ss') {
@@ -55,6 +55,7 @@ export default defineComponent({
 		messages  : Object
 	},
 	setup(props, {slots, emit, expose}) {
+		const isParentSmall = inject('isSmall', false);
 		const isError = ref(false);
 		const entity = ref();
 		const formatMin = computed(() => {
@@ -144,7 +145,8 @@ export default defineComponent({
 							'vb-datetime': true,
 							'field'      : true,
 							'is-disabled': isTruthy(props.disabled),
-							'is-shake'   : isError.value
+							'is-shake'   : isError.value,
+							'is-small'   : isParentSmall
 						}
 					},
 					[

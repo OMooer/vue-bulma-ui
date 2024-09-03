@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue';
+import { computed, inject, ref } from 'vue';
 
 defineOptions({
 	inheritAttrs: false
 });
+const isParentSmall = inject('isSmall', false);
 const props = defineProps({
 	'modelValue': null,
 	'type'      : null, // 禁止此属性被 $attrs 作用到 input 上
@@ -59,7 +60,7 @@ defineExpose({
 <template>
 	<div class="vb-password control is-expanded has-icons-right">
 		<input ref="entity" :type="showPassword ? 'text' : 'password'"
-		       :class="['input', isError ? 'is-shake is-danger': null]"
+		       :class="['input', isError ? 'is-shake is-danger' : null, isParentSmall ? 'is-small' : null]"
 					 autocomplete="off"
 		       v-bind="$attrs" v-model="innerValue" @change="checkInput">
 		<span :class="['icon', 'is-small', 'is-right', {'show': showPassword}]" @click="toggleShow">

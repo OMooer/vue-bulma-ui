@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
+import { inject, ref, watchEffect } from 'vue';
 
+const isParentSmall = inject('isSmall', false);
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps(['modelValue']);
 const switchValue = ref(false);
@@ -13,7 +14,7 @@ watchEffect(() => {
 </script>
 
 <template>
-	<label class="vb-switch" :class="{'is-on': switchValue}">
+	<label class="vb-switch" :class="{'is-on': switchValue, 'is-small': isParentSmall}">
 		<span class="text"><slot>&nbsp;</slot></span>
 		<input type="checkbox" v-model="switchValue"/>
 	</label>
