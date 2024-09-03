@@ -210,10 +210,27 @@ defineExpose({
 
 @media screen and (max-width: 768px) {
 	.steps {
-		justify-content: flex-start;
+		flex-direction: column;
+		margin: 0 1rem;
 
 		li {
-			display: none;
+			display: flex;
+			flex-direction: column;
+
+			a {
+				order: 0;
+			}
+
+			&::before, &::after {
+				margin: 0;
+				order: 1;
+			}
+
+			&:not(:last-of-type)::after {
+				margin: .5rem 0;
+				width: 1px;
+				height: 4rem;
+			}
 
 			&.is-active {
 				display: flex;

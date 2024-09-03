@@ -85,6 +85,11 @@ defineExpose({
 @import "../../../scss/animates";
 
 .vb-modal.modal {
+	.modal-content {
+		max-width: 100vw;
+		max-height: 100vh;
+	}
+
 	.modal-card-title {
 		font-size: .94rem;
 		font-weight: bold;
@@ -110,6 +115,10 @@ defineExpose({
 		overflow: hidden;
 		box-sizing: border-box;
 		height: calc(100% - 2em);
+
+		.card-content {
+			overflow: auto;
+		}
 
 		.card-content:last-child {
 			height: 100%;
