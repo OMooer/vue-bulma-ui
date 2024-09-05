@@ -6,7 +6,7 @@ import SelectorUI from '../../select';
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	modelValue?: any[];
-	style?: 'detach' | 'combo';
+	mode?: 'detach' | 'combo';
 	required?: boolean | boolean[] | string;
 	disabled?: boolean;
 	list: TVO.CascadeItem[];
@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<{
 	holderIcon?: string;
 	placeholder?: string;
 	loadingText?: string;
-}>(), {style: 'detach', cache: false, placeholder: '选择', loadingText: '加载中'});
+}>(), {mode: 'detach', cache: false, placeholder: '选择', loadingText: '加载中'});
 const emit = defineEmits(['update:modelValue', 'error']);
 
 const isLoading = ref(false);
@@ -234,7 +234,7 @@ defineExpose({
 
 <template>
 	<div ref="entity" class="vb-cascade">
-		<template v-if="style === 'combo'">
+		<template v-if="mode === 'combo'">
 			<div class="dropdown cascade-dropdown is-block" :class="classList">
 				<select
 						class="entity-shadow" tabindex="-1" aria-hidden="true" required
