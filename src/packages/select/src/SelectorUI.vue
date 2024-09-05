@@ -30,7 +30,7 @@ const findValue = computed(() => {
 });
 // 如果设置的值并不存在，则更新值为空
 onUpdated(() => {
-	if (!findValue.value) {
+	if (!findValue.value && props.modelValue) {
 		emit('update:modelValue', null);
 	}
 });

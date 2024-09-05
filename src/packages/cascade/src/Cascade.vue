@@ -40,6 +40,9 @@ watch(() => props.list, (newList) => {
 	];
 	updatePresetValue();
 }, {immediate: true});
+watch(() => props.modelValue, () => {
+	updatePresetValue();
+});
 // 获取级联选项的值
 const cascadeValue = computed(() => {
 	return cascadeList.value.map((item: any) => item.value);
@@ -189,6 +192,9 @@ async function selectLevel(index: number, value: any) {
 		isOpen.value = false;
 		confirmValue.value = true;
 		findValue.value = findSelectedValue(cascadeValue.value);
+		emit('update:modelValue', cascadeValue.value);
+	}
+	else if (props.mode !== 'combo') {
 		emit('update:modelValue', cascadeValue.value);
 	}
 }
