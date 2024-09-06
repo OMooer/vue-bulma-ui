@@ -1,25 +1,20 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue';
+import { computed, ref } from 'vue';
 
 defineOptions({
 	inheritAttrs: false
 });
-const emit = defineEmits(['update:modelValue', 'change', 'tab']);
-const props = defineProps(['modelValue', 'text', 'placeholder']);
+const emit = defineEmits(['tab']);
+const props = defineProps(['formatter', 'placeholder']);
+const modelValue = defineModel();
 const isEditable = ref(false);
-const innerValue = computed({
-	get() {
-		return props.modelValue;
-	},
-	set(v) {
-		emit('update:modelValue', v);
-	}
-});
 const innerText = computed(() => {
-	return props.text || props.modelValue || props.placeholder;
+	const placeholder = props.placeholder ?? '';
+	const formatter = props.formatter ?? ((v: any) => v);
+	return modelValue.value ? formatter(modelValue.value) : placeholder;
 });
 const isEmptyValue = computed(() => {
-	return !props.modelValue && !props.text;
+	return !modelValue.value;
 });
 const entityInput = ref();
 
@@ -27,12 +22,12 @@ function activeInput() {
 	isEditable.value = true;
 	setTimeout(() => {
 		entityInput.value.focus();
+		entityInput.value.select();
 	}, 100);
 }
 
 function changeValueShow(e: Event) {
 	isEditable.value = false;
-	emit('change', (e.target as HTMLInputElement).value);
 }
 
 function dispatchTab(e: any) {
@@ -48,8 +43,12 @@ defineExpose({
 
 <template>
 	<div class="dual-input" :class="{'is-readable': !isEditable}">
-		<input ref="entityInput" v-bind="$attrs" tabindex="-1" @keydown="dispatchTab" v-model="innerValue" @blur="changeValueShow">
-		<div class="shadow-input" :class="{'is-empty': isEmptyValue}" @click="activeInput" v-if="!isEditable">
+		<input
+				ref="entityInput" v-bind="$attrs" tabindex="-1" @keydown="dispatchTab" v-model="modelValue"
+				@blur="changeValueShow">
+		<div
+				class="shadow-input" :class="[{'is-empty': isEmptyValue}, $attrs.class]" :style="$attrs.style as any"
+				@click="activeInput" v-if="!isEditable">
 			{{ innerText }}
 		</div>
 	</div>
@@ -63,25 +62,25 @@ defineExpose({
 	align-items: center;
 	position: relative;
 	overflow: hidden;
-	padding: calc(.5em - 1px) 0;
+	padding: calc(.5em - 1px) .5em;
 	border-radius: 4px;
 	height: 100%;
-	
+
 	.field.has-addons .control:not(:last-child) & {
 		margin-right: 1px;
 	}
-	
+
 	&:focus-within {
 		outline: solid 1px $link;
 		background-color: transparent !important;
-		box-shadow: 0 0 0 0.125em rgba($link, .25);
+		box-shadow: 0 0 0 0.25em rgba($link, .25);
 	}
-	
+
 	&:hover {
 		@include file-bg-color();
 		cursor: text;
 	}
-	
+
 	&.is-readable {
 		input {
 			position: absolute;
@@ -89,36 +88,35 @@ defineExpose({
 			z-index: 0;
 		}
 	}
-	
+
 	input, .shadow-input {
 		flex-grow: 1;
 		padding: 0;
 		border: 0;
 		line-height: 1.5;
-		font-size: 1.25rem;
-		font-weight: bold;
+		font-size: 1rem;
 	}
-	
+
 	input {
 		background-color: transparent;
 		min-width: 0;
 		width: 100%;
-		
+
 		&::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
 			appearance: none;
 		}
-		
+
 		&:focus {
 			border: 0;
 			box-shadow: none;
 			outline: none;
 		}
 	}
-	
+
 	.shadow-input {
 		color: $black;
 		z-index: 1;
-		
+
 		&.is-empty {
 			color: $grey-lighter;
 		}
