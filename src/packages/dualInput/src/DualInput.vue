@@ -44,7 +44,7 @@ defineExpose({
 <template>
 	<div class="dual-input" :class="{'is-readable': !isEditable}">
 		<input
-				ref="entityInput" v-bind="$attrs" tabindex="-1" @keydown="dispatchTab" v-model="modelValue"
+				ref="entityInput" v-bind="$attrs" tabindex="-1" :placeholder @keydown="dispatchTab" v-model="modelValue"
 				@blur="changeValueShow">
 		<div
 				class="shadow-input" :class="[{'is-empty': isEmptyValue}, $attrs.class]" :style="$attrs.style as any"
@@ -99,8 +99,13 @@ defineExpose({
 
 	input {
 		background-color: transparent;
+		color: hsl(var(--bulma-input-h), var(--bulma-input-s), var(--bulma-input-color-l));
 		min-width: 0;
 		width: 100%;
+
+		&::placeholder {
+			font-weight: normal;
+		}
 
 		&::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
 			appearance: none;
@@ -114,11 +119,11 @@ defineExpose({
 	}
 
 	.shadow-input {
-		color: $black;
 		z-index: 1;
 
 		&.is-empty {
-			color: $grey-lighter;
+			color: $grey-lighter !important;
+			font-weight: normal !important;
 		}
 	}
 }
