@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 
 declare type CheckBox = {
 	type: 'checkbox';
@@ -15,9 +15,17 @@ declare type Prop = (CheckBox | Radio) & {
 	list: TVO.List;
 }
 const isParentSmall = inject('isSmall', false);
+const emit = defineEmits(['error']);
 const props = withDefaults(defineProps<Prop>(), {name: Math.random().toString(36).slice(2)});
 const modelValue = defineModel({default: () => []});
-const className = computed(() => [props.type === 'radio' ? 'radios' : 'checkboxes', isParentSmall ? 'is-small' : '']);
+const isError = ref(false);
+const className = computed(() => {
+	return [
+		props.type === 'radio' ? 'radios' : 'checkboxes',
+		isParentSmall ? 'is-small' : '',
+		isError.value ? 'is-danger' : ''
+	]
+});
 const innerValue = computed({
 	get() {
 		return modelValue.value;
@@ -52,6 +60,15 @@ function innerRequired(item: any) {
 	}
 	return false;
 }
+
+function setError(is: boolean, msg?: string) {
+	isError.value = is;
+	emit('error', is, msg);
+}
+
+defineExpose({
+	setError
+});
 </script>
 
 <template>
