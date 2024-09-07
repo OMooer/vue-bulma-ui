@@ -28,7 +28,7 @@ export default defineComponent({
 		isRange   : [Boolean, String],
 		editable  : {
 			type   : Boolean,
-			default: false
+			default: true
 		},
 		autoClose : {
 			type   : Boolean,
@@ -41,18 +41,18 @@ export default defineComponent({
 			type   : Boolean,
 			default: false
 		},
-		showTime  : {
-			type   : Boolean,
-			default: false
-		},
-		min       : [Date, String, Number],
-		max       : [Date, String, Number],
-		step      : [String, Number],
-		splitText : {
+		// showTime  : {
+		// 	type   : Boolean,
+		// 	default: false
+		// },
+		min      : [Date, String, Number],
+		max      : [Date, String, Number],
+		step     : [String, Number],
+		splitText: {
 			type   : String,
 			default: '-'
 		},
-		messages  : Object
+		messages : Object
 	},
 	setup(props, {slots, emit, expose}) {
 		const isParentSmall = inject('isSmall', false);
@@ -63,6 +63,9 @@ export default defineComponent({
 		});
 		const formatMax = computed(() => {
 			return props.max ? dateFormat(new Date(props.max as Date), 'YYYY-MM-DD') : null;
+		});
+		const formatType = computed(() => {
+			return ['datetime', 'datetime-local'].includes(props.type) ? 'datetime-local' : 'date';
 		});
 		const inner = ref('');
 		const innerRange = ref(['', '']);
@@ -84,9 +87,12 @@ export default defineComponent({
 		});
 
 		const langPack = computed(() => {
-			let packText = (props?.messages && props.messages[props.locale])
-					? props.messages[props.locale]?.calendar
-					: undefined;
+			const lang = props.messages?.[props.locale] ?? props.messages;
+			let packText = lang ? (lang?.calendar || lang) : undefined;
+			// 如果语言包的格式不对，抛弃掉
+			if (packText && !('rangeStart' in packText && 'rangeEnd' in packText)) {
+				packText = undefined;
+			}
 			packText ??= {
 				rangeStart: 'YYYY-MM-DD',
 				rangeEnd  : 'YYYY-MM-DD'
@@ -94,9 +100,12 @@ export default defineComponent({
 			return JSON.stringify(packText);
 		});
 
-		const directiveFn = (el: any) => {
-			if (el.value) {
+		const directiveFn = (el: any, binding?: any) => {
+			if (el.value || binding?.modifiers?.force) {
 				el.type = el.getAttribute('data-type');
+				if (binding?.modifiers?.force) {
+					entity.value?.dispatchEvent(new Event('click'));
+				}
 			}
 			else {
 				el.type = 'text';
@@ -126,7 +135,10 @@ export default defineComponent({
 						css    : {
 							mainClass    : 'date-panel card',
 							selectedClass: 'selected has-background-link has-text-white',
-							primaryClass : 'button is-primary is-small'
+							rightButtons : 'buttons',
+							primaryButton: 'button is-primary is-small',
+							defaultButton: 'button is-small',
+							editClass    : 'input is-small'
 						}
 					});
 					entity.value.focus();
@@ -163,7 +175,7 @@ export default defineComponent({
 											'data-auto-close': props.autoClose ? 'true' : null,
 											'data-week-start': props.weekStart,
 											'data-today'     : props.showToday ? 'true' : null,
-											'data-show-time' : props.showTime ? 'true' : null,
+											'data-show-time' : formatType.value === 'datetime-local' ? 'true' : null,
 											'data-min'       : formatMin.value,
 											'data-max'       : formatMax.value,
 											'data-range'     : true,
@@ -171,26 +183,41 @@ export default defineComponent({
 											'data-language'  : props.locale,
 											'data-lang-pack' : langPack.value,
 											onChange         : (e: any) => {
-												innerValue.value = [e.detail.start, e.detail.end];
+												let detail = e.detail;
+												if (e.target !== entity.value) {
+													const p = e.target.dataset?.role;
+													const v = e.target.value;
+													detail ??= {
+														start: p === 'start' ? v : innerValue.value[0] ?? '',
+														end  : p === 'end' ? v : innerValue.value[1] ?? '',
+													}
+												}
+												innerValue.value = [detail.start, detail.end];
 											}
 										}, [
 											// h('span', {role: 'range'}),
 											// h('span', {role: 'range'})
 											withDirectives(h('input', {
-												'type'       : 'text',
-												'data-type'  : props.showTime ? 'datetime-local' : 'date',
+												'type'       : formatType.value,
+												'data-type'  : formatType.value,// ? 'datetime-local' : 'date',
+												'data-role'  : 'start',
 												'step'       : props.step,
 												'value'      : innerValue.value[0],
 												'placeholder': JSON.parse(langPack.value)?.rangeStart,
-												'required'   : isTruthy(props.required)
+												'required'   : isTruthy(props.required),
+												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
+												onBlur       : (e: Event) => directiveFn(e.target)
 											}), [[insertPlace]]),
 											withDirectives(h('input', {
-												'type'       : 'text',
-												'data-type'  : props.showTime ? 'datetime-local' : 'date',
+												'type'       : formatType.value,
+												'data-type'  : formatType.value,// ? 'datetime-local' : 'date',
+												'data-role'  : 'end',
 												'step'       : props.step,
 												'value'      : innerValue.value[1],
 												'placeholder': JSON.parse(langPack.value)?.rangeEnd,
-												'required'   : isTruthy(props.required)
+												'required'   : isTruthy(props.required),
+												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
+												onBlur       : (e: Event) => directiveFn(e.target)
 											}), [[insertPlace]])
 										])
 										// 单一时间
@@ -200,7 +227,7 @@ export default defineComponent({
 												'input'    : true,
 												'is-danger': isError.value
 											},
-											'type'           : props.type,
+											'type'           : formatType.value,
 											'min'            : formatMin.value,
 											'max'            : formatMax.value,
 											'step'           : props.step,
@@ -212,18 +239,18 @@ export default defineComponent({
 											'data-auto-close': props.autoClose ? 'true' : null,
 											'data-week-start': props.weekStart,
 											'data-today'     : props.showToday ? 'true' : null,
-											'data-show-time' : props.showTime ? 'true' : null,
-											'data-language'  : props.locale,
-											'data-lang-pack' : langPack.value,
-											onChange         : (e: any) => {
+											// 'data-show-time' : props.showTime ? 'true' : null,
+											'data-language' : props.locale,
+											'data-lang-pack': langPack.value,
+											onChange        : (e: any) => {
 												setError(false);
 												innerValue.value = e.target.value;
 											},
-											onBlur           : (e: any) => {
+											onBlur          : (e: any) => {
 												if (!e.target.checkValidity() && e.target.value) {
 													setError(true, e.target.validationMessage);
 												}
-												if (e.relatedTarget && !e.relatedTarget?.getAttribute('role-action')) {
+												if (e.relatedTarget && !e.relatedTarget?.closest('.date-panel')) {
 													instance?.dismiss();
 												}
 											}
@@ -313,6 +340,10 @@ export default defineComponent({
 			}
 		}
 
+		input[type="text"] {
+			cursor: default;
+		}
+
 		[role=range] {
 			display: block;
 			cursor: default;
@@ -349,6 +380,15 @@ export default defineComponent({
 
 	&:not(.is-multiple) {
 		width: 15rem;
+	}
+
+	input[type="datetime-local"],
+	input[type="date"] {
+		&::-webkit-clear-button,
+		&::-webkit-inner-spin-button,
+		&::-webkit-calendar-picker-indicator {
+			display: none;
+		}
 	}
 
 	.op-arrow {
@@ -451,6 +491,70 @@ export default defineComponent({
 
 	.calendar-foot:not(:empty) {
 		margin-top: 1rem;
+
+		> div:first-of-type {
+			display: flex;
+			flex-grow: 1;
+		}
+	}
+
+	.calendar-modal {
+		display: grid;
+		grid-template-columns: 3fr 1fr;
+		gap: .25em;
+		background: var(--bulma-background);
+		overflow: hidden;
+		padding: 0 !important;
+
+		.cell {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			.cell-head {
+				padding: 1rem 0 .5rem;
+			}
+
+			ol {
+				display: flex;
+				flex-wrap: wrap;
+				flex-grow: 1;
+				font-size: .875rem;
+
+				li {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+
+					a {
+						padding: 2px 5px;
+						color: var(--bulma-text);
+
+						&:hover {
+							color: $link;
+						}
+					}
+				}
+			}
+
+			&:first-of-type {
+				box-shadow: $shadow;
+				background: var(--bulma-body-background-color);
+
+				ol li {
+					flex-basis: 33%;
+				}
+			}
+
+			&:last-of-type ol li {
+				flex-basis: 50%;
+
+				a {
+					flex-grow: 1;
+					text-align: center;
+				}
+			}
+		}
 	}
 }
 
