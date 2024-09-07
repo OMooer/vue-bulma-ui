@@ -448,7 +448,7 @@ export default defineComponent({
 					cursor: no-drop;
 
 					&:hover {
-						color: $black;
+						color: var(--bulma-text);
 					}
 				}
 
