@@ -89,14 +89,10 @@ export default defineComponent({
 		const langPack = computed(() => {
 			const lang = props.messages?.[props.locale] ?? props.messages;
 			let packText = lang ? (lang?.calendar || lang) : undefined;
-			// 如果语言包的格式不对，抛弃掉
-			if (packText && !('rangeStart' in packText && 'rangeEnd' in packText)) {
-				packText = undefined;
-			}
-			packText ??= {
+			packText = Object.assign({
 				rangeStart: 'YYYY-MM-DD',
 				rangeEnd  : 'YYYY-MM-DD'
-			};
+			}, packText);
 			return JSON.stringify(packText);
 		});
 
