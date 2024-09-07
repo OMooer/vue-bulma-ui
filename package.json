@@ -50,6 +50,6 @@
 	},
 	"dependencies": {
 		"echarts": "^5.4.3",
-		"sa-calendar": "^1.1.8"
+		"sa-calendar": "^1.1.9"
 	}
 }
