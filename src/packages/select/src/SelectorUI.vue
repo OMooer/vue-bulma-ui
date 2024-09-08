@@ -11,8 +11,9 @@ const props = withDefaults(defineProps<{
 	filter?: boolean;
 	disabled?: boolean;
 	required?: boolean;
+	filterText?: string;
 	emptyText?: string;
-}>(), {placeholder: '请选择', emptyText: '无数据'});
+}>(), {placeholder: '请选择', emptyText: '无数据', filterText: '筛选'});
 const emit = defineEmits(['update:modelValue', 'error']);
 const isError = ref(false);
 const isOpen = ref(false);
@@ -124,7 +125,7 @@ defineExpose({
 			<div class="dropdown-content">
 				<template v-if="filter">
 					<div class="dropdown-item filter">
-						<input type="text" class="input" v-focus v-model="keyword">
+						<input type="search" class="input" :placeholder="filterText" v-focus v-model="keyword">
 					</div>
 					<hr class="dropdown-divider filter-line"/>
 				</template>
