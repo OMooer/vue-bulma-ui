@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
 	disabled?: boolean;
 	required?: boolean;
 	emptyText?: string;
-}>(), {emptyText: '无数据'});
+}>(), {placeholder: '请选择', emptyText: '无数据'});
 const emit = defineEmits(['update:modelValue', 'error']);
 const isError = ref(false);
 const isOpen = ref(false);

@@ -8,18 +8,16 @@ const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	modelValue?: any;
 	list: TVO.List;
-	addons?: boolean;
 	placeholder?: string;
-	allowNull?: boolean;
+	required?: boolean;
 	isSmall?: boolean;
 }>(), {
-	placeholder: '请选择...',
-	allowNull  : false
+	placeholder: '请选择'
 });
 const emit = defineEmits(['update:modelValue', 'error']);
 const isError = ref(false);
 const entity = ref();
-const isNotNull = computed(() => !props.allowNull);
+const isNotNull = computed(() => props.required);
 const selectedValue = ref('');
 
 watchEffect(() => {
@@ -58,7 +56,7 @@ defineExpose({
 
 <template>
 	<div class="select is-fullwidth" :class="{'is-small': isSmall || isParentSmall, 'is-shake is-danger': isError}">
-		<select ref="entity" v-bind="$attrs" @change="update" v-model="selectedValue">
+		<select ref="entity" v-bind="$attrs" :required @change="update" v-model="selectedValue">
 			<option value="" :disabled="isNotNull">{{ placeholder }}</option>
 			<option :value="item.value" :disabled="item.disabled" :key="item.value as string" v-for="item in list">
 				{{ item.title }}
