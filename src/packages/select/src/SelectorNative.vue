@@ -12,6 +12,7 @@ const props = withDefaults(defineProps<{
 	required?: boolean;
 	isSmall?: boolean;
 }>(), {
+	modelValue : '',
 	placeholder: '请选择'
 });
 const emit = defineEmits(['update:modelValue', 'error']);
@@ -21,7 +22,7 @@ const isNotNull = computed(() => props.required);
 const selectedValue = ref('');
 
 watchEffect(() => {
-	selectedValue.value = props.modelValue;
+	selectedValue.value = props.modelValue ?? '';
 });
 
 function update(e: Event) {
