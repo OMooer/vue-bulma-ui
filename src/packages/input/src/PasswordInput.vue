@@ -59,10 +59,11 @@ defineExpose({
 
 <template>
 	<div class="vb-password control is-expanded has-icons-right">
-		<input ref="entity" :type="showPassword ? 'text' : 'password'"
-		       :class="['input', isError ? 'is-shake is-danger' : null, isParentSmall ? 'is-small' : null]"
-					 autocomplete="off"
-		       v-bind="$attrs" v-model="innerValue" @change="checkInput">
+		<input
+				ref="entity" :type="showPassword ? 'text' : 'password'"
+				:class="['input', isError ? 'is-shake is-danger' : null, isParentSmall ? 'is-small' : null]"
+				autocomplete="off"
+				v-bind="$attrs" v-model="innerValue" @change="checkInput">
 		<span :class="['icon', 'is-small', 'is-right', {'show': showPassword}]" @click="toggleShow">
 			<FasIcon :icon="['fas', showPassword ? 'eye' : 'eye-slash']"/>
 		</span>
@@ -74,9 +75,13 @@ defineExpose({
 	&.control .icon {
 		pointer-events: auto;
 		cursor: pointer;
-		
+
+		[data-theme=dark] & {
+			--bulma-input-icon-color: hsla(221deg, 14%, 89%, .5);
+		}
+
 		&.show {
-			color: hsl(0, 0%, 29%);
+			color: var(--bulma-text-strong);
 		}
 	}
 }
