@@ -90,8 +90,8 @@ export default defineComponent({
 			const lang = props.messages?.[props.locale] ?? props.messages;
 			let packText = lang ? (lang?.calendar || lang) : undefined;
 			packText = Object.assign({
-				rangeStart: 'YYYY-MM-DD',
-				rangeEnd  : 'YYYY-MM-DD'
+				rangeStart: '年/月/日',
+				rangeEnd  : '年/月/日'
 			}, packText);
 			return JSON.stringify(packText);
 		});
