@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits(['update:modelValue', 'error']);
 const isError = ref(false);
 const entity = ref();
+const isReallySmall = computed(() => isParentSmall || props.isSmall);
 const isNotNull = computed(() => props.required);
 const selectedValue = ref('');
 
@@ -56,7 +57,7 @@ defineExpose({
 </script>
 
 <template>
-	<div class="select is-fullwidth" :class="{'is-small': isSmall || isParentSmall, 'is-shake is-danger': isError}">
+	<div class="select is-fullwidth" :class="{'is-small': isReallySmall, 'is-shake is-danger': isError}">
 		<select ref="entity" v-bind="$attrs" :required @change="update" v-model="selectedValue">
 			<option value="" :disabled="isNotNull">{{ placeholder }}</option>
 			<option :value="item.value" :disabled="item.disabled" :key="item.value as string" v-for="item in list">

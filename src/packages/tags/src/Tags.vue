@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{
 	emptyText?: string;
 }>(), {collapse: 0, emptyText: '无数据'});
 const emit = defineEmits(['update:modelValue']);
+const isReallySmall = computed(() => isParentSmall || props.isSmall);
 const placeholderText = computed(() => {
 	return props.placeholder;
 });
@@ -59,9 +60,9 @@ watchEffect(() => {
 		setTimeout(() => {
 			useList.value = (props?.list || []).map((item: TVO.Item) => {
 				return {
-					title: item.title,
-					value: item.value,
-					icon: item.icon,
+					title   : item.title,
+					value   : item.value,
+					icon    : item.icon,
 					disabled: item.disabled
 				}
 			});
@@ -171,7 +172,7 @@ function toggleShow(ev: Event) {
 
 <template>
 	<div
-			class="vb-tags" :class="{'is-active': isOpen, 'is-small': isSmall || isParentSmall, 'is-disabled': disabled}"
+			class="vb-tags" :class="{'is-active': isOpen, 'is-small': isReallySmall, 'is-disabled': disabled}"
 			:data-required="required" @click="toggleShow">
 		<span class="icon is-small">
 			<FasIcon icon="angle-down" aria-hidden="true"/>
@@ -238,7 +239,7 @@ function toggleShow(ev: Event) {
 	cursor: default;
 	transition: border var(--bulma-duration);
 
-	&:hover {
+	&:hover:not(.is-disabled) {
 		--bulma-input-border-l-delta: var(--bulma-input-hover-border-l-delta);
 
 		> .icon {
@@ -263,11 +264,15 @@ function toggleShow(ev: Event) {
 	}
 
 	&.is-disabled {
-		pointer-events: none;
-		opacity: .5;
-		background-color: $grey-lightest;
-		border-color: $grey-lightest;
+		opacity: .7;
+		background-color: var(--bulma-input-disabled-background-color);
+		border-color: var(--bulma-input-disabled-border-color);
 		cursor: no-drop;
+
+		> .icon {
+			pointer-events: none;
+			cursor: no-drop;
+		}
 
 		.dropdown-trigger > .input {
 			background-color: transparent;

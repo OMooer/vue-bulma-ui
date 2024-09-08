@@ -352,16 +352,16 @@ export default defineComponent({
 	}
 
 	&.is-disabled {
-		pointer-events: none;
 		cursor: no-drop;
 
 		.control {
-			opacity: .5;
+			opacity: .7;
 		}
 
 		[role=calendar] {
-			background-color: $grey-lightest;
-			border-color: $grey-lightest;
+			pointer-events: none;
+			background-color: var(--bulma-input-disabled-background-color);
+			border-color: var(--bulma-input-disabled-border-color);
 		}
 	}
 }

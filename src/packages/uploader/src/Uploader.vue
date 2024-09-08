@@ -45,6 +45,7 @@ const props = defineProps({
 	isSmall    : Boolean
 });
 const emit = defineEmits(['update:modelValue', 'start', 'error', 'status']);
+const isReallySmall = computed(() => isParentSmall || props.isSmall);
 // 上传队列
 const uploadQueue = ref<{ [propName: string]: any }[]>([]);
 // 上传状态 init ready start success error complete
@@ -273,7 +274,7 @@ defineExpose({
 					</slot>
 				</div>
 				<div
-						class="file" :class="{'is-danger': uploadError, 'is-small': isSmall || isParentSmall}"
+						class="file" :class="{'is-danger': uploadError, 'is-small': isReallySmall}"
 						v-if="!hasValue || isTruthy(multiple)">
 					<div class="file-label">
 						<span class="file-cta">

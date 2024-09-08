@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue';
+import { computed, inject, provide, ref, watch } from 'vue';
 import Empty from '../../empty';
 import SelectorUI from '../../select';
 
@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<{
 	holderIcon?: string;
 	placeholder?: string;
 	loadingText?: string;
+	isSmall?: boolean;
 }>(), {mode: 'detach', cache: false, placeholder: '选择', loadingText: '加载中'});
 const emit = defineEmits(['update:modelValue', 'error']);
 
@@ -30,6 +31,7 @@ const current = ref();
 const confirmValue = ref();
 const cascadeList = ref<{ list: TVO.CascadeItem[]; required?: boolean, value: any }[]>([]);
 const cacheStore = ref<{ [propName: string]: TVO.CascadeItem[] }>({});
+const isReallySmall = computed(() => isParentSmall || props.isSmall);
 watch(() => props.list, (newList) => {
 	cascadeList.value = [
 		{
@@ -229,9 +231,11 @@ const classList = computed(() => {
 		'is-up'    : isUp.value,
 		'is-shake' : isError.value,
 		'is-danger': isError.value,
-		'is-small' : isParentSmall
+		'is-small' : isReallySmall.value
 	}
 });
+
+provide('isSmall', isReallySmall.value);
 
 defineExpose({
 	setError
@@ -239,7 +243,7 @@ defineExpose({
 </script>
 
 <template>
-	<div ref="entity" class="vb-cascade">
+	<div ref="entity" class="vb-cascade" :class="{'is-disabled': disabled}">
 		<template v-if="mode === 'combo'">
 			<div class="dropdown cascade-dropdown is-block" :class="classList">
 				<select
@@ -292,8 +296,9 @@ defineExpose({
 			<div class="dropdown cascade-item" v-if="isLoading">
 				<div class="dropdown-trigger is-fullwidth">
 					<button
-							type="button" class="button is-fullwidth is-justify-content-space-between" aria-label="loading"
-							aria-busy="true">
+							type="button" class="button is-fullwidth is-justify-content-space-between"
+							:class="{'is-small': isReallySmall}"
+							aria-label="loading" aria-busy="true">
 						<span class="has-text-grey-light">{{ loadingText }}</span>
 						<span class="icon is-small has-text-grey-light">
 							<FasIcon icon="spinner" spin-pulse/>
@@ -329,6 +334,12 @@ defineExpose({
 	.dropdown-trigger {
 		.button {
 			box-shadow: none;
+
+			&[disabled] {
+				background-color: var(--bulma-input-disabled-background-color);
+				border-color: var(--bulma-input-disabled-border-color);
+				opacity: .7;
+			}
 		}
 
 		.icon {
@@ -336,7 +347,7 @@ defineExpose({
 		}
 	}
 
-	&:hover {
+	&:hover:not(.is-disabled) {
 		.dropdown-trigger .icon {
 			color: var(--bulma-body-color);
 		}
@@ -363,7 +374,7 @@ defineExpose({
 					padding-right: 0.25em;
 
 					&.is-disabled {
-						opacity: .5;
+						opacity: .7;
 						pointer-events: none;
 						padding-right: 1rem;
 

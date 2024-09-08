@@ -126,8 +126,8 @@ function menuClicked(e: any) {
 
 	&.is-disabled {
 		.dropdown-trigger > .button {
-			background-color: $grey-lightest;
-			border-color: $grey-lightest;
+			background-color: var(--bulma-input-disabled-background-color);
+			border-color: var(--bulma-input-disabled-border-color);
 		}
 	}
 
