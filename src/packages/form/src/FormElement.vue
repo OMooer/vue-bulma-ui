@@ -73,7 +73,7 @@ provide('isSmall', props.isSmall);
 @import "../../../scss/variables";
 
 .field {
-	&:has([required],[data-required]) {
+	&:has([required],[data-required=true]) {
 		.form-el-label {
 			&::before {
 				content: '*';
