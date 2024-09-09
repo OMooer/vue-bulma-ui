@@ -47,8 +47,8 @@ function deleteSource() {
 <template>
 	<div :class="isImage ? 'image-source' : 'file-source'" v-bind="$attrs">
 		<!-- 图片形式 -->
-		<figure class="image is-3by2" v-if="isImage">
-			<img :src="sourceUrl" alt="" @click="showPreview">
+		<figure class="image" v-if="isImage">
+			<img :src="sourceUrl" :alt="sourceName" @click="showPreview">
 		</figure>
 		<!-- 文件形式 -->
 		<a class="file-label" :href="sourceUrl" download rel="external" v-else>
@@ -63,10 +63,10 @@ function deleteSource() {
 		</a>
 	</div>
 	<!-- 预览 -->
-	<Modal mask-close style="width: 800px" @close="isPreview = false" v-if="isPreview">
+	<Modal mask-close style="width: auto" @close="isPreview = false" v-if="isPreview">
 		<div class="upload-preview">
 			<figure class="image">
-				<img :src="sourceUrl" alt="">
+				<img :src="sourceUrl" :alt="sourceName">
 			</figure>
 			<a class="trash-upload" @click="deleteSource" v-if="canDelete">
 				<FasIcon icon="trash-can"/>
@@ -122,6 +122,13 @@ function deleteSource() {
 .image-source {
 	width: 100%;
 	height: 100%;
+
+	.image {
+		margin: auto;
+		width: fit-content;
+		max-width: 100%;
+		max-height: 100%;
+	}
 }
 
 .upload-preview {
@@ -136,6 +143,7 @@ function deleteSource() {
 	}
 
 	.image {
+		width: fit-content;
 		max-width: 100%;
 		max-height: 100%;
 	}
