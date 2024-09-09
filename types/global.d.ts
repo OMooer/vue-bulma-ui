@@ -132,11 +132,16 @@ declare namespace VBForm {
 		value: string | number;
 	}
 
+	type PasswordItem = {
+		type: 'password';
+		value: string;
+	}
+
 	type SlotItem = {
 		slot: string;
 	}
 
-	type FormItem = ListItem | TagItem | DateItem | SwitchItem | InputItem | SlotItem;
+	type FormItem = ListItem | TagItem | DateItem | SwitchItem | InputItem | PasswordItem | SlotItem;
 
 	type Item = FormItem & {
 		label?: string;

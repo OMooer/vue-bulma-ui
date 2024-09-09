@@ -6,17 +6,20 @@ defineOptions({
 });
 const isParentSmall = inject('isSmall', false);
 const props = defineProps({
-	isSmall: Boolean
+	disabled: Boolean,
+	isSmall : Boolean
 });
 const switchValue = defineModel();
 const isReallySmall = computed(() => isParentSmall || props.isSmall);
 </script>
 
 <template>
-	<label class="vb-switch" :class="{'is-on': switchValue, 'is-small': isReallySmall, 'is-custom': $slots.icon}">
+	<label
+			class="vb-switch"
+			:class="{'is-disabled': disabled, 'is-on': switchValue, 'is-small': isReallySmall, 'is-custom': $slots.icon}">
 		<slot name="icon" class="is-custom-icon"></slot>
 		<span class="text"><slot>&nbsp;</slot></span>
-		<input type="checkbox" v-model="switchValue"/>
+		<input type="checkbox" :disabled v-model="switchValue"/>
 	</label>
 </template>
 
@@ -83,7 +86,7 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 		transition: left .3s ease;
 	}
 
-	&:hover {
+	&:hover:not(.is-disabled) {
 		border-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), calc(var(--bulma-border-l) + var(--bulma-hover-border-l-delta)));
 	}
 
@@ -147,6 +150,11 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 			left: calc(100% - 2.4em);
 			right: 0;
 		}
+	}
+
+	&.is-disabled {
+		opacity: .5;
+		cursor: no-drop;
 	}
 }
 </style>
