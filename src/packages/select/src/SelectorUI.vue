@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, onUpdated, ref, watch } from 'vue';
+import { vFocus } from '../../../utils/directive';
 import Empty from '../../empty';
 
 const isParentSmall = inject('isSmall', false);
@@ -21,9 +22,6 @@ const isUp = ref(false);
 const entity = ref();
 const frontRef = ref();
 const keyword = ref('');
-const vFocus = {
-	updated: (el: HTMLInputElement) => el.focus()
-};
 
 const findValue = computed(() => {
 	const find = props.list?.find((item: any) => item.value === props.modelValue);

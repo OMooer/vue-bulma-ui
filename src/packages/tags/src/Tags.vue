@@ -2,6 +2,7 @@
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
 import { isTruthy } from '../../../utils';
+import { vFocus } from '../../../utils/directive';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
@@ -60,9 +61,9 @@ watchEffect(() => {
 		setTimeout(() => {
 			useList.value = (props?.list || []).map((item: TVO.Item) => {
 				return {
-					title   : item.title,
-					value   : item.value,
-					icon    : item.icon,
+					title: item.title,
+					value: item.value,
+					icon: item.icon,
 					disabled: item.disabled
 				}
 			});
@@ -88,6 +89,10 @@ const selectedTags = computed(() => {
 			icon : item?.icon
 		} as TVO.Item
 	});
+});
+// 根据合并值要展示的已选列表
+const showSelectedTags = computed(() => {
+	return isOpen.value ? selectedTags.value : selectedTags.value.slice(props.collapse * -1);
 });
 
 function getValueItem(value: TVO.Value): TVO.Item {
@@ -163,7 +168,7 @@ watch(isOpen, (is) => {
 });
 
 function toggleShow(ev: Event) {
-	if ((ev.target as HTMLElement) === tagEntity.value && isOpen.value) {
+	if ((ev.target as HTMLElement) === tagEntity.value && isOpen.value || props.disabled) {
 		return;
 	}
 	isOpen.value = !isOpen.value;
@@ -180,8 +185,8 @@ function toggleShow(ev: Event) {
 		<div class="dropdown" :class="{'is-active': isOpen, 'is-up': isUp}">
 			<div class="dropdown-trigger">
 				<div class="tag-list field is-grouped is-grouped-multiline" v-if="selectedTags.length">
-					<div class="control" v-for="item in selectedTags.slice(collapse*-1)">
-						<div class="tags has-addons" :class="{'are-medium': !isSmall}">
+					<div class="control" v-for="item in showSelectedTags">
+						<div class="tags has-addons" :class="{'are-medium': !isReallySmall}">
 							<span class="tag">
 								<i :class="item.icon" v-if="item.icon"></i>
 								{{ item.title }}
@@ -189,17 +194,23 @@ function toggleShow(ev: Event) {
 							<a class="tag is-delete" @click.stop="removeValue(item)"></a>
 						</div>
 					</div>
-					<div class="control" v-if="isTruthy(collapse) && selectedTags.length > collapse">
-						<span class="tag" :class="{'is-medium': !isSmall}">+{{ selectedTags.length - collapse }}</span>
+					<div class="control" v-if="!isOpen && isTruthy(collapse) && selectedTags.length > collapse">
+						<div class="tags">
+							<a
+									class="tag is-rounded" :class="{'is-medium': !isReallySmall}">+{{
+									selectedTags.length - collapse
+								}}</a>
+						</div>
 					</div>
 				</div>
 				<input
 						type="text" autocomplete="off" class="input"
 						ref="tagEntity"
-						:class="{'is-small': isSmall, 'is-expanded': isTruthy(collapse)}"
+						:class="{'is-small': isReallySmall, 'is-expanded': isTruthy(collapse)}"
 						:placeholder="placeholderText"
 						:required="isRequired"
 						:disabled="disabled"
+						v-focus="isOpen"
 						v-model="keyword" v-show="!selectedTags.length || isOpen">
 			</div>
 			<div class="dropdown-menu is-fullwidth" @click.stop>
@@ -261,6 +272,20 @@ function toggleShow(ev: Event) {
 			line-height: 1.5;
 			font-size: 0.75rem;
 		}
+
+		.tag-list {
+			padding: 0.3125rem;
+
+			.control {
+				.tag {
+					height: 1.5em;
+				}
+
+				.is-delete {
+					width: 1.5em;
+				}
+			}
+		}
 	}
 
 	&.is-disabled {
@@ -293,13 +318,20 @@ function toggleShow(ev: Event) {
 	.tag-list {
 		--bulma-block-spacing: 0;
 		overflow: hidden;
-		padding: .25rem .5rem 0;
+		padding: .25rem .5rem;
+		gap: .25rem !important;
 
 		.control {
-			margin-bottom: .25rem !important;
-
 			.tag {
 				height: 1.875em;
+			}
+
+			.is-delete {
+				margin-left: 0;
+			}
+
+			.tags > span.tag {
+				padding-right: 0.25em;
 			}
 		}
 	}

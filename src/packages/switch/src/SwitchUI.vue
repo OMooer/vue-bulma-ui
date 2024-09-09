@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { inject, ref, watchEffect } from 'vue';
+import { computed, inject } from 'vue';
 
+defineOptions({
+	inheritAttrs: false
+});
 const isParentSmall = inject('isSmall', false);
-const emit = defineEmits(['update:modelValue']);
-const props = defineProps(['modelValue']);
-const switchValue = ref(false);
-watchEffect(() => {
-	switchValue.value = props.modelValue;
+const props = defineProps({
+	isSmall: Boolean
 });
-watchEffect(() => {
-	emit('update:modelValue', switchValue.value);
-});
+const switchValue = defineModel();
+const isReallySmall = computed(() => isParentSmall || props.isSmall);
 </script>
 
 <template>
-	<label class="vb-switch" :class="{'is-on': switchValue, 'is-small': isParentSmall}">
+	<label class="vb-switch" :class="{'is-on': switchValue, 'is-small': isReallySmall, 'is-custom': $slots.icon}">
+		<slot name="icon" class="is-custom-icon"></slot>
 		<span class="text"><slot>&nbsp;</slot></span>
 		<input type="checkbox" v-model="switchValue"/>
 	</label>
@@ -30,8 +30,7 @@ watchEffect(() => {
 	justify-content: space-between;
 	overflow: hidden;
 	padding: 0 .5em;
-	background: $white;
-	border: solid 1px $grey-lighter;
+	border: solid 1px var(--bulma-border);
 	border-radius: 2.5em;
 	cursor: pointer;
 	line-height: normal;
@@ -60,20 +59,20 @@ watchEffect(() => {
 		z-index: 5;
 	}
 
-	&::before {
+	&::before, &::after {
 		content: "";
 		position: absolute;
 		left: 0;
-		background: $white-ter;
+	}
+
+	&::before {
+		background: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), calc(var(--bulma-scheme-main-ter-l) + 0%));
 		width: 100%;
 		height: 100%;
 		transition: background-color .3s ease;
 	}
 
 	&::after {
-		content: "";
-		position: absolute;
-		left: 0;
 		right: 0;
 		background: $white;
 		box-shadow: $shadow;
@@ -85,7 +84,7 @@ watchEffect(() => {
 	}
 
 	&:hover {
-		border-color: $grey-light;
+		border-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), calc(var(--bulma-border-l) + var(--bulma-hover-border-l-delta)));
 	}
 
 	&:focus-within {
@@ -124,6 +123,29 @@ watchEffect(() => {
 
 		.text {
 			font-size: .875rem;
+		}
+	}
+
+	&.is-custom {
+		&::before, &::after {
+			display: none;
+		}
+
+		:deep(.is-custom-icon) {
+			position: absolute;
+			left: 0;
+			right: 0;
+			box-shadow: $shadow;
+			border-radius: 50%;
+			width: 2.4em;
+			height: 2.4em;
+			z-index: 5;
+			transition: left .3s ease;
+		}
+
+		&.is-on :deep(.is-custom-icon) {
+			left: calc(100% - 2.4em);
+			right: 0;
 		}
 	}
 }
