@@ -23,7 +23,7 @@ const className = computed(() => {
 	return [
 		props.type === 'radio' ? 'radios' : 'checkboxes',
 		isParentSmall ? 'is-small' : '',
-		isError.value ? 'is-danger' : ''
+		isError.value ? 'is-danger is-shake' : ''
 	]
 });
 const innerValue = computed({

@@ -241,7 +241,7 @@ defineExpose({
 </script>
 
 <template>
-	<div class="vb-uploader" :class="{'is-disabled': isTruthy(disabled), 'is-danger': uploadError}">
+	<div class="vb-uploader" :class="{'is-disabled': isTruthy(disabled), 'is-danger is-shake': uploadError}">
 		<div
 				:class="[
 						'vb-uploader-progress',

@@ -16,8 +16,9 @@ const props = withDefaults(defineProps<{
 	disabled?: boolean;
 	emptyText?: string;
 }>(), {collapse: 0, emptyText: '无数据'});
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'error']);
 const isReallySmall = computed(() => isParentSmall || props.isSmall);
+const isError = ref(false);
 const placeholderText = computed(() => {
 	return props.placeholder;
 });
@@ -61,9 +62,9 @@ watchEffect(() => {
 		setTimeout(() => {
 			useList.value = (props?.list || []).map((item: TVO.Item) => {
 				return {
-					title: item.title,
-					value: item.value,
-					icon: item.icon,
+					title   : item.title,
+					value   : item.value,
+					icon    : item.icon,
 					disabled: item.disabled
 				}
 			});
@@ -173,11 +174,27 @@ function toggleShow(ev: Event) {
 	}
 	isOpen.value = !isOpen.value;
 }
+
+function setError(is: boolean, msg?: string) {
+	isError.value = is;
+	emit('error', is, msg);
+}
+
+defineExpose({
+	setError
+});
 </script>
 
 <template>
 	<div
-			class="vb-tags" :class="{'is-active': isOpen, 'is-small': isReallySmall, 'is-disabled': disabled}"
+			class="vb-tags control"
+			:class="{
+				'is-active': isOpen,
+				'is-small': isReallySmall,
+				'is-disabled': disabled,
+				'is-shake': isError,
+				'is-danger': isError
+			}"
 			:data-required="required" @click="toggleShow">
 		<span class="icon is-small">
 			<FasIcon icon="angle-down" aria-hidden="true"/>
@@ -261,6 +278,14 @@ function toggleShow(ev: Event) {
 	&:focus-within, &.is-active {
 		border-color: $link;
 		box-shadow: 0 0 0 0.125em rgba($link, .25);
+	}
+
+	&.is-danger {
+		border-color: $danger;
+
+		&:focus-within, &.is-active {
+			box-shadow: 0 0 0 0.125em rgba($danger, .25);
+		}
 	}
 
 	&.is-active > .icon {
