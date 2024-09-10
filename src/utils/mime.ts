@@ -1,5 +1,5 @@
 // @ts-ignore
-import db from 'mime-db';
+import * as db from 'mime-db';
 
 const globalMime = Object.entries<any>(db).filter(([_key, mime]: [_key: string, mime: any]) => mime.extensions?.length > 0);
 
