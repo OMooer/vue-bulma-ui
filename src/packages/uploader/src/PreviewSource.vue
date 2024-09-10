@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import Modal from '../../modal';
 
 declare interface Props {
 	source: string | { name: string; url: string };
-	canDelete?: boolean,
-	forceFile?: boolean
+	canDelete?: boolean;
+	forceFile?: boolean;
+	isSmall?: boolean;
 }
 
+const isParentSmall = inject('isSmall', false);
 const props = defineProps<Props>();
 const emit = defineEmits(['delete']);
 
+const isReallySmall = computed(() => isParentSmall || props.isSmall);
 const sourceName = computed(() => {
 	if (typeof props.source === 'object') {
 		return props.source?.name || props.source?.url;
@@ -45,7 +48,7 @@ function deleteSource() {
 </script>
 
 <template>
-	<div :class="isImage ? 'image-source' : 'file-source'" v-bind="$attrs">
+	<div :class="isImage ? 'image-source' : ['file-source file', {'is-small': isReallySmall}]" v-bind="$attrs">
 		<!-- 图片形式 -->
 		<figure class="image" v-if="isImage">
 			<img :src="sourceUrl" :alt="sourceName" @click="showPreview">
@@ -56,7 +59,7 @@ function deleteSource() {
 				<span class="file-icon"><FasIcon icon="file-arrow-down"/></span>
 			</span>
 			<span class="file-name">{{ sourceName }}
-				<button type="button" class="file-delete button is-ghost" @click.stop.prevent="deleteSource" v-if="canDelete">
+				<button type="button" class="file-delete button is-ghost" :class="{'is-small' : isReallySmall}" @click.stop.prevent="deleteSource" v-if="canDelete">
 					<FasIcon icon="trash-can"/>
 				</button>
 			</span>
@@ -86,12 +89,17 @@ function deleteSource() {
 	position: relative;
 	width: 100%;
 
-	.file-cta {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
+	.file-label {
+		flex-grow: 1;
+		min-width: 10rem;
 
-		.file-icon {
-			margin: 0;
+		.file-cta {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+
+			.file-icon {
+				margin: 0;
+			}
 		}
 	}
 
@@ -106,8 +114,12 @@ function deleteSource() {
 
 	.file-delete {
 		position: absolute;
-		right: -.5em;
+		right: 0;
 		top: 0;
+		padding-left: 0;
+		padding-right: 0;
+		width: 1.5em;
+		height: 100%;
 
 		&:hover {
 			color: $danger;
@@ -120,11 +132,13 @@ function deleteSource() {
 }
 
 .image-source {
+	min-width: 6rem;
+	min-height: 4rem;
+	background-color: $light;
 	width: 100%;
 	height: 100%;
 
 	.image {
-		margin: auto;
 		width: fit-content;
 		max-width: 100%;
 		max-height: 100%;

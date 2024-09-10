@@ -50,6 +50,7 @@
 	},
 	"dependencies": {
 		"echarts": "^5.4.3",
+		"mime-db": "^1.53.0",
 		"sa-calendar": "^1.1.9"
 	}
 }
