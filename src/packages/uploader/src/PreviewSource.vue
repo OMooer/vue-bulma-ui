@@ -132,13 +132,13 @@ function deleteSource() {
 }
 
 .image-source {
-	min-width: 6rem;
-	min-height: 4rem;
-	background-color: $light;
 	width: 100%;
 	height: 100%;
 
 	.image {
+		background-color: $light;
+		min-width: 4.5rem;
+		min-height: 3rem;
 		width: fit-content;
 		max-width: 100%;
 		max-height: 100%;
