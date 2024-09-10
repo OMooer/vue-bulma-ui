@@ -34,6 +34,8 @@ export { default as VbEmpty } from './packages/empty';
 export { default as VbForm } from './packages/form';
 // 表单项容器
 export { FormElement as VbFormItem } from './packages/form';
+// 自增数字框
+export { default as VbIncrement } from './packages/increment';
 // 输入框
 export { default as VbInput } from './packages/input';
 // 密文框

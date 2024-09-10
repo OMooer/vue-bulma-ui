@@ -27,6 +27,7 @@ declare module "@vue/runtime-core" {
 		VbEmpty: typeof import("../src/components")["VbEmpty"];
 		VbForm: typeof import("../src/components")["VbForm"];
 		VbFormItem: typeof import("../src/components")["VbFormItem"];
+		VbIncrement: typeof import("../src/components")["VbIncrement"];
 		VbInput: typeof import("../src/components")["VbInput"];
 		VbLoading: typeof import("../src/components")["VbLoading"];
 		VbLoadingBall: typeof import("../src/components")["VbLoadingBall"];

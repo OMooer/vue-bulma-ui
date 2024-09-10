@@ -6,7 +6,7 @@ import {
 	faChevronLeft, faCircleExclamation, faCircleQuestion,
 	faEye,
 	faEyeSlash, faFileArrowDown, faSort, faSortAsc, faSortDesc, faTrashCan, faUpload,
-	faAngleRight, faAngleLeft, faSpinner, faRotate, faAngleUp
+	faAngleRight, faAngleLeft, faSpinner, faRotate, faAngleUp, faPlus, faMinus
 } from '@fortawesome/free-solid-svg-icons';
 import {
 	faSquareMinus,
@@ -33,6 +33,8 @@ export default {
 				faEye,
 				faEyeSlash,
 				faFileArrowDown,
+				faMinus,
+				faPlus,
 				faRotate,
 				faSort,
 				faSortAsc,
