@@ -16,6 +16,7 @@ const props = defineProps({
 		default: 60
 	}
 });
+const emit = defineEmits(['running', 'stop']);
 const showBar = ref(false);
 const current = ref(100);
 const stepTime = 20;
@@ -23,6 +24,7 @@ const split = computed(() => 100 / (props.time * 1000 / stepTime));
 let timer: any;
 
 function startBar() {
+	emit('running');
 	showBar.value = true;
 	timer = setInterval(() => {
 		current.value -= split.value;
@@ -36,6 +38,7 @@ function stopBar() {
 	clearInterval(timer);
 	current.value = 100;
 	showBar.value = false;
+	emit('stop');
 }
 </script>
 
