@@ -3,11 +3,15 @@ import { computed, ref } from 'vue';
 import Countdown from './Countdown.vue';
 
 const props = defineProps({
-	size: {
+	size  : {
 		type   : Number,
 		default: 2
 	},
-	time: {
+	appear: {
+		type   : Boolean,
+		default: true
+	},
+	time  : {
 		type   : Number,
 		default: 60
 	}
@@ -36,7 +40,7 @@ function stopBar() {
 </script>
 
 <template>
-	<Countdown :time @running="startBar" @stop="stopBar" #default="cdSlots">
+	<Countdown :appear :time @running="startBar" @stop="stopBar" #default="cdSlots">
 		<progress
 				class="vb-countdown-bar progress is-link" :style="{height: size + 'px'}" max="100" :value="current"
 				v-if="showBar"></progress>
