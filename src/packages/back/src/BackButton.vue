@@ -7,6 +7,10 @@ const props = defineProps({
 		type    : null,
 		required: true
 	},
+	text     : {
+		type   : String,
+		default: '返回'
+	},
 	indexName: {
 		type   : String,
 		default: 'home'
@@ -21,6 +25,6 @@ const back = useBack(emit, props.router, {home: props.indexName, login: props.lo
 
 <template>
 	<button type="button" class="button" @click="back">
-		<slot>返回</slot>
+		<slot>{{ text }}</slot>
 	</button>
 </template>
