@@ -29,7 +29,7 @@ const timerMap: { [propName: symbol]: number } = {};
 const isTop = computed(() => {
 	return props.position === 'top';
 });
-watch(() => props.list, (toastList) => {
+watch(props.list, (toastList) => {
 	if (toastList.length) {
 		(toastList as OP.MsgObj[]).forEach((item: OP.MsgObj) => {
 			addToast(item);

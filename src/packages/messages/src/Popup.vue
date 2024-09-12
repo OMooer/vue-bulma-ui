@@ -30,7 +30,7 @@ const showPopup = computed({
 	}
 });
 
-watch(() => props.list, (popupList) => {
+watch(props.list, (popupList) => {
 	if (popupList.length) {
 		(popupList as OP.MsgObj[]).forEach((item: OP.MsgObj) => {
 			addPopup(item);

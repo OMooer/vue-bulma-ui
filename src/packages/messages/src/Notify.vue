@@ -19,7 +19,7 @@ const props = defineProps({
 });
 const {add, remove, list} = useTellMe();
 const timerMap: { [propName: symbol]: number } = {};
-watch(() => props.list, (notifyList) => {
+watch(props.list, (notifyList) => {
 	if (notifyList.length) {
 		(notifyList as OP.MsgObj[]).forEach((item: OP.MsgObj) => {
 			addNotify(item);

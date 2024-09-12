@@ -25,15 +25,18 @@ const notifyList = ref<OP.MsgObj[]>([]);
 const popupList = ref<OP.MsgObj[]>([]);
 
 watchEffect(() => {
-	toastList.value = props.data.filter((item: any) => item.type === 'toast').map((item: any) => {
+	toastList.value.splice(0);
+	toastList.value.push(...props.data.filter((item: any) => item.type === 'toast').map((item: any) => {
 		return item.package;
-	});
-	notifyList.value = props.data.filter((item: any) => item.type === 'notify').map((item: any) => {
+	}));
+	notifyList.value.splice(0);
+	notifyList.value.push(...props.data.filter((item: any) => item.type === 'notify').map((item: any) => {
 		return item.package;
-	});
-	popupList.value = props.data.filter((item: any) => item.type === 'popup').map((item: any) => {
+	}));
+	popupList.value.splice(0);
+	popupList.value.push(...props.data.filter((item: any) => item.type === 'popup').map((item: any) => {
 		return item.package;
-	});
+	}));
 });
 
 function tell(type: 'toast' | 'notify' | 'popup', data: OP.MsgObj) {
