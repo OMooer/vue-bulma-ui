@@ -28,7 +28,6 @@ defineProps(['text']);
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background-color: rgba(255, 255, 255, .5);
 	color: $grey;
 	width: 100%;
 	height: 100%;
