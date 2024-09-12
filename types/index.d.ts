@@ -29,15 +29,17 @@ declare module "@vue/runtime-core" {
 		VbFormItem: typeof import("../src/components")["VbFormItem"];
 		VbIncrement: typeof import("../src/components")["VbIncrement"];
 		VbInput: typeof import("../src/components")["VbInput"];
+		VbLink: typeof import("../src/components")["VbLink"];
 		VbLoading: typeof import("../src/components")["VbLoading"];
 		VbLoadingBall: typeof import("../src/components")["VbLoadingBall"];
 		VbLoadingBar: typeof import("../src/components")["VbLoadingBar"];
 		VbLoadingDot: typeof import("../src/components")["VbLoadingDot"];
 		VbMenu: typeof import("../src/components")["VbMenu"];
-		VbLink: typeof import("../src/components")["VbLink"];
 		VbModal: typeof import("../src/components")["VbModal"];
+		VbNotify: typeof import("../src/components")["VbNotify"];
 		VbPagination: typeof import("../src/components")["VbPagination"];
 		VbPassword: typeof import("../src/components")["VbPassword"];
+		VbPopup: typeof import("../src/components")["VbPopup"];
 		VbPreview: typeof import("../src/components")["VbPreview"];
 		VbSelect: typeof import("../src/components")["VbSelect"];
 		VbSelectNative: typeof import("../src/components")["VbSelectNative"];
@@ -50,6 +52,7 @@ declare module "@vue/runtime-core" {
 		VbTags: typeof import("../src/components")["VbTags"];
 		VbTell: typeof import("../src/components")["VbTell"];
 		VbTips: typeof import("../src/components")["VbTips"];
+		VbToast: typeof import("../src/components")["VbToast"];
 		VbTree: typeof import("../src/components")["VbTree"];
 		VbUploader: typeof import("../src/components")["VbUploader"];
 		VbUPluginSI: typeof import("../src/components")["VbUPluginSI"];

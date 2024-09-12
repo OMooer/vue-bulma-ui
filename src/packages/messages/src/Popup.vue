@@ -54,6 +54,7 @@ function autoClose(popup: OP.MsgObj) {
 
 function hoverPopup(id: symbol) {
 	clearTimeout(timerMap[id]);
+	emit('hover', id);
 }
 
 function closePopup() {
