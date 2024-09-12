@@ -2,7 +2,13 @@
 import { onMounted, onUnmounted, provide, ref, watch } from 'vue';
 
 const emit = defineEmits(['dismiss']);
-const props = defineProps(['finished']);
+const props = defineProps({
+	finished: Boolean,
+	timeout : {
+		type   : Number,
+		default: 10000
+	}
+});
 const percent = ref(0);
 const status = ref('load');
 const isEnd = ref(false);
@@ -57,7 +63,7 @@ function timeout() {
 		percent.value = 100;
 		status.value = 'error';
 		dismiss();
-	}, 10000);
+	}, props.timeout);
 }
 
 function finish() {
