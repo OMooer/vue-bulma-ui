@@ -101,6 +101,7 @@ function removeAuto() {
 	}
 
 	&.has-addons {
+		--bulma-block-spacing: 0;
 		display: inline-flex;
 
 		input {

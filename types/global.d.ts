@@ -6,7 +6,7 @@ declare namespace TVO {
 		icon?: string;
 		selected?: boolean;
 		disabled?: boolean;
-	}
+	} | null;
 	type List = Item[];
 
 	type CascadeItem = Item & {
