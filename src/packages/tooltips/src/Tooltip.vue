@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps(['isQuestion', 'tips', 'inline']);
+defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean});
 </script>
 
 <template>
@@ -37,7 +37,7 @@ defineProps(['isQuestion', 'tips', 'inline']);
 	justify-content: center;
 	color: $link;
 	height: auto;
-	
+
 	&:before {
 		content: attr(data-tips);
 		white-space: pre-wrap;
@@ -48,13 +48,13 @@ defineProps(['isQuestion', 'tips', 'inline']);
 		background-color: rgba(51, 51, 51, 0.85);
 		text-align: left;
 		font-size: 12px;
-		color: #fff;
+		color: #FFF;
 		max-width: 200px;
 		transform: translateY(-24px);
 		opacity: 0;
 		transition: opacity .3s ease-in;
 	}
-	
+
 	&:after {
 		content: "";
 		visibility: hidden;
@@ -70,7 +70,7 @@ defineProps(['isQuestion', 'tips', 'inline']);
 		opacity: 0;
 		transition: opacity .3s ease-in;
 	}
-	
+
 	&:hover {
 		&:before, &:after {
 			visibility: visible;
@@ -82,7 +82,7 @@ defineProps(['isQuestion', 'tips', 'inline']);
 .vb-tips.dropdown {
 	.dropdown-menu {
 		transform: translateX(-4rem);
-		
+
 		.dropdown-item {
 			overflow: hidden;
 			max-width: 25rem;
@@ -94,6 +94,5 @@ defineProps(['isQuestion', 'tips', 'inline']);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	font-size: .75rem;
 }
 </style>
