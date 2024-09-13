@@ -66,7 +66,7 @@ function removeAuto() {
 </script>
 
 <template>
-	<div class="vb-increment-num field has-addons">
+	<div class="vb-increment field has-addons" @keydown.capture.prevent="keyAuto">
 		<div class="control">
 			<button
 					type="button" class="button is-rounded" v-bind:class="$attrs.class" :disabled="isMinimum"
@@ -75,9 +75,7 @@ function removeAuto() {
 			</button>
 		</div>
 		<div class="control">
-			<input
-					type="number" readonly class="input" v-bind:class="$attrs.class" :step @keydown.prevent="keyAuto"
-					v-model.number="modelValue">
+			<input type="number" readonly class="input" v-bind:class="$attrs.class" :step v-model.number="modelValue">
 		</div>
 		<div class="control">
 			<button
@@ -90,7 +88,7 @@ function removeAuto() {
 </template>
 
 <style scoped lang="scss">
-.vb-increment-num {
+.vb-increment {
 	input {
 		text-align: center;
 		width: 5em;
@@ -99,6 +97,32 @@ function removeAuto() {
 		&::-webkit-inner-spin-button,
 		&::-webkit-calendar-picker-indicator {
 			display: none;
+		}
+	}
+
+	&.has-addons {
+		display: inline-flex;
+
+		input {
+			z-index: 5 !important;
+		}
+	}
+
+	&:focus-within {
+		.control {
+			--increment-box-shadow-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), var(--bulma-input-focus-shadow-alpha));
+			--increment-border-color: var(--bulma-link-text);
+
+			.button {
+				--bulma-button-border-width: 1px;
+				border-color: var(--increment-border-color);
+				box-shadow: var(--bulma-input-focus-shadow-size) var(--increment-box-shadow-color);
+			}
+
+			.input {
+				border-color: var(--increment-border-color);
+				box-shadow: 0 -0.4375em 0 -0.25em var(--increment-box-shadow-color), 0 0.4375em 0 -0.25em var(--increment-box-shadow-color);
+			}
 		}
 	}
 }
