@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 
 withDefaults(defineProps<{
-	list: TVO.List;
+	list: TVO.DropdownItem[];
 	hasArrow?: boolean;
 }>(), {hasArrow: true});
 const emit = defineEmits(['active']);

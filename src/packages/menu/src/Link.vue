@@ -2,8 +2,13 @@
 import { computed, ref, watchEffect } from 'vue';
 import { RouterLink, useLink, useRoute } from 'vue-router';
 
+defineOptions({
+	inheritAttrs: false
+});
 const emit = defineEmits(['state']);
 const props = defineProps({
+	// @ts-ignore
+	...RouterLink.props,
 	exactClass    : {
 		type   : String,
 		default: 'is-exact-link'
@@ -12,11 +17,19 @@ const props = defineProps({
 		type   : Boolean,
 		default: false
 	},
-	// @ts-ignore
-	...RouterLink.props
 });
-// @ts-ignore
-const {route, isActive} = useLink(props);
+let routeLink;
+try {
+	// @ts-ignore
+	routeLink ??= useLink(props);
+}
+catch (e) {
+	routeLink = {};
+}
+const linkTo = computed(() => {
+	return typeof props.to === 'string' ? props.to : (props.to?.name ?? props.to?.path ?? '');
+});
+const {route = ref({fullPath: linkTo.value}), isActive = ref(false)} = routeLink;
 const currentRoute = useRoute();
 // 重新计算路由命中状态
 const isPathMatched = ref(false);
@@ -42,14 +55,16 @@ const isExternalLink = computed(() => {
 </script>
 
 <template>
-	<a v-if="isExternalLink" v-bind="$attrs" :href="to" :class="{'is-less': noExternalIcon}" target="_blank" rel="nofollow noreferrer noopener">
+	<a
+			v-if="isExternalLink" v-bind="$attrs" :href="props.to" :class="{'is-less': props.noExternalIcon}" target="_blank"
+			rel="nofollow noreferrer noopener">
 		<slot/>
 	</a>
 	<router-link v-else v-bind="$props" custom :to="route.fullPath" v-slot="{isExactActive, href, navigate}">
 		<a
 				:href="href"
 				:title="($attrs as any).title"
-				:class="[{[exactClass]: isExactActive}, $attrs.class]"
+				:class="[{[props.exactClass]: isExactActive}, $attrs.class]"
 				@click="navigate"
 		>
 			<slot/>

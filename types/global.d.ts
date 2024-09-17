@@ -6,12 +6,14 @@ declare namespace TVO {
 		icon?: string;
 		selected?: boolean;
 		disabled?: boolean;
-	} | null;
+	};
 	type List = Item[];
 
 	type CascadeItem = Item & {
 		children?: TVO.List;
 	}
+
+	type DropdownItem = Item | null;
 }
 
 declare namespace Tree {
@@ -162,19 +164,26 @@ declare namespace VBForm {
 }
 
 declare namespace VBMenu {
-	import type { Component } from 'vue';
-
 	type TitleLang = {
 		[propName: string]: string;
 	}
 
-	type Item = {
-		name: string;
-		title: string | TitleLang;
-		icon?: string | Component;
+	type ExtLink = {
 		url: string;
+		external: true;
+	};
+
+	type innerRoute = {
+		name: string;
+		external?: false;
+	};
+
+	type ItemType = ExtLink | innerRoute;
+
+	type Item = ItemType & {
+		title: string | TitleLang;
+		icon?: any;
 		children?: Item[];
 		folded?: boolean;
-		external?: boolean;
 	}
 }
