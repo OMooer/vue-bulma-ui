@@ -11,15 +11,17 @@ const props = withDefaults(defineProps<{
 	placeholder?: string;
 	required?: boolean;
 	isSmall?: boolean;
+	allowNull?: boolean;
 }>(), {
 	modelValue : '',
+	allowNull  : true,
 	placeholder: '请选择'
 });
 const emit = defineEmits(['update:modelValue', 'error']);
 const isError = ref(false);
 const entity = ref();
 const isReallySmall = computed(() => isParentSmall || props.isSmall);
-const isNotNull = computed(() => props.required);
+const isNotNull = computed(() => props.required || !props.allowNull);
 const selectedValue = ref('');
 
 watchEffect(() => {

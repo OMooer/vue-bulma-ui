@@ -32,13 +32,13 @@ menuList.value.forEach(item => {
 					:to="item.external === true ? item.url : {name: item.name}"
 					:title="item.title"
 					@state="item.folded =! $event">
-				<div class="menu-title">
+				<span class="menu-title">
 					<span class="icon" v-if="item.icon">
 						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
 						<Component :is="item.icon" v-else/>
 					</span>
 					<span class="text" :data-code="(item.title as string).substring?.(0,1)">{{ item.title }}</span>
-				</div>
+				</span>
 				<span class="icon next-icon" :class="{'roll-down': !item?.folded}" v-if="item.children?.length">
 					<FasIcon icon="angle-right"/>
 				</span>

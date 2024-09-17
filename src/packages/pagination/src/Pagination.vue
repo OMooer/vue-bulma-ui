@@ -4,7 +4,6 @@ import { SelectorNative } from '../../select';
 
 const props = defineProps({
 	router         : null,
-	route          : null,
 	page           : {
 		type    : Number,
 		required: true,
@@ -35,7 +34,7 @@ const props = defineProps({
 	rangeSize      : {
 		type     : Number,
 		default  : 7,
-		validator: (v: number) => v > 5 && v <= 20
+		validator: (v: number) => v === 0 || (v >= 3 && v <= 19)
 	}
 });
 const limit = defineModel<number>('limit', {default: 10});
@@ -48,23 +47,42 @@ const sizes = computed(() => {
 		}
 	});
 });
+const validRangeSize = computed(() => {
+	let rs = props.rangeSize;
+	rs = rs === 0 ? rs : Math.max(3, rs);
+	return Math.min(19, rs);
+});
 const maxPage = computed(() => {
 	return Math.max(1, Math.ceil(props.total / limit.value));
 });
-const currentRangePages = computed(() => {
-	// 1 2 3 4 5 6 7 8 9 10
-	const arr = Array(maxPage.value).fill(0).map((_, i) => i + 1);
-	if (maxPage.value <= props.rangeSize) {
-		return arr.slice(0, props.rangeSize);
+const currentPageSize = computed({
+	get() {
+		return sizes.value.some(item => item.value === limit.value) ? limit.value : '';
+	},
+	set(v: number) {
+		limit.value = v;
 	}
-	const start = Math.max(0, props.page - Math.ceil(props.rangeSize / 2));
-	const cut = arr.slice(start, start + props.rangeSize);
-	if (cut.length < props.rangeSize) {
+})
+const currentRangePages = computed(() => {
+	// 1 2 3 4 5 6 7 8 9 10 ...
+	const arr = Array(maxPage.value).fill(0).map((_, i) => i + 1);
+	// 如果最大页数小于等于分页按钮个数则显示全部分页
+	if (maxPage.value <= validRangeSize.value) {
+		return arr.slice(0, validRangeSize.value);
+	}
+	const start = Math.max(0, props.page - Math.ceil(validRangeSize.value / 2));
+	const cut = arr.slice(start, start + validRangeSize.value);
+	if (cut.length < validRangeSize.value) {
 		// 如果 cut 的个数少于 rangeSize 则往前面获取 arr 的数据补齐
-		const d = props.rangeSize - cut.length;
+		const d = validRangeSize.value - cut.length;
 		// 往前获取 d 个数据添加到 cut 里
 		cut.splice(0, 0, ...arr.slice(start - d, start));
 	}
+	// 小于6个的无法显示省略，直接返回以当前页为参照的总个数
+	if (validRangeSize.value <= 6) {
+		return cut;
+	}
+	// 6个以上的可以在显示省略的情况下无缝跳转所以返回包括第一页和最后页的省略显示
 	// 如果第一个不是1，那么将前两个更改为1和省略
 	const firstRange = cut[0];
 	if (firstRange > 1) {
@@ -86,9 +104,10 @@ function gotoPage(page: number) {
 	else if (page > maxPage.value) {
 		page = maxPage.value;
 	}
-	if (props.router && props.route) {
-		const params = Object.assign({}, props.route.params, {page});
-		props.router.push({name: props.route.name, params, query: props.route.query});
+	if (props.router) {
+		const route = props.router.currentRoute;
+		const params = Object.assign({}, route.params, {page});
+		props.router.push({name: route.name, params, query: route.query});
 	}
 	emit('changePage', page);
 }
@@ -97,7 +116,7 @@ function gotoPage(page: number) {
 <template>
 	<nav class="pagination" role="navigation" aria-label="pagination">
 		<div class="vb-pagination-sizes" v-if="showChangeSizes">
-			<SelectorNative :list="sizes" v-model="limit" style="width: auto"/>
+			<SelectorNative :allowNull="false" :list="sizes" v-model="currentPageSize" style="width: auto"/>
 		</div>
 		<template v-if="showStepButtons">
 			<a class="pagination-previous" :class="{'is-disabled': page<=1}" @click="gotoPage(page-1)">{{ prevText }}</a>
