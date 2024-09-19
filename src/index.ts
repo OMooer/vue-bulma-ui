@@ -16,7 +16,9 @@ import type { App } from 'vue';
 import { useDialog } from './actions/dialog';
 import * as components from './components';
 
-export const {$dialog, $alert, $confirm} = useDialog();
+const {$dialog, $alert, $confirm} = useDialog();
+
+export { useDialog };
 
 export default {
 	install(Vue: App, opt: any) {
