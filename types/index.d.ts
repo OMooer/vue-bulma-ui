@@ -1,9 +1,7 @@
 /// <reference path="global.d.ts" />
 /// <reference path="sa-calendar.d.ts" />
 
-import "@vue/runtime-core";
-
-declare module "@vue/runtime-core" {
+declare module 'vue' {
 	export interface GlobalComponents {
 		VbAvatar: typeof import("../src/components")["VbAvatar"];
 		VbBack: typeof import("../src/components")["VbBack"];
@@ -58,14 +56,14 @@ declare module "@vue/runtime-core" {
 		VbUPluginSI: typeof import("../src/components")["VbUPluginSI"];
 	}
 
-	interface ComponentCustomProperties {
+	export interface ComponentCustomProperties {
 		$dialog: OP.Dialog;
 		$alert: OP.Alert;
 		$confirm: OP.Confirm;
 	}
 }
 
-declare module "vue3-bulma-ui" {
+declare module 'vue3-bulma-ui' {
 	import type { Plugin } from "vue";
 	const _default: Plugin<[]>;
 	export default _default;
