@@ -67,6 +67,13 @@ declare module 'vue3-bulma-ui' {
 	import type { Plugin } from "vue";
 	const _default: Plugin<[]>;
 	export default _default;
+	export const {useDialog}: {
+		useDialog: () => {
+			$alert: OP.Alert;
+			$confirm: OP.Confirm;
+			$dialog: OP.Dialog;
+		}
+	};
 }
 
 export {};
