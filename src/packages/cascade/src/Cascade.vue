@@ -354,14 +354,16 @@ defineExpose({
 	}
 
 	.dropdown-menu {
+		max-width: 100%;
+
 		.dropdown-content {
 			display: flex;
 
 			.cascade-level {
 				overflow: auto;
 				flex-grow: 1;
-				min-width: 12rem;
-				max-height: 15rem;
+				width: 12em;
+				max-height: 15em;
 
 				&:not(:last-child) {
 					border-right: solid 1px $split-color;
