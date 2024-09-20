@@ -61,7 +61,7 @@ function reset() {
 	<form action="" @submit.prevent="submit" @reset.prevent="reset" :class="classList">
 		<!-- 配置表单项 -->
 		<template v-for="item in config?.items" v-if="hasConfigItems">
-			<slot :name="item.slot" v-if="'slot' in item"/>
+			<slot :name="item.slot" :class="['column mb-0', item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]" v-if="'slot' in item"/>
 			<FormElement
 					class="column mb-0" :class="[item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]"
 					:label="item.label" :isSmall

@@ -18,18 +18,28 @@ const props = defineProps({
 		default: false
 	},
 });
-let routeLink;
-try {
-	// @ts-ignore
-	routeLink ??= useLink(props);
-}
-catch (e) {
-	routeLink = {};
-}
 const linkTo = computed(() => {
 	return typeof props.to === 'string' ? props.to : (props.to?.name ?? props.to?.path ?? '');
 });
-const {route = ref({fullPath: linkTo.value}), isActive = ref(false)} = routeLink;
+/**
+ * ******** 特性说明 *********
+ * useLink 返回的 route 是 Computed 对象，由于开发环境与生产环境的机制不同，
+ * 在开发环境中使用 useLink() 传入错误的路由时，会马上抛出错误，因为 computed 在创建后就执行了内部逻辑，
+ * 但是在生产环境时 computed 只会在读取时才会执行内部逻辑，而错误的位置正好是在 route 里，
+ * 这就导致了在开发环境时 useLink() 报错，而在生产环境里要 route.value 才报错。
+ * 所以我们如果允许传入错误的路由信息则需要通过 try catch 来捕获这两处可能的出错。
+ * 至于为什么要允许错误的路由信息呢，是因为我们需要支持外部的链接使用本组件，而外部链接是不会在路由表里的。
+ */
+let route = ref(), isActive = ref(false);
+try {
+	const routeLink = useLink(props as any);
+	route.value = routeLink.route.value;
+	isActive.value = routeLink.isActive.value;
+}
+catch (e) {
+	route.value = {fullPath: linkTo.value};
+	isActive.value = false;
+}
 const currentRoute = useRoute();
 // 重新计算路由命中状态
 const isPathMatched = ref(false);
