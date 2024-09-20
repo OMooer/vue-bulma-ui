@@ -33,8 +33,8 @@ const linkTo = computed(() => {
 let route = ref(), isActive = ref(false);
 try {
 	const routeLink = useLink(props as any);
-	route.value = routeLink.route.value;
-	isActive.value = routeLink.isActive.value;
+	route = routeLink.route.value ? computed(() => routeLink.route.value) : routeLink.route;
+	isActive = computed(() => routeLink.isActive.value);
 }
 catch (e) {
 	route.value = {fullPath: linkTo.value};
