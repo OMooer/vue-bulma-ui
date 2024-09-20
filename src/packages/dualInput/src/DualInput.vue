@@ -119,6 +119,8 @@ defineExpose({
 	}
 
 	.shadow-input {
+		overflow: hidden;
+		white-space: nowrap;
 		z-index: 1;
 
 		&.is-empty {
