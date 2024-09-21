@@ -238,11 +238,26 @@ export default defineComponent({
 											// 'data-show-time' : props.showTime ? 'true' : null,
 											'data-language' : props.locale,
 											'data-lang-pack': langPack.value,
-											onChange        : (e: any) => {
+											onChange(e: any) {
 												setError(false);
 												innerValue.value = e.target.value;
 											},
-											onBlur          : (e: any) => {
+											onClick(e: any) {
+												e.preventDefault();
+											},
+											onTouchstart(e: any) {
+												if (e.target.getAttribute('open') === 'open') {
+													e.preventDefault();
+												}
+												else {
+													e.target.disabled = true;
+													setTimeout(() => {
+														e.target.disabled = false;
+														e.target.click();
+													});
+												}
+											},
+											onBlur(e: any) {
 												if (!e.target.checkValidity() && e.target.value) {
 													setError(true, e.target.validationMessage);
 												}
@@ -419,6 +434,10 @@ export default defineComponent({
 				font-weight: bold;
 			}
 
+			dd {
+				height: 14.2em;
+			}
+
 			li {
 				text-align: center;
 				line-height: 2;
@@ -486,11 +505,24 @@ export default defineComponent({
 	}
 
 	.calendar-foot:not(:empty) {
-		margin-top: 1rem;
+		overflow: hidden;
+		margin-top: .5em;
 
 		> div:first-of-type {
 			display: flex;
 			flex-grow: 1;
+
+			input:has(+input) {
+				border-right: 0;
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+
+			input + input {
+				border-left: 0;
+				border-top-left-radius: 0;
+				border-bottom-left-radius: 0;
+			}
 		}
 	}
 
@@ -564,6 +596,22 @@ export default defineComponent({
 
 			dl {
 				width: 100%;
+			}
+		}
+
+		.calendar-foot {
+			display: flex;
+			flex-direction: column;
+			gap: .5em;
+			align-items: center;
+
+			.buttons {
+				width: 100%;
+				justify-content: flex-end;
+
+				.button {
+					flex-grow: 1;
+				}
 			}
 		}
 	}

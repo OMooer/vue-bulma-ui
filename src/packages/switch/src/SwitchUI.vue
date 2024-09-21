@@ -66,6 +66,7 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 		content: "";
 		position: absolute;
 		left: 0;
+		border-radius: 2.5em;
 	}
 
 	&::before {
@@ -107,7 +108,7 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 			right: 0;
 		}
 
-		&:focus-within {
+		&:focus-within, &:hover {
 			border-color: $success;
 			box-shadow: 0 0 0 0.125em rgba($success, .25);
 		}

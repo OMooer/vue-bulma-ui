@@ -13,6 +13,7 @@ const props = defineProps({
 	}
 });
 let timer: any;
+let longPress = false;
 const modelValue = defineModel({default: 0});
 const isMinimum = computed(() => {
 	let prop = props.min ?? false;
@@ -26,6 +27,11 @@ const isMaximum = computed(() => {
 });
 
 function minusNumber() {
+	console.log(longPress, 'minus')
+	if (longPress) {
+		longPress = false;
+		return;
+	}
 	if (isMinimum.value) {
 		return;
 	}
@@ -33,6 +39,10 @@ function minusNumber() {
 }
 
 function addNumber() {
+	if (longPress) {
+		longPress = false;
+		return;
+	}
 	if (isMaximum.value) {
 		return;
 	}
@@ -49,19 +59,26 @@ function keyAuto(e: KeyboardEvent) {
 }
 
 function autoMinus() {
-	timer = setInterval(() => {
-		minusNumber();
-	}, 100);
+	timer = setTimeout(() => {
+		longPress = true;
+		timer = setInterval(() => {
+			minusNumber();
+		}, 100);
+	}, 200);
 }
 
 function autoAdd() {
-	timer = setInterval(() => {
-		addNumber();
-	}, 100);
+	timer = setTimeout(() => {
+		longPress = true;
+		timer = setInterval(() => {
+			addNumber();
+		}, 100);
+	}, 200);
 }
 
 function removeAuto() {
 	clearInterval(timer);
+	clearTimeout(timer);
 }
 </script>
 
@@ -70,7 +87,8 @@ function removeAuto() {
 		<div class="control">
 			<button
 					type="button" class="button is-rounded" v-bind:class="$attrs.class" :disabled="isMinimum"
-					@click="minusNumber" @mousedown="autoMinus" @mouseup="removeAuto" @mouseleave="removeAuto">
+					@click="minusNumber" @touchstart="autoMinus" @touchend="removeAuto"
+					@mousedown="autoMinus" @mouseup="removeAuto" @mouseleave="removeAuto">
 				<span class="icon"><FasIcon icon="minus"/></span>
 			</button>
 		</div>
@@ -80,7 +98,8 @@ function removeAuto() {
 		<div class="control">
 			<button
 					type="button" class="button is-rounded" v-bind:class="$attrs.class" :disabled="isMaximum"
-					@click="addNumber" @mousedown="autoAdd" @mouseup="removeAuto" @mouseleave="removeAuto">
+					@click="addNumber" @touchstart="autoAdd" @touchend="removeAuto"
+					@mousedown="autoAdd" @mouseup="removeAuto" @mouseleave="removeAuto">
 				<span class="icon"><FasIcon icon="plus"/></span>
 			</button>
 		</div>
