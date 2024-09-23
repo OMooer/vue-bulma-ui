@@ -13,7 +13,7 @@ const props = defineProps({
 const isError = ref(false);
 const helpMsg = ref();
 const wrapTips = computed(() => {
-	return props.tips?.replace(/\\n/g, '\n');
+	return props.floatTips ? props.tips?.replace(/\\n/g, '\n') : null;
 });
 
 watchEffect(() => {
@@ -85,38 +85,82 @@ provide('isSmall', props.isSmall);
 	}
 }
 
-.is-float-form:has(input) {
-	margin-top: .5rem;
+.is-float-form:has(input,textarea) {
+	--float-height: 1em;
+
+	&:has(.field .control .is-small) {
+		font-size: var(--bulma-size-small);
+	}
+
+	&:has(.field .control .is-medium) {
+		font-size: var(--bulma-size-medium);
+	}
+
+	&:has(.field .control .is-large) {
+		font-size: var(--bulma-size-large);
+	}
 
 	.form-el-label {
 		position: relative;
 		z-index: 10;
-		float: left;
-		margin-bottom: -2.5em;
-		padding: .5em .75em;
+		margin-bottom: 0;
+		padding: var(--bulma-control-padding-vertical) .75em var(--bulma-control-padding-vertical);
 		pointer-events: none;
 		font-weight: normal;
-		color: $placeholder-color;
-		height: 2.5em;
+		color: var(--bulma-body-color);
+		line-height: 1.7;
+		height: var(--bulma-control-height);
+		transform-origin: left;
 		transition: transform .2s ease-in-out;
+
+		&:has(+.field .control input) {
+			transform: translateY(.5em);
+		}
+
+		&:has(+.field .control .is-small) {
+			font-size: var(--bulma-size-small);
+		}
+
+		&:has(+.field .control .is-medium) {
+			font-size: var(--bulma-size-medium);
+		}
+
+		&:has(+.field .control .is-large) {
+			font-size: var(--bulma-size-large);
+		}
+
+		+ .field {
+			margin-top: calc(var(--bulma-control-height) * -1);
+		}
 	}
 
-	:deep(input::placeholder) {
-		color: transparent;
-		font-size: .875em;
+
+	:deep(input) {
+		padding-top: calc(var(--bulma-control-padding-vertical) + var(--float-height));
+		height: calc(var(--bulma-control-height) + var(--float-height));
+
+		&::placeholder {
+			color: transparent;
+			font-size: .875em;
+		}
 	}
 
-	&:focus-within, &:has(input:not(:placeholder-shown)) {
+	// 进入焦点或者已输入内容
+	&:focus-within, &:has(input:not(:placeholder-shown),textarea:not(:placeholder-shown)) {
 		.form-el-label {
-			background-clip: content-box;
-			background-color: var(--bulma-body-background-color);
-			color: var(--bulma-body-color);
-			//font-weight: bold;
-			transform: translate(-.75em, -50%) scale(.9);
+			//background-clip: content-box;
+			//background-color: var(--bulma-body-background-color);
+			color: $placeholder-color;
+			font-weight: bold;
+			transform: scale(.875) translate(-.2em, -.5em) !important;
 		}
 
 		:deep(input::placeholder) {
 			color: $placeholder-color;
+		}
+
+		:deep(textarea.textarea) {
+			padding-top: calc(var(--bulma-control-height) * .875 - .5em);
 		}
 	}
 }

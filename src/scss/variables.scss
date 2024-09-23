@@ -11,7 +11,7 @@ $danger-light: lighten($danger, 10%);
 
 $split-color: cv.getVar("border-weak");
 $input-border-color: hsl(var(--bulma-input-h), var(--bulma-input-s), calc(var(--bulma-input-border-l) + var(--bulma-input-border-l-delta)));
-$placeholder-color: cv.getVar("input-placeholder-color");
+$placeholder-color: hsla(var(--bulma-text-h), var(--bulma-text-s), var(--bulma-text-strong-l), 0.3);
 
 @mixin file-bg-color() {
 	--bulma-file-h: var(--bulma-scheme-h);

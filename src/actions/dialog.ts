@@ -54,15 +54,19 @@ const dialogVNode = defineComponent(
  */
 export function useDialog() {
 	// 创建 dialog 页面根容器
-	let dialogEl = document.querySelector('#dialogs');
-	if (!dialogEl) {
-		dialogEl = document.createElement('div');
-		dialogEl.id = 'dialogs';
-		document.body.appendChild(dialogEl);
+	function getDialogRoot() {
+		let dialogEl = document.querySelector('#dialogs');
+		if (!dialogEl) {
+			dialogEl = document.createElement('div');
+			dialogEl.id = 'dialogs';
+			document.body.appendChild(dialogEl);
+		}
+		return dialogEl;
 	}
 
 	// dialog 实现
 	const $dialog = (options: OP.DialogOption) => {
+		const dialogEl = getDialogRoot();
 		// 返回一个 Promise 用来回调 confirm 的选择
 		return new Promise((resolve, reject) => {
 			options.doneText = options.doneText || '确定';
