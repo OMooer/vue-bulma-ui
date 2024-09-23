@@ -145,6 +145,11 @@ provide('isSmall', props.isSmall);
 		}
 	}
 
+	:deep(textarea::placeholder) {
+		color: transparent;
+		font-size: .875em;
+	}
+
 	// 进入焦点或者已输入内容
 	&:focus-within, &:has(input:not(:placeholder-shown),textarea:not(:placeholder-shown)) {
 		.form-el-label {
@@ -161,6 +166,10 @@ provide('isSmall', props.isSmall);
 
 		:deep(textarea.textarea) {
 			padding-top: calc(var(--bulma-control-height) * .875 - .5em);
+
+			&::placeholder {
+				color: $placeholder-color;
+			}
 		}
 	}
 }
