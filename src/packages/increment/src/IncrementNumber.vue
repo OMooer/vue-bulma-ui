@@ -5,9 +5,10 @@ defineOptions({
 	inheritAttrs: false
 });
 const props = defineProps({
-	min : Number,
-	max : Number,
-	step: {
+	disabled: Boolean,
+	min     : Number,
+	max     : Number,
+	step    : {
 		type   : Number,
 		default: 1
 	}
@@ -27,7 +28,6 @@ const isMaximum = computed(() => {
 });
 
 function minusNumber() {
-	console.log(longPress, 'minus')
 	if (longPress) {
 		longPress = false;
 		return;
@@ -86,18 +86,18 @@ function removeAuto() {
 	<div class="vb-increment field has-addons" @keydown.capture.prevent="keyAuto">
 		<div class="control">
 			<button
-					type="button" class="button is-rounded" v-bind:class="$attrs.class" :disabled="isMinimum"
+					type="button" class="button" v-bind:class="$attrs.class" :disabled="disabled || isMinimum"
 					@click="minusNumber" @touchstart="autoMinus" @touchend="removeAuto"
 					@mousedown="autoMinus" @mouseup="removeAuto" @mouseleave="removeAuto">
 				<span class="icon"><FasIcon icon="minus"/></span>
 			</button>
 		</div>
 		<div class="control">
-			<input type="number" readonly class="input" v-bind:class="$attrs.class" :step v-model.number="modelValue">
+			<input type="number" readonly :disabled class="input" v-bind:class="$attrs.class" :step v-model.number="modelValue">
 		</div>
 		<div class="control">
 			<button
-					type="button" class="button is-rounded" v-bind:class="$attrs.class" :disabled="isMaximum"
+					type="button" class="button" v-bind:class="$attrs.class" :disabled="disabled || isMaximum"
 					@click="addNumber" @touchstart="autoAdd" @touchend="removeAuto"
 					@mousedown="autoAdd" @mouseup="removeAuto" @mouseleave="removeAuto">
 				<span class="icon"><FasIcon icon="plus"/></span>
