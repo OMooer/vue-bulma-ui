@@ -6,6 +6,7 @@ defineOptions({
 });
 const props = defineProps({
 	disabled: Boolean,
+	required: Boolean,
 	min     : Number,
 	max     : Number,
 	step    : {
@@ -93,7 +94,7 @@ function removeAuto() {
 			</button>
 		</div>
 		<div class="control">
-			<input type="number" readonly :disabled class="input" v-bind:class="$attrs.class" :step v-model.number="modelValue">
+			<input type="number" class="input" v-bind:class="$attrs.class" readonly :disabled :step v-model.number="modelValue">
 		</div>
 		<div class="control">
 			<button
