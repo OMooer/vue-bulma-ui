@@ -128,10 +128,12 @@ export default defineComponent({
 				if (entity.value.getAttribute('open') !== 'open') {
 					instance = new Calendar({
 						trigger: entity.value,
+						mount  : entity.value.closest('.vb-datetime'),
 						css    : {
 							mainClass    : 'date-panel card',
 							selectedClass: 'selected has-background-link has-text-white',
-							rightButtons : 'buttons',
+							lefter       : 'left-wrap',
+							righter      : 'buttons',
 							primaryButton: 'button is-primary is-small',
 							defaultButton: 'button is-small',
 							editClass    : 'input is-small'
@@ -278,6 +280,7 @@ export default defineComponent({
 @import "../../../scss/variables";
 
 .vb-datetime {
+	position: relative;
 
 	input[type="text"],
 	input[type="datetime-local"],
@@ -382,15 +385,21 @@ export default defineComponent({
 }
 
 // 弹出窗样式
+.vb-datetime .date-panel {
+	top: auto !important;
+	left: auto !important;
+}
+
 .date-panel.card {
 	position: absolute;
 	padding: 1rem;
 	box-sizing: border-box;
+	min-width: 15rem;
 	max-width: 35rem;
 	z-index: 9988;
 
-	&:not(.is-multiple) {
-		width: 15rem;
+	&.is-multiple {
+		min-width: 30rem;
 	}
 
 	input[type="datetime-local"],
@@ -508,7 +517,7 @@ export default defineComponent({
 		overflow: hidden;
 		margin-top: .5em;
 
-		> div:first-of-type {
+		.left-wrap {
 			display: flex;
 			flex-grow: 1;
 
@@ -588,11 +597,12 @@ export default defineComponent({
 
 @media screen and (max-width: 768px) {
 	.date-panel.card {
-		max-width: 15rem;
+		min-width: unset !important;
+		max-width: 100%;
 
 		.calendar-body {
 			flex-direction: column;
-			gap: 1rem;
+			gap: .5em;
 
 			dl {
 				width: 100%;
@@ -604,6 +614,10 @@ export default defineComponent({
 			flex-direction: column;
 			gap: .5em;
 			align-items: center;
+
+			.left-wrap {
+				width: 100%;
+			}
 
 			.buttons {
 				width: 100%;
