@@ -43,22 +43,20 @@ declare namespace OP {
 		showClose?: boolean;
 	}
 
+	type DialogText = {
+		doneText?: string;
+		cancelText?: string;
+	}
+
 	type DialogOption = {
 		id?: symbol;
 		type?: 'alert' | 'confirm';
 		title?: string;
 		msg: string;
 		width?: string;
-		doneText?: string;
-		cancelText?: string;
-	}
+	} & DialogText;
 
-	type FastDialogOpt = {
-		title?: string;
-		width?: string;
-		doneText?: string;
-		cancelText?: string;
-	}
+	type FastDialogOpt = Omit<DialogOption, 'id' | 'type' | 'msg'>;
 
 	type Toast = (msg: string | MsgObj) => void
 	type Notification = (msg: string | MsgObj) => void

@@ -1,4 +1,4 @@
-import { library } from '@fortawesome/fontawesome-svg-core';
+import { library, type IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
 	faAngleDown,
@@ -16,38 +16,29 @@ import type { App } from 'vue';
 import { useDialog } from './actions/dialog';
 import * as components from './components';
 
-const {$dialog, $alert, $confirm} = useDialog();
-
-export { useDialog };
-
 export default {
-	install(Vue: App, opt: any) {
+	install(Vue: App, opt?: { icon?: IconDefinition[]; dialog?: OP.DialogText }) {
+		const {$dialog, $alert, $confirm} = useDialog(opt?.dialog);
 		// UI 使用图标
-		library.add(
-				faAngleDown,
-				faAngleLeft,
-				faAngleRight,
-				faAngleUp,
-				faCheck,
-				faChevronLeft,
-				faCircleExclamation,
-				faCircleQuestion,
-				faEye,
-				faEyeSlash,
-				faFileArrowDown,
-				faGlobe,
-				faMinus,
-				faPlus,
-				faRotate,
-				faSort,
-				faSortAsc,
-				faSortDesc,
-				faSpinner,
-				faSquareMinus,
-				faSquarePlus,
-				faTrashCan,
-				faUpload,
-		);
+		const iconSet = [
+			...(opt?.icon ?? []),
+			faAngleDown, faAngleLeft, faAngleRight, faAngleUp,
+			faCheck,
+			faChevronLeft,
+			faCircleExclamation,
+			faCircleQuestion,
+			faEye, faEyeSlash,
+			faFileArrowDown,
+			faGlobe,
+			faMinus, faPlus,
+			faRotate,
+			faSort, faSortAsc, faSortDesc,
+			faSpinner,
+			faSquareMinus, faSquarePlus,
+			faTrashCan,
+			faUpload,
+		];
+		library.add(...iconSet);
 		Vue.component('FasIcon', FontAwesomeIcon);
 		// UI 组件注册
 		Object.keys(components).forEach((key) => {
@@ -59,3 +50,5 @@ export default {
 		Vue.config.globalProperties.$confirm = $confirm;
 	}
 }
+
+export { useDialog };

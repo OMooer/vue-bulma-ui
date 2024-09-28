@@ -52,7 +52,7 @@ const dialogVNode = defineComponent(
 /**
  * useDialog
  */
-export function useDialog() {
+export function useDialog(language: OP.DialogText = {doneText: '确定', cancelText: '取消'}) {
 	// 创建 dialog 页面根容器
 	function getDialogRoot() {
 		let dialogEl = document.querySelector('#dialogs');
@@ -69,8 +69,8 @@ export function useDialog() {
 		const dialogEl = getDialogRoot();
 		// 返回一个 Promise 用来回调 confirm 的选择
 		return new Promise((resolve, reject) => {
-			options.doneText = options.doneText || '确定';
-			options.cancelText = options.cancelText || '取消';
+			options.doneText ??= language.doneText;
+			options.cancelText ??= language.cancelText;
 			const dialogEntity = ref(null);
 			const dismissDialog = () => {
 				dialog.unmount();
