@@ -60,6 +60,8 @@ export { Toast as VbToast } from './packages/messages';
 export { Tell as VbTell } from './packages/messages';
 // 分页
 export { default as VbPagination } from './packages/pagination';
+// 评级
+export { default as VbRating } from './packages/rating';
 // 下拉选择器
 export { default as VbSelect } from './packages/select';
 export { SelectorNative as VbSelectNative } from './packages/select';

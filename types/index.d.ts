@@ -39,6 +39,7 @@ declare module 'vue' {
 		VbPassword: typeof import("../src/components")["VbPassword"];
 		VbPopup: typeof import("../src/components")["VbPopup"];
 		VbPreview: typeof import("../src/components")["VbPreview"];
+		VbRating: typeof import("../src/components")["VbRating"];
 		VbSelect: typeof import("../src/components")["VbSelect"];
 		VbSelectNative: typeof import("../src/components")["VbSelectNative"];
 		VbSidePage: typeof import("../src/components")["VbSidePage"];
