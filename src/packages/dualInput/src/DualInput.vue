@@ -31,7 +31,7 @@ function changeValueShow(e: Event) {
 }
 
 function dispatchTab(e: any) {
-	if (e.keyCode === 9) {
+	if (e.code === 'Tab') {
 		emit('tab', e.shiftKey);
 	}
 }

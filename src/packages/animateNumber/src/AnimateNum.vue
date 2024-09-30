@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { numberSplit } from '../../../utils';
 
 const props = defineProps({
@@ -15,14 +15,30 @@ const numberText = computed(() => {
 const charList = computed(() => {
 	return numberText.value?.toString().split('') ?? [];
 });
+const oldPoints = ref<string[]>([]);
+watch(charList, (newList, oldList) => {
+	oldPoints.value = oldList;
+	// 如果数组长度不一致，在前面补齐数组长度
+	if (newList.length > oldList.length) {
+		const pad = Array(newList.length - oldList.length).fill('0');
+		oldPoints.value = [...pad, ...oldList];
+	}
+	// 如果数组长度一致，删除多余元素
+	else if (newList.length < oldList.length) {
+		oldPoints.value = oldList.slice(-newList.length);
+	}
+});
 </script>
 
 <template>
-	<span class="vb-animate-number">
+	<span class="vb-animate-number" :key="numberText">
 		<template v-for="(char, index) in charList">
 			<span v-if="isNaN(parseInt(char, 0))">{{ char }}</span>
 			<span
-					class="number-char" :key="char" :style="`--ani-point: -${char};--ani-delay: ${charList.length - index}`"
+					class="number-char"
+					:style="`--ani-init: -${Number(oldPoints[index]) || 0};
+					--ani-point: -${char};
+					--ani-delay: ${charList.length - index}`"
 					v-else>
 				{{ char }}
 			</span>
@@ -33,7 +49,7 @@ const charList = computed(() => {
 <style scoped lang="scss">
 @keyframes scrollNum {
 	0% {
-		transform: translateY(0);
+		transform: translateY(calc(var(--ani-init) * 1.3em));
 	}
 	100% {
 		transform: translateY(calc(var(--ani-point) * 1.3em));
