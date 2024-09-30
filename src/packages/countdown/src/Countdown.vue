@@ -24,7 +24,7 @@ function countdown() {
 			clearInterval(timer);
 			seconds.value = props.time;
 			running.value = false;
-			emit('stop');
+			emit('stop', countdown);
 		}
 	}, 1000);
 }

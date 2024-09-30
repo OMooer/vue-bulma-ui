@@ -3,6 +3,7 @@
 
 declare module 'vue' {
 	export interface GlobalComponents {
+		VbAnimateNum: typeof import("../src/components")["VbAnimateNum"];
 		VbAvatar: typeof import("../src/components")["VbAvatar"];
 		VbBack: typeof import("../src/components")["VbBack"];
 		VbTLBack: typeof import("../src/components")["VbTLBack"];

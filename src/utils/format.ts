@@ -9,13 +9,15 @@ export function splitCardExp(value: string): string {
 /**
  * 数字分割（千分位逗号）
  * @param value
+ * @param ignoreZero
  */
-export function numberSplit<T>(value: T): string {
+export function numberSplit<T>(value: T, ignoreZero?: boolean): string {
 	if (value) {
 		if (isNaN(Number(value))) {
 			return value.toString();
 		}
-		return Number(value).toLocaleString('nu', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+		const NumText = Number(value).toLocaleString('nu', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+		return ignoreZero ? NumText.replace(/\.0+$/, '') : NumText;
 	}
 	else {
 		return '-';

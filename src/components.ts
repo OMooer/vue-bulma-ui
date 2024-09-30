@@ -1,3 +1,5 @@
+// 动画数字
+export { default as VbAnimateNum } from './packages/animateNumber';
 // 头像
 export { default as VbAvatar } from './packages/avatar';
 // 返回
