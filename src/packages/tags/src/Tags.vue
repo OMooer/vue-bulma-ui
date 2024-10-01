@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
-import { isTruthy } from '../../../utils';
+import { isOverWindow, isTruthy } from '../../../utils';
 import { vFocus } from '../../../utils/directive';
 
 const isParentSmall = inject('isSmall', false);
@@ -157,9 +157,9 @@ watch(isOpen, (is) => {
 	if (is) {
 		tagEntity.value.focus();
 		// 计算位置决定展开方向
-		const docHeight = document.documentElement.clientHeight;
-		const bottom = tagEntity.value.getBoundingClientRect().top + tagEntity.value.offsetHeight + 300;
-		isUp.value = bottom > docHeight;
+		const target = tagEntity.value;
+		const offset = target.querySelector('.dropdown-menu').offsetHeight;
+		isUp.value = isOverWindow(target, offset);
 		document.addEventListener('click', event, {capture: true});
 	}
 	else {

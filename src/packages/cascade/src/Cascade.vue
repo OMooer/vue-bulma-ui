@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, provide, ref, watch } from 'vue';
+import { isOverWindow } from '../../../utils';
 import Empty from '../../empty';
 import SelectorUI from '../../select';
 
@@ -63,9 +64,9 @@ const captureEvent = (ev: Event) => {
 watch(isOpen, (is) => {
 	if (is) {
 		// 计算位置决定展开方向
-		const docHeight = document.documentElement.clientHeight;
-		const bottom = entity.value.getBoundingClientRect().top + entity.value.offsetHeight + 300;
-		isUp.value = bottom > docHeight;
+		const target = entity.value;
+		const offset = target.querySelector('.dropdown-menu').offsetHeight;
+		isUp.value = isOverWindow(target, offset);
 		document.addEventListener('click', captureEvent, {capture: true});
 	}
 	else {

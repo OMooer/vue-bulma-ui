@@ -14,3 +14,15 @@ export function isTruthy(property: any) {
 	}
 	return false;
 }
+
+/**
+ * 检测目标元素是否超出页面底部
+ * @param target
+ * @param offset 附加偏移数值
+ */
+export function isOverWindow(target: HTMLElement, offset: number) {
+	const html = document.documentElement;
+	const pageHeight = Math.max(html.clientHeight, html.scrollHeight);
+	const bottom = html.scrollTop + target.getBoundingClientRect().top + target.offsetHeight + offset;
+	return bottom > pageHeight;
+}

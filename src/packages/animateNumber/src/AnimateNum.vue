@@ -1,19 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { numberSplit } from '../../../utils';
 
 const props = defineProps({
-	number: {
-		type    : Number,
+	text: {
+		type    : String,
 		required: true
-	},
-	split : Boolean
-});
-const numberText = computed(() => {
-	return props.split ? numberSplit(props.number, true) : props.number;
+	}
 });
 const charList = computed(() => {
-	return numberText.value?.toString().split('') ?? [];
+	return props.text?.split('') ?? [];
 });
 const oldPoints = ref<string[]>([]);
 watch(charList, (newList, oldList) => {
@@ -31,7 +26,7 @@ watch(charList, (newList, oldList) => {
 </script>
 
 <template>
-	<span class="vb-animate-number" :key="numberText">
+	<span class="vb-animate-number" :key="text">
 		<template v-for="(char, index) in charList">
 			<span v-if="isNaN(parseInt(char, 0))">{{ char }}</span>
 			<span
