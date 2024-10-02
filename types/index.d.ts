@@ -51,6 +51,7 @@ declare module 'vue' {
 		VbTabs: typeof import("../src/components")["VbTabs"];
 		VbTags: typeof import("../src/components")["VbTags"];
 		VbTell: typeof import("../src/components")["VbTell"];
+		VbTime: typeof import("../src/components")["VbTime"];
 		VbTips: typeof import("../src/components")["VbTips"];
 		VbToast: typeof import("../src/components")["VbToast"];
 		VbTree: typeof import("../src/components")["VbTree"];

@@ -26,6 +26,7 @@ export { CountdownBar as VbCountdownBar } from './packages/countdown';
 export { default as VbDialog } from './packages/dialog';
 // 日期选择器
 export { default as VbDatetime } from './packages/datetimePicker';
+export { TimePicker as VbTime } from './packages/datetimePicker';
 // 弹出菜单
 export { default as VbDropdown } from './packages/dropdown';
 // 双态输入框
