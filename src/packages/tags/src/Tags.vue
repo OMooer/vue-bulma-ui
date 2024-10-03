@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
-import { isOverWindow, isTruthy } from '../../../utils';
-import { vFocus } from '../../../utils/directive';
+import { isOverWindow, isTruthy, vFocus } from '../../../utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{

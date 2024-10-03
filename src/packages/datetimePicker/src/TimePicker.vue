@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue';
-import { isOverWindow } from '../../../utils';
+import { isOverWindow, OUT_OF_RANGE } from '../../../utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	min?: string;
 	max?: string;
+	step?: string | number;
 	showSecond?: boolean;
 	placeholder?: string;
 	disabled?: boolean;
 	required?: boolean;
 }>(), {placeholder: '请选择', min: '00:00:00', max: '23:59:59'});
 const emit = defineEmits(['error']);
-const modelValue = defineModel();
+const modelValue = defineModel<string>();
 const isError = ref(false);
 const isOpen = ref(false);
 const isUp = ref(false);
@@ -21,9 +22,9 @@ const hourValue = ref();
 const minuteValue = ref();
 const secondValue = ref();
 
-const hours = makeList(24);
-const minutes = makeList(60);
-const seconds = makeList(60);
+const hours = makeList(24, 3600);
+const minutes = makeList(60, 60);
+const seconds = makeList(60, 1);
 
 const hourValueCP = computed({
 	get() {
@@ -108,6 +109,16 @@ watch(isOpen, (is) => {
 	}
 });
 
+watch(modelValue, () => {
+	const time = modelValue.value?.split(':');
+	if (time && time instanceof Array) {
+		const [h, m, s] = time;
+		h && (hourValue.value = h);
+		m && (minuteValue.value = m);
+		s && (secondValue.value = s);
+	}
+}, {immediate: true})
+
 watch([hourValue, minuteValue, secondValue], () => {
 	setError(false);
 	nextTick(() => {
@@ -129,10 +140,13 @@ function scrollOptions(target: any) {
 	});
 }
 
-function makeList(total: number) {
-	return Array(total).fill(0).map((_, i) => {
-		return (i).toString().padStart(2, '0');
-	});
+function makeList(total: number, ratio: number) {
+	const opts = [];
+	const step = (ratio === 1 ? Number(props.step) : Math.floor(Number(props.step) / ratio)) % 60;
+	for (let i = 0; i < total; i += (step || 1)) {
+		opts.push(i.toString().padStart(2, '0'));
+	}
+	return opts;
 }
 
 function focusIn(e: any) {
@@ -144,15 +158,18 @@ function updateValue() {
 	const [h, m, s] = concatValue.value;
 	// 如果值超出范围则报错
 	if (Number(h) > 23 || Number(m) > 59 || Number(s) > 59) {
-		setError(true, 'out of range');
+		setError(true, OUT_OF_RANGE);
 		return;
 	}
 	if (!shadowEl.value?.reportValidity() || checkOutRange(h, m, s).some(b => b)) {
-		setError(true, 'out of range');
+		setError(true, shadowEl.value?.validationMessage ?? OUT_OF_RANGE);
 		return;
 	}
-	// 更新值
-	modelValue.value = concatValue.value.filter(v => !!v).join(':');
+	// 如果所有应填值未填完整则不更新值
+	if (concatValue.value.slice(0, props.showSecond ? 3 : 2).every(v => !!v)) {
+		// 更新值
+		modelValue.value = concatValue.value.filter(v => !!v).join(':');
+	}
 	nextTick(() => {
 		scrollOptions(entity.value);
 	});
@@ -261,7 +278,7 @@ defineExpose({
 		<div class="dropdown-trigger">
 			<input
 					ref="shadow"
-					class="shadow-time" type="time" step="1" :disabled :required
+					class="shadow-time" type="time" :step :disabled :required
 					:min="rangeLimit.min.slice(0, showSecond ? 3 : 2).join(':')"
 					:max="rangeLimit.max.slice(0, showSecond ? 3 : 2).join(':')"
 					@focus="focusIn"
@@ -271,20 +288,20 @@ defineExpose({
 				<input
 						type="number" placeholder="--" :required :disabled
 						@focus="isOpen = true" @blur="padValue('hour', $event)" @keydown="checkKeyBehavior"
-						min="0" max="23" @click.stop
+						min="0" max="23" :step="Math.floor(Number(step)/3600) || undefined" @click.stop
 						v-model="hourValueCP">
 				:
 				<input
 						type="number" placeholder="--" :required :disabled
 						@focus="isOpen = true" @blur="padValue('minute', $event)" @keydown="checkKeyBehavior"
-						min="0" max="59" @click.stop
+						min="0" max="59" :step="Math.floor(Number(step)/60) || undefined" @click.stop
 						v-model="minuteValueCP">
 				<template v-if="showSecond">
 					:
 					<input
 							type="number" placeholder="--" :required :disabled
 							@focus="isOpen = true" @blur="padValue('second', $event)" @keydown="checkKeyBehavior"
-							min="0" max="59" @click.stop
+							min="0" max="59" :step @click.stop
 							v-model="secondValueCP">
 				</template>
 			</div>
@@ -357,9 +374,22 @@ defineExpose({
 	&.is-danger {
 		.dropdown-trigger {
 			> .time-field {
-				outline: solid 1px $danger !important;
-				box-shadow: 0 0 0 0.125em rgba($danger, .25) !important;
+				--bulma-input-h: var(--bulma-danger-h);
+				--bulma-input-s: var(--bulma-danger-s);
+
+				border: solid 1px $danger !important;
+
+				&:focus-within {
+					box-shadow: 0 0 0 0.125em rgba($danger, .25) !important;
+				}
 			}
+		}
+	}
+
+	.has-addons & {
+		.dropdown-trigger .time-field {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
 		}
 	}
 
@@ -384,7 +414,7 @@ defineExpose({
 			height: var(--bulma-control-height);
 
 			&:focus-within {
-				outline: solid 1px $link;
+				border: solid 1px $link;
 				box-shadow: 0 0 0 0.25em rgba($link, .25);
 			}
 

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, onUpdated, ref, watch } from 'vue';
-import { isOverWindow } from '../../../utils';
-import { vFocus } from '../../../utils/directive';
+import { isOverWindow, vFocus } from '../../../utils';
 import Empty from '../../empty';
 
 const isParentSmall = inject('isSmall', false);

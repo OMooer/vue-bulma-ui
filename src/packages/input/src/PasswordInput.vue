@@ -72,16 +72,28 @@ defineExpose({
 
 <style scoped lang="scss">
 .vb-password {
-	&.control .icon {
-		pointer-events: auto;
-		cursor: pointer;
+	&.control {
+		.icon {
+			pointer-events: auto;
+			cursor: pointer;
 
-		[data-theme=dark] & {
-			--bulma-input-icon-color: hsla(221deg, 14%, 89%, .5);
+			&:hover {
+				color: var(--bulma-input-icon-hover-color);
+			}
+
+			[data-theme=dark] & {
+				--bulma-input-icon-color: hsla(221deg, 14%, 89%, .5);
+			}
+
+			&.show {
+				color: var(--bulma-text-strong);
+			}
+
 		}
 
-		&.show {
-			color: var(--bulma-text-strong);
+		[disabled] + .icon {
+			pointer-events: none;
+			color: var(--bulma-input-icon-color) !important;
 		}
 	}
 }

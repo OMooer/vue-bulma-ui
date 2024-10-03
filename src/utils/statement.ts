@@ -1,0 +1,1 @@
+export const OUT_OF_RANGE = 'out of range';
