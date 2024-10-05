@@ -54,6 +54,7 @@ watch(charList, (newList, oldList) => {
 @keyframes fadeOut {
 	to {
 		display: none;
+		opacity: 0;
 	}
 }
 
