@@ -239,6 +239,7 @@ defineExpose({
 
 			.dropdown-scroll-view {
 				overflow: auto;
+				overscroll-behavior: contain;
 				max-height: 300px;
 			}
 

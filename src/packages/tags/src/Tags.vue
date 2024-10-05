@@ -157,7 +157,7 @@ watch(isOpen, (is) => {
 		tagEntity.value.focus();
 		// 计算位置决定展开方向
 		const target = tagEntity.value;
-		const offset = target.querySelector('.dropdown-menu').offsetHeight;
+		const offset = target.closest('.vb-tags').querySelector('.dropdown-menu').offsetHeight;
 		isUp.value = isOverWindow(target, offset);
 		document.addEventListener('click', event, {capture: true});
 	}
@@ -392,6 +392,7 @@ defineExpose({
 
 		.dropdown-content {
 			overflow: auto;
+			overscroll-behavior: contain;
 			max-height: 300px;
 		}
 

@@ -48,12 +48,15 @@
 
 @keyframes shake {
 	0% {
+		z-index: 10;
 		transform: translate(-5px, 0);
 	}
 	50% {
+		z-index: 10;
 		transform: translate(0, -2px);
 	}
 	100% {
+		z-index: 10;
 		transform: translate(5px, 0);
 	}
 }

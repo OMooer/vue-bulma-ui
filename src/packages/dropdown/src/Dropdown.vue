@@ -75,15 +75,13 @@ function menuClicked(e: any) {
 		</div>
 		<div class="dropdown-menu is-fullwidth" role="menu" v-show="canMenuHoverIt">
 			<div class="dropdown-content">
-				<div class="dropdown-scroll-view">
-					<template :key="index" v-for="(item, index) in list">
-						<hr class="dropdown-divider" v-if="!item">
-						<a class="dropdown-item" :class="{'is-disabled': item.disabled}" @click="selectValue(item.value)" v-else>
-							<i :class="item.icon" v-if="item.icon"></i>
-							<span>{{ item.title }}</span>
-						</a>
-					</template>
-				</div>
+				<template :key="index" v-for="(item, index) in list">
+					<hr class="dropdown-divider" v-if="!item">
+					<a class="dropdown-item" :class="{'is-disabled': item.disabled}" @click="selectValue(item.value)" v-else>
+						<i :class="item.icon" v-if="item.icon"></i>
+						<span>{{ item.title }}</span>
+					</a>
+				</template>
 			</div>
 		</div>
 	</div>
@@ -157,15 +155,6 @@ function menuClicked(e: any) {
 		}
 
 		.dropdown-content {
-			display: flex;
-			flex-direction: column;
-			margin: 0 0 1em;
-
-			.dropdown-scroll-view {
-				overflow: auto;
-				max-height: 300px;
-			}
-
 			.dropdown-item {
 				display: flex;
 				align-items: center;

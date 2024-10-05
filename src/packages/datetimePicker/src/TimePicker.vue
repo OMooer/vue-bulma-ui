@@ -8,10 +8,9 @@ const props = withDefaults(defineProps<{
 	max?: string;
 	step?: string | number;
 	showSecond?: boolean;
-	placeholder?: string;
 	disabled?: boolean;
 	required?: boolean;
-}>(), {placeholder: '请选择', min: '00:00:00', max: '23:59:59'});
+}>(), {min: '00:00:00', max: '23:59:59'});
 const emit = defineEmits(['error']);
 const modelValue = defineModel<string>();
 const isError = ref(false);
@@ -22,9 +21,10 @@ const hourValue = ref();
 const minuteValue = ref();
 const secondValue = ref();
 
-const hours = makeList(24, 3600);
-const minutes = makeList(60, 60);
-const seconds = makeList(60, 1);
+let factory;
+const hours = makeList(24, 'hours');
+const minutes = makeList(60, 'minutes');
+const seconds = makeList(60, 'seconds');
 
 const hourValueCP = computed({
 	get() {
@@ -55,7 +55,7 @@ const concatValue = computed(() => {
 	hourValue.value && (vals[0] = hourValue.value.toString().padStart(2, '0'));
 	minuteValue.value && (vals[1] = minuteValue.value.toString().padStart(2, '0'));
 	secondValue.value && (vals[2] = secondValue.value.toString().padStart(2, '0'));
-	return vals;
+	return vals.slice(0, props.showSecond ? 3 : 2);
 });
 const rangeLimit = computed(() => {
 	const minimum = props.min.split(':');
@@ -140,13 +140,48 @@ function scrollOptions(target: any) {
 	});
 }
 
-function makeList(total: number, ratio: number) {
-	const opts = [];
-	const step = (ratio === 1 ? Number(props.step) : Math.floor(Number(props.step) / ratio)) % 60;
-	for (let i = 0; i < total; i += (step || 1)) {
-		opts.push(i.toString().padStart(2, '0'));
+function validTimeFactory(step: number) {
+	// const time = new Set<string>();
+	const hour   = new Set<number>(),
+	      minute = new Set<number>(),
+	      second = new Set<number>();
+	let n = 0, lastHour = 0;
+	while (1) {
+		const d = new Date(n * 1000);
+		const h = d.getUTCHours(),
+		      m = d.getUTCMinutes(),
+		      s = d.getUTCSeconds();
+		if (hour.has(h) && lastHour > h) {
+			break;
+		}
+		// time.add([h, m, s].join(':'));
+		lastHour = h;
+		hour.add(h);
+		minute.add(m);
+		second.add(s);
+		n += step;
 	}
-	return opts;
+	// console.log(Array.from(time));
+	return {
+		hours  : Array.from(hour).sort((a, b) => a - b).map(i => i.toString().padStart(2, '0')),
+		minutes: Array.from(minute).sort((a, b) => a - b).map(i => i.toString().padStart(2, '0')),
+		seconds: Array.from(second).sort((a, b) => a - b).map(i => i.toString().padStart(2, '0'))
+	}
+}
+
+function makeList(total: number, name: 'hours' | 'minutes' | 'seconds') {
+	const step = Number(props.step) || 0;
+	if (!step) {
+		factory = (() => {
+			const opts = [];
+			for (let i = 0; i < total; i++) {
+				opts.push(i.toString().padStart(2, '0'));
+			}
+			return {[name]: opts};
+		})()
+	}
+	factory ??= validTimeFactory(step);
+	return factory[name] ?? [];
 }
 
 function focusIn(e: any) {
@@ -278,10 +313,10 @@ defineExpose({
 		<div class="dropdown-trigger">
 			<input
 					ref="shadow"
-					class="shadow-time" type="time" :step :disabled :required
+					class="shadow-time" type="time" :step="step||1" :disabled :required
 					:min="rangeLimit.min.slice(0, showSecond ? 3 : 2).join(':')"
 					:max="rangeLimit.max.slice(0, showSecond ? 3 : 2).join(':')"
-					@focus="focusIn"
+					tabindex="-1" @focus="focusIn"
 					:value="concatValue.every(v=>v)?concatValue.join(':'):''"
 			>
 			<div class="time-field" @click="focusIn">
@@ -455,6 +490,7 @@ defineExpose({
 
 			.dropdown-scroll-view {
 				overflow: auto;
+				overscroll-behavior: contain;
 				max-height: 12em;
 				flex-grow: 1;
 				border-right: solid 1px $split-color;

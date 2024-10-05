@@ -362,6 +362,7 @@ defineExpose({
 
 			.cascade-level {
 				overflow: auto;
+				overscroll-behavior: contain;
 				flex-grow: 1;
 				width: 12em;
 				max-height: 15em;
