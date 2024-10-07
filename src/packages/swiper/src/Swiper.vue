@@ -16,13 +16,15 @@ const props = defineProps({
 		type   : Number,
 		default: 5000
 	},
-	seamless     : Boolean
+	seamless     : Boolean,
+	wheeled      : Boolean
 });
 const slots = defineSlots();
 const current = ref(0);
 const percent = ref(0);
-let autoTimer: any, percentTimer: any;
+let autoTimer: any, percentTimer: any, wheelTimer: any, regulateTimer: any;
 let startX = 0, offsetX = 0;
+let wheelOffsetX = 0, wheelCapture = false;
 
 const total = computed(() => {
 	return slots.default?.()?.length || 0;
@@ -81,6 +83,7 @@ function moveTo(index: number) {
 function left(offset: number = 0) {
 	if (current.value <= 0) {
 		if (!props.seamless) {
+			containerRegulate();
 			return;
 		}
 		current.value = total.value;
@@ -92,6 +95,7 @@ function left(offset: number = 0) {
 function right(offset: number = 0) {
 	if (current.value >= total.value - 1) {
 		if (!props.seamless) {
+			containerRegulate();
 			return;
 		}
 		current.value = -1;
@@ -115,6 +119,51 @@ function containerOffsetTrans(offset: number) {
 		container.style.transform = `translateX(calc(${ currentIndex.value * -100 }% + ${ offset }px))`;
 		container.offsetWidth;
 		container.style.transition = '';
+	}
+}
+
+// 滚动事件
+function wheelContainer(e: any) {
+	e.preventDefault();
+	if (!e.target.closest('.swiper-container') || !props.wheeled) {
+		return;
+	}
+	// 当滚动事件完全停止之后重置滚动状态
+	wheelTimer && clearTimeout(wheelTimer);
+	wheelTimer = setTimeout(() => {
+		wheelOffsetX = 0;
+		wheelCapture = false;
+	}, 200);
+	// 如果滚动已经进行处理的话，直接返回不再执行
+	if (wheelCapture) {
+		return;
+	}
+
+	const width = e.currentTarget.offsetWidth;
+	const padding = 50;
+	const min = Math.min(1, currentIndex.value) * width + padding;
+	const max = -1 * Math.min(1, total.value - (props.seamless ? -1 : 1) - currentIndex.value) * width - padding;
+	wheelOffsetX -= e.deltaX;
+	// 正数代表从左到右滑动
+	wheelOffsetX = wheelOffsetX > 0 ? Math.min(min, wheelOffsetX) : Math.max(max, wheelOffsetX);
+	// 如果移动位置达到边界的话，设置捕获状态，阻止后续的移动事件
+	if (wheelOffsetX === min || wheelOffsetX === max) {
+		wheelCapture = true;
+	}
+	// 即时定位新的位置
+	containerOffsetTrans(wheelOffsetX);
+	// 清除可能存在的校正延时
+	regulateTimer && clearTimeout(regulateTimer);
+	// 如果滚动位置超过阈值，则直接跳转上一页或下一页，并设置捕获状态
+	if (Math.abs(wheelOffsetX) > width * .3) {
+		wheelCapture = true;
+		wheelOffsetX > 0 ? left(wheelOffsetX) : right(wheelOffsetX);
+	}
+	else {
+		// 如果没有超过阈值，则一段时间后校正回当前页所在位置
+		regulateTimer = setTimeout(() => {
+			containerRegulate();
+		}, 200);
 	}
 }
 
@@ -177,7 +226,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div ref="swiper" class="vb-swiper">
+	<div class="vb-swiper" @wheel="wheelContainer">
 		<div ref="cont" class="swiper-container" v-if="total">
 			<Component :is="swiperItems"/>
 		</div>
