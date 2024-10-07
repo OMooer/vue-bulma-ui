@@ -74,6 +74,8 @@ export { default as VbSidePage } from './packages/sidePage';
 export { default as VbSort } from './packages/sort';
 // 步骤条
 export { default as VbSteps } from './packages/steps';
+// 滑动容器
+export { default as VbSwiper } from './packages/swiper';
 // switch 开关
 export { default as VbSwitch } from './packages/switch';
 // 表格

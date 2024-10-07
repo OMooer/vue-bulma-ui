@@ -46,6 +46,7 @@ declare module 'vue' {
 		VbSidePage: typeof import("../src/components")["VbSidePage"];
 		VbSort: typeof import("../src/components")["VbSort"];
 		VbSteps: typeof import("../src/components")["VbSteps"];
+		VbSwiper: typeof import("../src/components")["VbSwiper"];
 		VbSwitch: typeof import("../src/components")["VbSwitch"];
 		VbTable: typeof import("../src/components")["VbTable"];
 		VbTabs: typeof import("../src/components")["VbTabs"];

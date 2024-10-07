@@ -87,6 +87,9 @@ const classList = computed(() => {
 });
 
 const shadowEl = useTemplateRef<HTMLInputElement>('shadow');
+const shadowStep = computed(() => {
+	return rangeLimit.value.min[2] !== '00' ? 'any' : (props.step || 'any');
+});
 
 const event = (ev: Event) => {
 	if (!(ev.target as HTMLElement).closest('.vb-time-picker.is-active')) {
@@ -313,7 +316,7 @@ defineExpose({
 		<div class="dropdown-trigger">
 			<input
 					ref="shadow"
-					class="shadow-time" type="time" :step="step||1" :disabled :required
+					class="shadow-time" type="time" :step="shadowStep" :disabled :required
 					:min="rangeLimit.min.slice(0, showSecond ? 3 : 2).join(':')"
 					:max="rangeLimit.max.slice(0, showSecond ? 3 : 2).join(':')"
 					tabindex="-1" @focus="focusIn"
@@ -323,20 +326,20 @@ defineExpose({
 				<input
 						type="number" placeholder="--" :required :disabled
 						@focus="isOpen = true" @blur="padValue('hour', $event)" @keydown="checkKeyBehavior"
-						min="0" max="23" :step="Math.floor(Number(step)/3600) || undefined" @click.stop
+						min="0" max="23" @click.stop
 						v-model="hourValueCP">
 				:
 				<input
 						type="number" placeholder="--" :required :disabled
 						@focus="isOpen = true" @blur="padValue('minute', $event)" @keydown="checkKeyBehavior"
-						min="0" max="59" :step="Math.floor(Number(step)/60) || undefined" @click.stop
+						min="0" max="59" @click.stop
 						v-model="minuteValueCP">
 				<template v-if="showSecond">
 					:
 					<input
 							type="number" placeholder="--" :required :disabled
 							@focus="isOpen = true" @blur="padValue('second', $event)" @keydown="checkKeyBehavior"
-							min="0" max="59" :step @click.stop
+							min="0" max="59" @click.stop
 							v-model="secondValueCP">
 				</template>
 			</div>
