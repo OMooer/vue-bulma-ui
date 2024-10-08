@@ -252,6 +252,9 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .vb-swiper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	position: relative;
 	overflow: hidden;
 	width: 100%;
@@ -299,23 +302,20 @@ onBeforeUnmount(() => {
 		justify-content: center;
 		align-items: center;
 		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		height: 1em;
-		margin: 0;
+		margin: .4em 1em;
 		padding: 0;
 		list-style: none;
+		bottom: 0;
 		z-index: 4;
 
 		li {
 			--ind-bg: hsla(var(--bulma-text-h), var(--bulma-text-s), var(--bulma-text-strong-l), .2);
 			margin: 0 .1em;
 			background: var(--ind-bg);
-			border-radius: 2px;
+			border-radius: 4px;
 			cursor: pointer;
-			width: 1em;
-			height: 4px;
+			width: 1.5em;
+			height: .4em;
 
 			&.is-active {
 				--bg-per: calc(var(--bg-percent, 0) * 1%);
