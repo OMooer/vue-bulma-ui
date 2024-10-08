@@ -3,21 +3,29 @@ import { cloneVNode, computed, defineComponent, h, onBeforeUnmount, onMounted, r
 import { flattenVNode } from '../../../utils';
 
 const props = defineProps({
-	showControl  : {
+	showControl   : {
 		type   : Boolean,
 		default: true
 	},
-	showIndicator: {
+	showIndicator : {
 		type   : Boolean,
 		default: true
 	},
-	autoplay     : Boolean,
-	duration     : {
+	autoplay      : Boolean,
+	duration      : {
 		type   : Number,
 		default: 5000
 	},
-	seamless     : Boolean,
-	wheeled      : Boolean
+	seamless      : Boolean,
+	wheeled       : Boolean,
+	previousMargin: {
+		type   : String,
+		default: '0px'
+	},
+	nextMargin    : {
+		type   : String,
+		default: '0px'
+	}
 });
 const slots = defineSlots();
 const current = ref(0);
@@ -71,13 +79,24 @@ function autoplay() {
 	}, props.duration - (props.duration * (percent.value / 100)));
 }
 
+function pausePlay() {
+	if (props.autoplay) {
+		percentTimer && clearTimeout(percentTimer);
+		autoTimer && clearTimeout(autoTimer);
+	}
+}
+
+function startPlay() {
+	if (props.autoplay) {
+		autoplay();
+	}
+}
+
 function moveTo(index: number) {
 	percent.value = 0;
 	current.value = index;
 	containerRegulate();
-	if (props.autoplay) {
-		autoplay();
-	}
+	startPlay();
 }
 
 function left(offset: number = 0) {
@@ -107,7 +126,7 @@ function right(offset: number = 0) {
 // 内容容器校正设置
 function containerRegulate() {
 	if (cont.value) {
-		cont.value.style.transform = `translateX(${ currentIndex.value * -100 }%)`;
+		cont.value.style.transform = `translateX(calc(${ currentIndex.value }* (-100% + ${ props.previousMargin } + ${ props.nextMargin }) + ${ props.previousMargin }))`;
 	}
 }
 
@@ -116,7 +135,7 @@ function containerOffsetTrans(offset: number) {
 	if (cont.value) {
 		const container = cont.value as HTMLElement;
 		container.style.transition = 'none';
-		container.style.transform = `translateX(calc(${ currentIndex.value * -100 }% + ${ offset }px))`;
+		container.style.transform = `translateX(calc(${ currentIndex.value }* (-100% + ${ props.previousMargin } + ${ props.nextMargin }) + ${ props.previousMargin } + ${ offset }px))`;
 		container.offsetWidth;
 		container.style.transition = '';
 	}
@@ -124,10 +143,10 @@ function containerOffsetTrans(offset: number) {
 
 // 滚动事件
 function wheelContainer(e: any) {
-	e.preventDefault();
-	if (!e.target.closest('.swiper-container') || !props.wheeled) {
+	if (e.deltaX === 0 || !e.target.closest('.swiper-container') || !props.wheeled) {
 		return;
 	}
+	e.preventDefault();
 	// 当滚动事件完全停止之后重置滚动状态
 	wheelTimer && clearTimeout(wheelTimer);
 	wheelTimer = setTimeout(() => {
@@ -171,15 +190,18 @@ function wheelContainer(e: any) {
 function getNewChild(node: any, _index: number) {
 	const prop = {
 		style: {
-			width : '100%',
+			width : `calc(100% - ${ props.previousMargin } - ${ props.nextMargin })`,
 			height: '100%'
+		},
+		onMouseenter() {
+			pausePlay();
+		},
+		onMouseleave() {
+			startPlay();
 		},
 		onTouchstart(e: TouchEvent) {
 			const {clientX} = e.touches[0];
-			if (props.autoplay) {
-				percentTimer && clearTimeout(percentTimer);
-				autoTimer && clearTimeout(autoTimer);
-			}
+			pausePlay()
 			startX = clientX;
 		},
 		onTouchmove(e: TouchEvent) {
@@ -198,9 +220,7 @@ function getNewChild(node: any, _index: number) {
 				return;
 			}
 			containerRegulate();
-			if (props.autoplay) {
-				autoplay();
-			}
+			startPlay();
 		}
 	};
 	return cloneVNode(node, prop);
@@ -215,9 +235,7 @@ function getItems() {
 
 onMounted(() => {
 	containerRegulate();
-	if (props.autoplay) {
-		autoplay();
-	}
+	startPlay();
 });
 onBeforeUnmount(() => {
 	autoTimer && clearTimeout(autoTimer);
@@ -238,7 +256,9 @@ onBeforeUnmount(() => {
 				<FasIcon icon="chevron-right"/>
 			</a>
 		</slot>
-		<slot name="indicator" :index="current" :moveTo="moveTo" :percent="percent" v-if="showIndicator && total">
+		<slot
+				name="indicator" :total="total" :index="current" :moveTo="moveTo" :percent="percent"
+				v-if="showIndicator && total">
 			<ol class="swiper-indicator">
 				<li
 						:class="{'is-active': i === current + 1}" @click="moveTo(i - 1)"
@@ -261,6 +281,9 @@ onBeforeUnmount(() => {
 
 	.swiper-container {
 		display: -webkit-box;
+		flex-grow: 1;
+		width: 100%;
+		height: 100%;
 		transition: transform .3s ease-in-out;
 	}
 
@@ -313,6 +336,7 @@ onBeforeUnmount(() => {
 			margin: 0 .1em;
 			background: var(--ind-bg);
 			border-radius: 4px;
+			border: solid 1px var(--bulma-grey);
 			cursor: pointer;
 			width: 1.5em;
 			height: .4em;
