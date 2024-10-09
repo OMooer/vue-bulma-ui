@@ -259,12 +259,8 @@ onBeforeUnmount(() => {
 		<slot
 				name="indicator" :total="total" :index="current" :moveTo="moveTo" :percent="percent"
 				v-if="showIndicator && total">
-			<ol class="swiper-indicator">
-				<li
-						:class="{'is-active': i === current + 1}" @click="moveTo(i - 1)"
-						:style="`--bg-percent: ${percent}`"
-						v-for="i in total">
-				</li>
+			<ol class="swiper-indicator" :style="`--bg-percent: ${percent}%`">
+				<li :class="{'is-active': i === current + 1}" @click="moveTo(i - 1)" v-for="i in total"></li>
 			</ol>
 		</slot>
 	</div>
@@ -332,18 +328,19 @@ onBeforeUnmount(() => {
 		z-index: 4;
 
 		li {
-			--ind-bg: hsla(var(--bulma-text-h), var(--bulma-text-s), var(--bulma-text-strong-l), .2);
-			margin: 0 .1em;
-			background: var(--ind-bg);
+			margin: 0 .15em;
+			background: rgba(255, 255, 255, .3);
 			border-radius: 4px;
-			border: solid 1px var(--bulma-grey);
+			box-shadow: 0 0 3px -1px var(--bulma-grey);
 			cursor: pointer;
 			width: 1.5em;
-			height: .4em;
+			height: .3em;
 
 			&.is-active {
-				--bg-per: calc(var(--bg-percent, 0) * 1%);
-				background: linear-gradient(to right, var(--bulma-primary) var(--bg-per, 0%), var(--bulma-dark) var(--bg-per, 0%));
+				--m: min(calc(var(--bg-percent) * 50), calc(1% * 50));
+				--a: calc(100% - var(--m));
+				background-color: hsla(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l), var(--a));
+				background-image: linear-gradient(to right, var(--bulma-primary) var(--bg-percent), transparent var(--bg-percent));
 			}
 		}
 	}
