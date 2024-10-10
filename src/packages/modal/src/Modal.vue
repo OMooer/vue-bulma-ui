@@ -71,7 +71,7 @@ defineExpose({
 								type="button" class="delete is-right" aria-label="close" @click="dismiss"
 								v-if="isTruthy(hasClose)"></button>
 						<div class="card-content">
-							<slot/>
+							<slot :dismiss="dismiss"/>
 						</div>
 						<slot name="footer" :dismiss="dismiss"/>
 					</div>
