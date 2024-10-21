@@ -34,8 +34,12 @@ let autoTimer: any, percentTimer: any, wheelTimer: any, regulateTimer: any;
 let startX = 0, offsetX = 0;
 let wheelOffsetX = 0, wheelCapture = false;
 
+const flatSlotNodes = computed(() => {
+	const defaultSlots = slots.default?.();
+	return flattenVNode(defaultSlots);
+});
 const total = computed(() => {
-	return slots.default?.()?.length || 0;
+	return flatSlotNodes.value?.length || 0;
 });
 const currentIndex = computed(() => {
 	return props.seamless ? current.value + 1 : current.value;
@@ -228,9 +232,9 @@ function getNewChild(node: any, _index: number) {
 
 // 获取内容节点，如果是无缝轮播的话拷贝第一个和最后一个节点
 function getItems() {
-	const defaultSlots = slots.default?.();
-	const items = props.seamless ? [defaultSlots.slice(-1), defaultSlots, defaultSlots.slice(0, 1)].flat() : defaultSlots;
-	return flattenVNode(items).map(getNewChild);
+	const flatNodes = flatSlotNodes.value;
+	const items = props.seamless ? [flatNodes.slice(-1), flatNodes, flatNodes.slice(0, 1)].flat() : flatNodes;
+	return items.map(getNewChild);
 }
 
 onMounted(() => {

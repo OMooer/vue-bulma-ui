@@ -52,7 +52,9 @@ const dialogVNode = defineComponent(
 /**
  * useDialog
  */
-export function useDialog(language: OP.DialogText = {doneText: '确定', cancelText: '取消'}) {
+export function useDialog(language?: OP.DialogText) {
+	language = Object.assign({doneText: '确定', cancelText: '取消'}, language ?? {});
+
 	// 创建 dialog 页面根容器
 	function getDialogRoot() {
 		let dialogEl = document.querySelector('#dialogs');
