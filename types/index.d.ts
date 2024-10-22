@@ -26,6 +26,7 @@ declare module 'vue' {
 		VbEmpty: typeof import("../src/components")["VbEmpty"];
 		VbForm: typeof import("../src/components")["VbForm"];
 		VbFormItem: typeof import("../src/components")["VbFormItem"];
+		VbGallery: typeof import("../src/components")["VbGallery"];
 		VbIncrement: typeof import("../src/components")["VbIncrement"];
 		VbInput: typeof import("../src/components")["VbInput"];
 		VbLink: typeof import("../src/components")["VbLink"];

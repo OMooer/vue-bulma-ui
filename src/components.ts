@@ -37,6 +37,8 @@ export { default as VbEmpty } from './packages/empty';
 export { default as VbForm } from './packages/form';
 // 表单项容器
 export { FormElement as VbFormItem } from './packages/form';
+// 画廊
+export { default as VbGallery } from './packages/gallery';
 // 自增数字框
 export { default as VbIncrement } from './packages/increment';
 // 输入框

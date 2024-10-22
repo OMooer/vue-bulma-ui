@@ -3,10 +3,28 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
 	faAngleDown,
 	faCheck,
-	faChevronLeft, faCircleExclamation, faCircleQuestion,
+	faChevronLeft,
+	faCircleExclamation,
+	faCircleQuestion,
 	faEye,
-	faEyeSlash, faFileArrowDown, faSort, faSortAsc, faSortDesc, faTrashCan, faUpload,
-	faAngleRight, faAngleLeft, faSpinner, faRotate, faAngleUp, faPlus, faMinus, faGlobe, faChevronRight
+	faEyeSlash,
+	faFileArrowDown,
+	faSort,
+	faSortAsc,
+	faSortDesc,
+	faTrashCan,
+	faUpload,
+	faAngleRight,
+	faAngleLeft,
+	faSpinner,
+	faRotate,
+	faAngleUp,
+	faPlus,
+	faMinus,
+	faGlobe,
+	faChevronRight,
+	faExpand,
+	faCompress, faDownload, faMagnifyingGlass, faMagnifyingGlassMinus, faMagnifyingGlassPlus
 } from '@fortawesome/free-solid-svg-icons';
 import {
 	faSquareMinus,
@@ -27,7 +45,8 @@ export default {
 			faChevronLeft, faChevronRight,
 			faCircleExclamation,
 			faCircleQuestion,
-			faEye, faEyeSlash,
+			faDownload,
+			faEye, faEyeSlash, faExpand, faCompress,
 			faFileArrowDown,
 			faGlobe,
 			faMinus, faPlus,
@@ -37,6 +56,7 @@ export default {
 			faSquareMinus, faSquarePlus,
 			faTrashCan,
 			faUpload,
+			faMagnifyingGlass, faMagnifyingGlassMinus, faMagnifyingGlassPlus
 		];
 		library.add(...iconSet);
 		Vue.component('FasIcon', FontAwesomeIcon);

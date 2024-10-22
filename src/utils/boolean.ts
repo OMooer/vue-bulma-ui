@@ -26,3 +26,14 @@ export function isOverWindow(target: HTMLElement, offset: number) {
 	const bottom = html.scrollTop + target.getBoundingClientRect().top + target.offsetHeight + offset;
 	return bottom > pageHeight;
 }
+
+/**
+ * 判断目标是否为 Promise 对象
+ * @param fn
+ */
+export function isPromise(fn: any) {
+	if (typeof fn === 'function') {
+		fn = fn();
+	}
+	return typeof fn?.then === 'function';
+}

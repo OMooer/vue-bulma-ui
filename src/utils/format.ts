@@ -90,3 +90,17 @@ export function takeSeparate(text: string, opts?: { long?: number; sep?: string;
 export function getI18nData(data: { [propName: string]: string }, locale: string = 'zh-cn') {
 	return data[locale] || data['zh-cn'] || data[Object.keys(data)[0]];
 }
+
+/**
+ * 生成缩放比例
+ * @param n
+ */
+export function scaleGenerator(n: number) {
+	const initScale = 1;
+	if (!n) {
+		return initScale;
+	}
+	const base = 0.25;
+	const increment = base * (n > 0 ? Math.pow(2, Math.abs(n) - 1) : n);
+	return Math.max(0.05, initScale + increment);
+}
