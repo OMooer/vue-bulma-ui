@@ -58,7 +58,7 @@ function rating(rank: number) {
 
 <template>
 	<div class="vb-rating">
-		<div class="starts" :class="{'is-disabled': readonly}">
+		<div class="stars" :class="{'is-disabled': readonly}">
 				<span
 						:data-init="fill[0]" :data-star="fill[1]"
 						:class="{'is-active': rank <= currentRank, 'is-half': isHalfStar}"
@@ -77,7 +77,7 @@ function rating(rank: number) {
 	align-items: center;
 	user-select: none;
 
-	.starts {
+	.stars {
 		font-weight: initial;
 		line-height: 1;
 
