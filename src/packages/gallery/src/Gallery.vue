@@ -7,6 +7,7 @@ const {current = 0, list = [], showSide = true, confirmRemove} = defineProps<{
 	current: number;
 	list: (string | Normal.PhotoObj)[];
 	showSide?: boolean;
+	showZoom?: boolean;
 	confirmRemove?: () => Promise<void>;
 }>();
 const emit = defineEmits(['close', 'delete']);
@@ -30,6 +31,7 @@ const currentIndex = ref(current);
 watch(() => currentIndex.value, () => {
 	nextTick(scrollSidebar);
 }, {immediate: true});
+let mainRect;
 const isFullscreen = ref(!!document.fullscreenElement);
 const photoIsReady = ref(false);
 const photoScaleRatio = ref(0);
@@ -124,19 +126,53 @@ function zoomOut() {
 	}
 }
 
+function getMainRect() {
+	let {width, height, top, bottom, left, right} = mainer.value?.getBoundingClientRect() ?? {};
+	width ??= document.documentElement.clientWidth;
+	height ??= document.documentElement.clientHeight;
+	top ??= 0;
+	bottom ??= height;
+	left ??= 0;
+	right ??= width;
+
+	return {
+		width,
+		height,
+		top,
+		bottom,
+		left,
+		right
+	}
+}
+
 function movePhoto(e: any) {
 	e.preventDefault();
 	const target = mainer.value?.querySelector('figure img') as HTMLElement;
-	const {width = 0, height = 0} = target?.getBoundingClientRect() ?? {};
-	const wrapWidth = mainer.value?.offsetWidth ?? document.documentElement.clientWidth;
-	const wrapHeight = mainer.value?.offsetHeight ?? document.documentElement.clientHeight;
+	const {width = 0, height = 0, top = 0, bottom = 0, left = 0, right = 0} = target?.getBoundingClientRect() ?? {};
+	mainRect ??= getMainRect();
 	// 正值是减，负值是加
 	// x轴允许滚动
-	if (width > wrapWidth) {
+	if (width > mainRect.width) {
+		// 目标到右边界不再移动
+		if (e.deltaX > 0 && right <= mainRect.right) {
+			return;
+		}
+		// 目标到左边界则不再移动
+		if (e.deltaX < 0 && left >= mainRect.left) {
+			return;
+		}
 		offsetX.value -= e.deltaX;
 	}
 	// y轴允许滚动
-	if (height > wrapHeight) {
+	if (height > mainRect.height) {
+		// 目标到底部边界则不再移动
+		if (e.deltaY > 0 && bottom <= mainRect.bottom) {
+			return;
+		}
+		// 目标到顶部边界则不再移动
+		if (e.deltaY < 0 && top >= mainRect.top) {
+			return;
+		}
 		offsetY.value -= e.deltaY;
 	}
 }
@@ -145,10 +181,16 @@ onBeforeMount(() => {
 	document.addEventListener('fullscreenchange', () => {
 		isFullscreen.value = !!document.fullscreenElement;
 	})
+	window.addEventListener('resize', () => {
+		mainRect = getMainRect();
+	})
 });
 onBeforeUnmount(() => {
 	document.removeEventListener('fullscreenchange', () => {
 		isFullscreen.value = !!document.fullscreenElement;
+	})
+	window.removeEventListener('resize', () => {
+		mainRect = getMainRect();
 	})
 });
 </script>
@@ -174,23 +216,25 @@ onBeforeUnmount(() => {
 					<img :src="currentPhoto?.origin" alt="" @load="ready" v-show="photoIsReady"/>
 				</figure>
 
+				<!-- 缩放工具 -->
+				<div class="vb-gallery__zoom" v-if="showZoom">
+					<a :class="{'is-disabled': photoScaleRatio <= -4}" @click="zoomOut">
+						<FasIcon icon="magnifying-glass-minus" size="xl"/>
+					</a>
+					<a :class="{'is-disabled': photoScaleRatio === 0}" @click="photoScaleRatio=0">
+						<FasIcon icon="magnifying-glass" size="xl"/>
+					</a>
+					<a :class="{'is-disabled': photoScaleRatio >= 5}" @click="zoomIn">
+						<FasIcon icon="magnifying-glass-plus" size="xl"/>
+					</a>
+				</div>
+
 				<!-- 工具栏 -->
 				<div class="vb-gallery__tools" @click.stop @wheel.stop.prevent v-if="photoIsReady">
 					<slot name="tools" :remove="() => deletePhoto(currentIndex)" :fullscreen="fullscreen">
 						<div class="tool-item">
 							<a aria-label="delete photo" @click="deletePhoto(currentIndex)">
 								<FasIcon icon="trash-can" size="xl"/>
-							</a>
-						</div>
-						<div class="tool-item is-grouped">
-							<a :class="{'is-disabled': photoScaleRatio <= -4}" @click="zoomOut">
-								<FasIcon icon="magnifying-glass-minus" size="xl"/>
-							</a>
-							<a :class="{'is-disabled': photoScaleRatio === 0}" @click="photoScaleRatio=0">
-								<FasIcon icon="magnifying-glass" size="xl"/>
-							</a>
-							<a :class="{'is-disabled': photoScaleRatio >= 5}" @click="zoomIn">
-								<FasIcon icon="magnifying-glass-plus" size="xl"/>
 							</a>
 						</div>
 						<div class="tool-item">
@@ -314,14 +358,48 @@ onBeforeUnmount(() => {
 		}
 	}
 
+	&__zoom {
+		position: fixed;
+		z-index: 1;
+		right: .5em;
+		top: 50%;
+		opacity: .25;
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+		padding: 1em .75rem;
+		background: hsla(var(--bulma-black-h), var(--bulma-black-s), calc(var(--bulma-black-l) + 15%), .85);
+		border-radius: var(--bulma-radius);
+		transition: opacity .3s;
+		transform: translateY(-50%);
+
+		&:hover {
+			opacity: 1;
+		}
+
+		a {
+			color: var(--bulma-grey-light);
+
+			&:hover {
+				color: var(--bulma-white);
+			}
+
+			&.is-disabled {
+				pointer-events: none;
+				opacity: .3;
+			}
+		}
+	}
+
 	&__tools {
 		position: absolute;
 		bottom: 0;
+		z-index: 3;
 		display: flex;
 		align-items: center;
 		justify-content: space-evenly;
-		gap: 1em;
-		padding: .7em 1em .3em;
+		gap: 2em;
+		padding: .7em 1.5em .3em;
 		background: hsla(var(--bulma-black-h), var(--bulma-black-s), calc(var(--bulma-black-l) + 15%), .85);
 		border-radius: var(--bulma-radius) var(--bulma-radius) 0 0;
 		box-shadow: var(--bulma-shadow);
@@ -348,11 +426,6 @@ onBeforeUnmount(() => {
 					opacity: .3;
 				}
 			}
-
-			&.is-grouped {
-				display: flex;
-				gap: .5em;
-			}
 		}
 	}
 }
@@ -372,6 +445,10 @@ onBeforeUnmount(() => {
 			&__item {
 				width: 5em;
 			}
+		}
+
+		&__zoom {
+			display: none;
 		}
 	}
 }
