@@ -9,12 +9,16 @@ const props = defineProps({
 	max      : Number,
 	fill     : {
 		type   : Array,
-		default: () => ['☆', '★']
+		default: () => ['★']
 	},
 	showScore: Boolean,
 	readonly : Boolean
 });
 const score = defineModel({default: 0});
+const shapes = computed(() => {
+	const [a, b] = props.fill;
+	return [a, b ?? a];
+});
 // 最大评分
 const maxScore = computed(() => props.max || props.star);
 // 当前评级
@@ -60,7 +64,7 @@ function rating(rank: number) {
 	<div class="vb-rating">
 		<div class="stars" :class="{'is-disabled': readonly}">
 				<span
-						:data-init="fill[0]" :data-star="fill[1]"
+						:data-init="shapes[0]" :data-star="shapes[1]"
 						:class="{'is-active': rank <= currentRank, 'is-half': isHalfStar}"
 						@click="rating(rank)"
 						v-for="rank in starStep"></span>
@@ -75,9 +79,13 @@ function rating(rank: number) {
 .vb-rating {
 	display: inline-flex;
 	align-items: center;
+	justify-content: space-between;
+	gap: 0.5em;
 	user-select: none;
 
 	.stars {
+		display: flex;
+		align-items: center;
 		font-weight: initial;
 		line-height: 1;
 
@@ -87,7 +95,7 @@ function rating(rank: number) {
 
 		span {
 			position: relative;
-			display: inline-block;
+			display: block;
 			cursor: pointer;
 			overflow: hidden;
 			font-size: 1em;
@@ -124,7 +132,7 @@ function rating(rank: number) {
 			&::before {
 				content: attr(data-init);
 				z-index: 1;
-				color: var(--rating-color);
+				color: var(--rating-color, #D3D3D3);
 			}
 
 			&::after {
@@ -143,8 +151,6 @@ function rating(rank: number) {
 	}
 
 	.score {
-		display: flex;
-		padding: 0 .5em;
 		line-height: initial;
 	}
 }
