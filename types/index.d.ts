@@ -73,7 +73,7 @@ declare module 'vue3-bulma-ui' {
 	const _default: Plugin<[]>;
 	export default _default;
 	export const {useDialog}: {
-		useDialog: () => {
+		useDialog: (textOpt:OP.DialogText) => {
 			$alert: OP.Alert;
 			$confirm: OP.Confirm;
 			$dialog: OP.Dialog;
