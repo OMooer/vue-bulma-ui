@@ -67,7 +67,7 @@ declare namespace OP {
 
 declare namespace Normal {
 	type AnyObj = { [key: string]: any };
-	type PhotoObj = { small: string; origin: string; };
+	type PhotoObj = { name?: string; small?: string; origin?: string; };
 }
 
 declare namespace VBTable {

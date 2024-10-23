@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, useTemplateRef, watch, watchEffect } from 'vue';
-import { isPromise, scaleGenerator } from '../../../utils';
+import { flattenVNode, isPromise, scaleGenerator } from '../../../utils';
 import Loading, { AnimateDot } from '../../loading';
 
-const {current = 0, list = [], showSide = true, confirmRemove} = defineProps<{
-	current: number;
+const {current = 0, list = [], showSide = true, showZoom, showToolbar = true, confirmRemove} = defineProps<{
+	current?: number;
 	list: (string | Normal.PhotoObj)[];
 	showSide?: boolean;
 	showZoom?: boolean;
+	showToolbar?: boolean;
 	confirmRemove?: () => Promise<void>;
 }>();
 const emit = defineEmits(['close', 'delete']);
+const slots = defineSlots();
 
 const gallery = useTemplateRef<HTMLElement>('galleryRef');
 const sidebar = useTemplateRef<HTMLElement>('sideRef');
@@ -20,11 +22,24 @@ watchEffect(() => {
 	photos.value = list.map((item: any) => {
 		if (typeof item === 'string') {
 			return {
+				name  : item.substring(item.lastIndexOf('/') + 1),
 				small : item,
 				origin: item
 			}
 		}
-		return item;
+		let {name, small, origin} = item;
+		if (!small && origin) {
+			small = origin;
+		}
+		if (small && !origin) {
+			origin = small;
+		}
+		name ??= origin.substring(origin.lastIndexOf('/') + 1);
+		return {
+			name,
+			small,
+			origin
+		};
 	});
 });
 const currentIndex = ref(current);
@@ -41,6 +56,20 @@ const offsetY = ref(0);
 const currentPhoto = computed(() => photos.value?.[currentIndex.value]);
 const scale = computed(() => {
 	return scaleGenerator(photoScaleRatio.value);
+});
+const showTools = computed(() => {
+	// 如果选项设置了不显示则直接不显示
+	if (!showToolbar) {
+		return false;
+	}
+	const tools = slots.tools;
+	// 没有设置插槽显示默认的
+	if (!tools) {
+		return true;
+	}
+	// 有插槽且有内容就显示
+	const len = flattenVNode(tools?.());
+	return len.length > 0;
 });
 
 watch(() => photoScaleRatio.value, () => {
@@ -204,7 +233,7 @@ onBeforeUnmount(() => {
 						class="vb-gallery__side__item" :class="{'is-active': index === currentIndex}" @click="switchShow(index)"
 						v-for="(item, index) in photos" :key="item.small">
 					<figure class="image is-3by2">
-						<img :src="item.small" :alt="index.toString()">
+						<img :src="item.small" :alt="item.name">
 					</figure>
 				</a>
 			</div>
@@ -213,7 +242,7 @@ onBeforeUnmount(() => {
 					<Loading @wheel.stop.prevent v-if="!photoIsReady">
 						<AnimateDot class="rainbow"/>
 					</Loading>
-					<img :src="currentPhoto?.origin" alt="" @load="ready" v-show="photoIsReady"/>
+					<img :src="currentPhoto?.origin" :alt="currentPhoto?.name" @load="ready" v-show="photoIsReady"/>
 				</figure>
 
 				<!-- 缩放工具 -->
@@ -230,7 +259,7 @@ onBeforeUnmount(() => {
 				</div>
 
 				<!-- 工具栏 -->
-				<div class="vb-gallery__tools" @click.stop @wheel.stop.prevent v-if="photoIsReady">
+				<div class="vb-gallery__tools" @click.stop @wheel.stop.prevent v-if="photoIsReady && showTools">
 					<slot name="tools" :remove="() => deletePhoto(currentIndex)" :fullscreen="fullscreen">
 						<div class="tool-item">
 							<a aria-label="delete photo" @click="deletePhoto(currentIndex)">

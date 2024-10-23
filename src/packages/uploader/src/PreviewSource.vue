@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue';
-import Modal from '../../modal';
+import Gallery from '../../gallery';
 
 declare interface Props {
 	source: string | { name: string; url: string };
@@ -59,23 +59,26 @@ function deleteSource() {
 				<span class="file-icon"><FasIcon icon="file-arrow-down"/></span>
 			</span>
 			<span class="file-name">{{ sourceName }}
-				<button type="button" class="file-delete button is-ghost" :class="{'is-small' : isReallySmall}" @click.stop.prevent="deleteSource" v-if="canDelete">
+				<button
+						type="button" class="file-delete button is-ghost" :class="{'is-small' : isReallySmall}"
+						@click.stop.prevent="deleteSource" v-if="canDelete">
 					<FasIcon icon="trash-can"/>
 				</button>
 			</span>
 		</a>
 	</div>
 	<!-- 预览 -->
-	<Modal mask-close style="width: auto" @close="isPreview = false" v-if="isPreview">
-		<div class="upload-preview">
-			<figure class="image">
-				<img :src="sourceUrl" :alt="sourceName">
-			</figure>
+	<Gallery
+			:list="[{origin:sourceUrl, name:sourceName}]"
+			:show-side="false" show-zoom
+			@close="isPreview = false"
+			v-if="isPreview">
+		<template #tools>
 			<a class="trash-upload" @click="deleteSource" v-if="canDelete">
 				<FasIcon icon="trash-can"/>
 			</a>
-		</div>
-	</Modal>
+		</template>
+	</Gallery>
 </template>
 
 <style scoped lang="scss">
@@ -145,43 +148,17 @@ function deleteSource() {
 	}
 }
 
-.upload-preview {
-	overflow: hidden;
-	margin: -1.5rem;
-	border-radius: .25rem;
+.trash-upload {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	box-sizing: border-box;
+	font-size: 1.5rem;
+	color: $white;
 
 	&:hover {
-		.trash-upload {
-			transform: none;
-		}
-	}
-
-	.image {
-		width: fit-content;
-		max-width: 100%;
-		max-height: 100%;
-	}
-
-
-	.trash-upload {
-		position: fixed;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 1rem;
-		box-sizing: border-box;
-		background-color: rgba(0, 0, 0, .5);
-		font-size: 1.5rem;
-		color: $white;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		transform: translateY(100%);
-		transition: transform .3s ease;
-
-		&:hover {
-			color: $danger;
-		}
+		color: $danger;
 	}
 }
 </style>
