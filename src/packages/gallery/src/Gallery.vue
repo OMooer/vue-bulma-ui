@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, useTemplateRef, watch, watchEffect } from 'vue';
-import { flattenVNode, isPromise, scaleGenerator } from '../../../utils';
+import { debounce, flattenVNode, isPromise, scaleGenerator } from '../../../utils';
 import Loading, { AnimateDot } from '../../loading';
 
 const {current = 0, list = [], showSide = true, showZoom, showToolbar = true, confirmRemove} = defineProps<{
@@ -206,21 +206,29 @@ function movePhoto(e: any) {
 	}
 }
 
+function fullscreenChangeHandler() {
+	isFullscreen.value = !!document.fullscreenElement;
+}
+
+function resizeHandler(e: Event) {
+	// 如果窗口变得跟屏幕一样大，那么认为是使用了系统级的全屏，同样设置全屏状态
+	if (window.innerWidth === window.screen.width && window.innerHeight === window.screen.height) {
+		if (!isFullscreen.value) {
+			fullscreen();
+		}
+	}
+	mainRect = getMainRect();
+}
+
+const resizeFn = debounce(resizeHandler, 300);
+
 onBeforeMount(() => {
-	document.addEventListener('fullscreenchange', () => {
-		isFullscreen.value = !!document.fullscreenElement;
-	})
-	window.addEventListener('resize', () => {
-		mainRect = getMainRect();
-	})
+	document.addEventListener('fullscreenchange', fullscreenChangeHandler)
+	window.addEventListener('resize', resizeFn)
 });
 onBeforeUnmount(() => {
-	document.removeEventListener('fullscreenchange', () => {
-		isFullscreen.value = !!document.fullscreenElement;
-	})
-	window.removeEventListener('resize', () => {
-		mainRect = getMainRect();
-	})
+	document.removeEventListener('fullscreenchange', fullscreenChangeHandler)
+	window.removeEventListener('resize', resizeFn)
 });
 </script>
 
@@ -297,7 +305,7 @@ onBeforeUnmount(() => {
 	grid-template-rows: 1fr;
 	grid-template-areas: "side main";
 
-	&.is-fullscreen {
+	:fullscreen &, &:fullscreen, &.is-fullscreen {
 		grid-template-columns: 0 1fr;
 
 		.vb-gallery__side {
