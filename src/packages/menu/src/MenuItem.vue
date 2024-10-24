@@ -14,14 +14,18 @@ const props = withDefaults(defineProps<{
 
 const menuList = ref(props.data);
 menuList.value.forEach(item => {
-	// 如果 title 是包含多语言的在这里处理
-	if (typeof item.title === 'object') {
-		item.title = getI18nData(item.title, props.locale);
-	}
 	if (item.children?.length) {
 		item.folded = true;
 	}
 });
+
+function getMenuTitle(title: string | { [propName: string]: string }): string {
+	// 如果 title 是包含多语言的在这里处理
+	if (typeof title === 'object') {
+		return getI18nData(title, props.locale);
+	}
+	return title;
+}
 </script>
 
 <template>
@@ -30,21 +34,23 @@ menuList.value.forEach(item => {
 			<Link
 					class="menu-link" :exactClass
 					:to="item.external === true ? item.url : {name: item.name}"
-					:title="item.title"
+					:title="getMenuTitle(item.title)"
 					@state="item.folded =! $event">
 				<span class="menu-title">
 					<span class="icon" v-if="item.icon">
 						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
 						<Component :is="item.icon" v-else/>
 					</span>
-					<span class="text" :data-code="(item.title as string).substring?.(0,1)">{{ item.title }}</span>
+					<span class="text" :data-code="getMenuTitle(item.title)?.substring?.(0,1)">
+						{{ getMenuTitle(item.title) }}
+					</span>
 				</span>
 				<span class="icon next-icon" :class="{'roll-down': !item?.folded}" v-if="item.children?.length">
 					<FasIcon icon="angle-right"/>
 				</span>
 			</Link>
 			<div class="next-menu" v-if="item.children?.length">
-				<MenuItem :data="item.children" :exactClass :activeClass/>
+				<MenuItem :locale :data="item.children" :exactClass :activeClass/>
 			</div>
 		</li>
 	</ul>
