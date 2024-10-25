@@ -94,7 +94,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 						v-for="(item, idx) in tableConfig?.columns">
 					<!-- 如果有插槽则显示插槽的内容，否则显示纯数据值 -->
 					<template v-if="item.slot">
-						<slot :name="item.slot" :col="data" :val="data[item.field]">未设置插槽内容</slot>
+						<slot :name="item.slot" :row="data" :val="data[item.field]">未设置插槽内容</slot>
 					</template>
 					<template v-else>{{ data[item.field] }}</template>
 				</td>
