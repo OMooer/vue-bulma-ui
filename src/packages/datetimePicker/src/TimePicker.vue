@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue';
-import { isOverWindow, OUT_OF_RANGE } from '../../../utils';
+import { isOverBoxSize, OUT_OF_RANGE } from '../../../utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
@@ -100,14 +100,16 @@ const event = (ev: Event) => {
 watch(isOpen, (is) => {
 	if (is) {
 		// 计算位置决定展开方向
-		const target = entity.value;
-		const offset = target.querySelector('.dropdown-menu').offsetHeight;
-		isUp.value = isOverWindow(target, offset);
+		const target = entity.value?.querySelector('.dropdown-menu');
+		requestAnimationFrame(() => {
+			isUp.value = isOverBoxSize(target, 0)('bottom');
+		});
 		document.addEventListener('click', event, {capture: true});
 		// 滚动到指定位置
 		scrollOptions(target);
 	}
 	else {
+		isUp.value = false;
 		document.removeEventListener('click', event, {capture: true});
 	}
 });

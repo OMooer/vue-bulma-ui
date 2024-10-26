@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, onUpdated, ref, watch } from 'vue';
-import { isOverWindow, vFocus } from '../../../utils';
+import { isOverBoxSize, vFocus } from '../../../utils';
 import Empty from '../../empty';
 
 const isParentSmall = inject('isSmall', false);
@@ -61,12 +61,14 @@ const event = (ev: Event) => {
 watch(isOpen, (is) => {
 	if (is) {
 		// 计算位置决定展开方向
-		const target = entity.value;
-		const offset = target.querySelector('.dropdown-menu').offsetHeight;
-		isUp.value = isOverWindow(target, offset);
+		const target = entity.value?.querySelector('.dropdown-menu');
+		requestAnimationFrame(() => {
+			isUp.value = isOverBoxSize(target, 0)('bottom');
+		});
 		document.addEventListener('click', event, {capture: true});
 	}
 	else {
+		isUp.value = false;
 		keyword.value = '';
 		document.removeEventListener('click', event, {capture: true});
 	}

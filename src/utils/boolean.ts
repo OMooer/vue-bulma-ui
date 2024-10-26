@@ -16,15 +16,22 @@ export function isTruthy(property: any) {
 }
 
 /**
- * 检测目标元素是否超出页面底部
+ * 检测目标元素是否超出容器的边距
  * @param target
  * @param offset 附加偏移数值
+ * @param box 容器元素，默认是页面根元素
  */
-export function isOverWindow(target: HTMLElement, offset: number) {
-	const html = document.documentElement;
-	const pageHeight = Math.max(html.clientHeight, html.scrollHeight);
-	const bottom = html.scrollTop + target.getBoundingClientRect().top + target.offsetHeight + offset;
-	return bottom > pageHeight;
+export function isOverBoxSize(target: HTMLElement, offset: number, box?: HTMLElement) {
+	box ??= document.documentElement;
+	return (direction: 'top' | 'bottom' | 'left' | 'right') => {
+		const boxRect = box.getBoundingClientRect();
+		const targetRect = target.getBoundingClientRect();
+		const targetPos = targetRect?.[direction];
+		if (!targetPos) {
+			return false;
+		}
+		return targetPos + offset > boxRect[direction];
+	}
 }
 
 /**

@@ -1,23 +1,39 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { isOverWindow } from '../../../utils';
+import { computed, ref, useAttrs, watch } from 'vue';
+import { isOverBoxSize } from '../../../utils';
 
-withDefaults(defineProps<{
+defineOptions({
+	inheritAttrs: false
+});
+const props = withDefaults(defineProps<{
 	list: TVO.DropdownItem[];
 	hasArrow?: boolean;
+	isHoverable?: boolean;
+	parentElement?: string;
 }>(), {hasArrow: true});
 const emit = defineEmits(['active']);
+const attrs = useAttrs();
 const isOpen = ref(false);
 const isUp = ref(false);
+const isRight = ref(false);
 const canMenuHoverIt = ref(true);
 const entity = ref();
 
 const classList = computed(() => {
+	const cls = attrs.class as string;
+	const clsArray = cls ? cls.split(' ') : [];
+	const filterCls = Array.from(new Set(clsArray)).filter((c: string) => !['is-right', 'is-hoverable'].includes(c));
+	const appendClass = filterCls.reduce((result: any, name: string) => {
+		result[name] = true;
+		return result;
+	}, {});
 	return {
 		'vb-dropdown': true,
 		'dropdown'   : true,
 		'is-active'  : isOpen.value,
-		'is-up'      : isUp.value
+		'is-up'      : isUp.value,
+		'is-right'   : isRight.value,
+		...appendClass
 	}
 });
 
@@ -30,12 +46,18 @@ const event = (ev: Event) => {
 watch(isOpen, (is) => {
 	if (is) {
 		// 计算位置决定展开方向
-		const target = entity.value;
-		const offset = target.querySelector('.dropdown-menu').offsetHeight;
-		isUp.value = isOverWindow(target, offset);
+		// const target = entity.value;
+		const target = entity.value?.querySelector('.dropdown-menu');
+		requestAnimationFrame(() => {
+			const overBox = isOverBoxSize(target, 0, document.querySelector(props.parentElement as string) as HTMLElement)
+			isUp.value = overBox('bottom');
+			isRight.value = overBox('right');
+		});
 		document.addEventListener('click', event, {capture: true});
 	}
 	else {
+		isUp.value = false;
+		isRight.value = false;
 		document.removeEventListener('click', event, {capture: true});
 	}
 });
@@ -47,6 +69,18 @@ function toggleDropdown() {
 function selectValue(value: any) {
 	emit('active', value);
 	isOpen.value = false;
+}
+
+function hoverHandler() {
+	if (props.isHoverable && !isOpen.value) {
+		isOpen.value = true;
+	}
+}
+
+function leaveHandler() {
+	if (props.isHoverable && isOpen.value) {
+		isOpen.value = false;
+	}
 }
 
 function menuClicked(e: any) {
@@ -61,7 +95,7 @@ function menuClicked(e: any) {
 </script>
 
 <template>
-	<div ref="entity" :class="classList" @click="menuClicked">
+	<div ref="entity" :class="classList" @click="menuClicked" @mouseenter="hoverHandler" @mouseleave="leaveHandler">
 		<div class="dropdown-trigger">
 			<button
 					type="button" @click="toggleDropdown"

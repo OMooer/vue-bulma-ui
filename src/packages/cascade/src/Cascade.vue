@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, provide, ref, watch } from 'vue';
-import { isOverWindow } from '../../../utils';
+import { isOverBoxSize } from '../../../utils';
 import Empty from '../../empty';
 import SelectorUI from '../../select';
 
@@ -64,12 +64,14 @@ const captureEvent = (ev: Event) => {
 watch(isOpen, (is) => {
 	if (is) {
 		// 计算位置决定展开方向
-		const target = entity.value;
-		const offset = target.querySelector('.dropdown-menu').offsetHeight;
-		isUp.value = isOverWindow(target, offset);
+		const target = entity.value?.querySelector('.dropdown-menu');
+		requestAnimationFrame(() => {
+			isUp.value = isOverBoxSize(target, 0)('bottom');
+		});
 		document.addEventListener('click', captureEvent, {capture: true});
 	}
 	else {
+		isUp.value = false;
 		document.removeEventListener('click', captureEvent, {capture: true});
 	}
 });

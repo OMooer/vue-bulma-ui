@@ -137,7 +137,6 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 
 		tr.is-checked {
 			td {
-				//background-color: lighten($info, 25%);
 				background-color: hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-scheme-main-ter-l));
 			}
 		}
@@ -151,6 +150,10 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				background-color: var(--bulma-table-background-color);
 				box-shadow: -1px 0 0 0 $split-color inset, 1px 0 0 0 $split-color inset;
 				border-right: 0;
+
+				&:has(.dropdown.is-active) {
+					z-index: 12;
+				}
 
 				& + th, & + td {
 					border-left: 0;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
-import { isOverWindow, isTruthy, vFocus } from '../../../utils';
+import { isOverBoxSize, isTruthy, vFocus } from '../../../utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
@@ -156,12 +156,14 @@ watch(isOpen, (is) => {
 	if (is) {
 		tagEntity.value.focus();
 		// 计算位置决定展开方向
-		const target = tagEntity.value;
-		const offset = target.closest('.vb-tags').querySelector('.dropdown-menu').offsetHeight;
-		isUp.value = isOverWindow(target, offset);
+		const target = tagEntity.value?.closest('.vb-tags').querySelector('.dropdown-menu');
+		requestAnimationFrame(() => {
+			isUp.value = isOverBoxSize(target, 0)('bottom');
+		});
 		document.addEventListener('click', event, {capture: true});
 	}
 	else {
+		isUp.value = false;
 		keyword.value = '';
 		document.removeEventListener('click', event, {capture: true});
 	}
