@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, provide, ref, watch } from 'vue';
+import { provide, ref, watch } from 'vue';
 
 const emit = defineEmits(['dismiss']);
 const props = defineProps({
+	top     : Boolean,
+	start   : {
+		type   : Boolean,
+		default: true
+	},
 	finished: Boolean,
+	progress: Number,
 	timeout : {
 		type   : Number,
 		default: 10000
@@ -12,18 +18,16 @@ const props = defineProps({
 const percent = ref(0);
 const status = ref('load');
 const isEnd = ref(false);
+const isLoading = ref(false);
 let timer: any;
 
-onMounted(() => {
-	runBar();
-});
-onUnmounted(() => {
-	percent.value = 0;
-	status.value = 'load';
-});
-
-watch(() => props.finished, () => {
-	if (props.finished) {
+watch(() => props.start, (isStarted) => {
+	if (isStarted) {
+		runBar();
+	}
+}, {immediate: true});
+watch(() => props.finished, (isFinished) => {
+	if (isFinished) {
 		// 如果异步数据已经加载完成，但进度条还在执行，则设置标识
 		if (percent.value < 90) {
 			isEnd.value = true;
@@ -36,6 +40,10 @@ watch(() => props.finished, () => {
 }, {immediate: true});
 
 function runBar() {
+	isEnd.value = false;
+	percent.value = 0;
+	status.value = 'load';
+	isLoading.value = true;
 	// 启动模拟进度条定时器
 	if (timer) {
 		clearInterval(timer);
@@ -51,6 +59,12 @@ function runBar() {
 			}
 			// 否则设置等待超时操作
 			else {
+				// 同时如果存在进度属性则一边监听进度条
+				watch(() => props.progress, (newPercent) => {
+					if (newPercent) {
+						percent.value = Math.max(newPercent, percent.value);
+					}
+				}, {immediate: true});
 				timeout();
 			}
 		}
@@ -79,6 +93,7 @@ function dismiss() {
 		timer = null;
 	}
 	setTimeout(() => {
+		isLoading.value = false;
 		emit('dismiss', status.value);
 	}, 300);
 }
@@ -89,7 +104,7 @@ provide('status', status);
 </script>
 
 <template>
-	<div class="vb-loading">
+	<div class="vb-loading" :class="{'top-loading': top}" v-if="isLoading">
 		<slot>
 			<p class="normal"></p>
 		</slot>
