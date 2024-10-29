@@ -121,9 +121,9 @@ export default defineComponent({
 			if (props.isRange) {
 				emit('update:modelValue', innerRange.value);
 			}
-			else if (innerDate.value && innerTime.value) {
+			else if (innerDate.value) {
 				let datetime = innerDate.value;
-				if (formatType.value === 'datetime-local') {
+				if (formatType.value === 'datetime-local' && innerTime.value) {
 					datetime += 'T' + innerTime.value;
 				}
 				emit('update:modelValue', datetime);
