@@ -30,7 +30,10 @@ export function isOverBoxSize(target: HTMLElement, offset: number, box?: HTMLEle
 		if (!targetPos) {
 			return false;
 		}
-		return targetPos + offset > boxRect[direction];
+		const boxRectSide = boxRect[direction];
+		const checkPosition = targetPos + offset;
+
+		return ['top', 'left'].includes(direction) ? (checkPosition < boxRectSide) : (checkPosition > boxRectSide);
 	}
 }
 

@@ -16,6 +16,7 @@ const attrs = useAttrs();
 const isOpen = ref(false);
 const isUp = ref(false);
 const isRight = ref(false);
+const isFixed = ref(false);
 const canMenuHoverIt = ref(true);
 const entity = ref();
 
@@ -33,6 +34,7 @@ const classList = computed(() => {
 		'is-active'  : isOpen.value,
 		'is-up'      : isUp.value,
 		'is-right'   : isRight.value,
+		'is-fixed'   : isFixed.value,
 		...appendClass
 	}
 });
@@ -46,18 +48,22 @@ const event = (ev: Event) => {
 watch(isOpen, (is) => {
 	if (is) {
 		// 计算位置决定展开方向
-		// const target = entity.value;
 		const target = entity.value?.querySelector('.dropdown-menu');
+		const overBox = isOverBoxSize(target, 0, document.querySelector(props.parentElement as string) as HTMLElement)
 		requestAnimationFrame(() => {
-			const overBox = isOverBoxSize(target, 0, document.querySelector(props.parentElement as string) as HTMLElement)
 			isUp.value = overBox('bottom');
 			isRight.value = overBox('right');
+			setTimeout(() => {
+				// 需要重新定位
+				isFixed.value = isUp.value && overBox('top');
+			})
 		});
 		document.addEventListener('click', event, {capture: true});
 	}
 	else {
 		isUp.value = false;
 		isRight.value = false;
+		isFixed.value = false;
 		document.removeEventListener('click', event, {capture: true});
 	}
 });
@@ -143,6 +149,16 @@ function menuClicked(e: any) {
 			.filter-line {
 				order: 1;
 			}
+		}
+	}
+
+	&.is-fixed.dropdown {
+		.dropdown-menu {
+			position: fixed;
+			top: unset;
+			bottom: unset;
+			width: unset;
+			transform: translate(-50%, -50%);
 		}
 	}
 
