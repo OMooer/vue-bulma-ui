@@ -147,15 +147,14 @@ function reset() {
 			<div class="field is-grouped" :class="{'column': hasConfigItems}">
 				<slot name="buttons">
 					<template v-if="config?.buttons.length">
-						<div class="control" v-for="btn in config.buttons">
-							<button :type="btn.type" :class="[btn.class, isSmall ? 'is-small' : '']" @click="btn?.handler">{{
-									btn.text
-								}}
+						<div class="control" :class="{'is-expanded': btn.fulled}" v-for="btn in config.buttons">
+							<button :type="btn.type" :class="[btn.class, isSmall ? 'is-small' : '']" @click="btn?.handler">
+								{{ btn.text }}
 							</button>
 						</div>
 					</template>
-					<div class="control" v-else>
-						<button type="submit" class="button is-success" :class="{'is-small': isSmall}">{{ submitText }}</button>
+					<div class="control is-expanded" v-else>
+						<button type="submit" class="button is-success is-fullwidth" :class="{'is-small': isSmall}">{{ submitText }}</button>
 					</div>
 				</slot>
 			</div>

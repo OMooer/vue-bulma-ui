@@ -98,6 +98,7 @@ function rating(rank: number) {
 			display: block;
 			cursor: pointer;
 			overflow: hidden;
+			font-family: Arial, "Helvetica Neue", "Courier New", sans-serif;
 			font-size: 1em;
 			width: 1em;
 			height: 1em;

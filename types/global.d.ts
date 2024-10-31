@@ -90,6 +90,7 @@ declare namespace VBForm {
 	type Btn = {
 		text: string;
 		type: 'submit' | 'reset' | 'button',
+		fulled?: boolean;
 		class?: string;
 		handler?: () => void;
 	}
