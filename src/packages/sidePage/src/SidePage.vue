@@ -37,8 +37,10 @@ onBeforeMount(() => {
 	ready.value = true;
 });
 
-function dismiss() {
-	ready.value = false;
+function dismiss(e: any) {
+	if (!e || !e.target.closest('.sp-scroll-view')) {
+		ready.value = false;
+	}
 }
 </script>
 
@@ -46,7 +48,7 @@ function dismiss() {
 	<Teleport to="body">
 		<div class="side-page" @click="dismiss">
 			<Transition :name="animateName" @after-leave="$emit('close')" appear>
-				<div class="sp-container" :class="contClassName" @click.stop v-show="ready">
+				<div class="sp-container" :class="contClassName" v-show="ready">
 					<!-- 关闭按钮 -->
 					<a class="delete is-medium" aria-label="Close" @click="dismiss" v-if="hasClose"></a>
 					<div class="sp-scroll-view">
