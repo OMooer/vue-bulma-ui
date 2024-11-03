@@ -1,14 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 
-defineProps({
-	list: {
+const props = defineProps({
+	currentIndex: {
+		type   : Number,
+		default: 0
+	},
+	list        : {
 		type   : Array,
 		default: () => []
 	}
 });
 const emit = defineEmits(['change']);
 const activeIndex = ref(0);
+
+watchEffect(() => {
+	if (typeof props.currentIndex !== 'undefined') {
+		setTimeout(() => {
+			changeTab(props.currentIndex);
+		});
+	}
+});
 
 function changeTab(index: number) {
 	activeIndex.value = index;
