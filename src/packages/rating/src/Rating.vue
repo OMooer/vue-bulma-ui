@@ -128,6 +128,8 @@ function rating(rank: number) {
 			&::before, &::after {
 				position: absolute;
 				overflow: hidden;
+				text-align: center;
+				width: 1em;
 			}
 
 			&::before {
