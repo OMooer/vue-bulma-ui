@@ -121,7 +121,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 
 	.table {
 		table-layout: fixed;
-		width: fit-content;
+		width: auto;
 		min-width: 100%;
 
 		thead {
@@ -143,6 +143,8 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 
 		th, td {
 			word-break: break-all;
+			vertical-align: middle;
+			white-space: nowrap;
 
 			&.is-sticky {
 				position: sticky;

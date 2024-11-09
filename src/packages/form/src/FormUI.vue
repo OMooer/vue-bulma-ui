@@ -11,6 +11,7 @@ const emit = defineEmits(['submit', 'reset']);
 const props = withDefaults(defineProps<{
 	config?: VBForm.Config;
 	submitText?: string;
+	disableSubmit?: boolean;
 }>(), {submitText: '提交'});
 const modelValue = defineModel<Normal.AnyObj>();
 const innerValue = ref<Normal.AnyObj>({});
@@ -45,6 +46,9 @@ const colClassName = computed(() => {
 
 //表单提交
 function submit(e: any) {
+	if (props.disableSubmit) {
+		return;
+	}
 	emit("submit", e);
 }
 
@@ -61,7 +65,10 @@ function reset() {
 	<form action="" @submit.prevent="submit" @reset.prevent="reset" :class="classList">
 		<!-- 配置表单项 -->
 		<template v-for="item in config?.items" v-if="hasConfigItems">
-			<slot :name="item.slot" :class="['column mb-0', item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]" v-if="'slot' in item"/>
+			<slot
+					:name="item.slot"
+					:class="['column mb-0', item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]"
+					v-if="'slot' in item"/>
 			<FormElement
 					class="column mb-0" :class="[item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]"
 					:label="item.label" :isSmall
@@ -154,7 +161,12 @@ function reset() {
 						</div>
 					</template>
 					<div class="control is-expanded" v-else>
-						<button type="submit" class="button is-success is-fullwidth" :class="{'is-small': isSmall}">{{ submitText }}</button>
+						<button
+								type="submit" class="button is-success is-fullwidth"
+								:class="{'is-small': isSmall}"
+								:disabled="disableSubmit">
+							{{ submitText }}
+						</button>
 					</div>
 				</slot>
 			</div>
