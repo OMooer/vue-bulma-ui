@@ -154,8 +154,14 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 	}
 
 	&.is-disabled {
-		opacity: .5;
-		cursor: no-drop;
+		cursor: not-allowed;
+		background-color: var(--bulma-background);
+		border-color: var(--bulma-background);
+		color: var(--bulma-text-weak);
+
+		&::after {
+			box-shadow: none;
+		}
 	}
 }
 </style>

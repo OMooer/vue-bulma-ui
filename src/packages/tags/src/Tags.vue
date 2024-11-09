@@ -264,7 +264,7 @@ defineExpose({
 	align-items: center;
 	justify-content: space-between;
 	border: solid 1px $input-border-color;
-	border-radius: 4px;
+	border-radius: var(--bulma-radius);
 	cursor: default;
 	transition: border var(--bulma-duration);
 
@@ -277,8 +277,8 @@ defineExpose({
 	}
 
 	&:focus-within, &.is-active {
-		border-color: $link;
-		box-shadow: 0 0 0 0.125em rgba($link, .25);
+		border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+		box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
 	}
 
 	&.is-danger {
@@ -315,14 +315,15 @@ defineExpose({
 	}
 
 	&.is-disabled {
-		opacity: .7;
-		background-color: var(--bulma-input-disabled-background-color);
-		border-color: var(--bulma-input-disabled-border-color);
-		cursor: no-drop;
+		background-color: var(--bulma-background);
+		border-color: var(--bulma-background);
+		color: var(--bulma-text-weak);
+		cursor: not-allowed;
 
 		> .icon {
 			pointer-events: none;
-			cursor: no-drop;
+			cursor: not-allowed;
+			opacity: .7;
 		}
 
 		.dropdown-trigger > .input {

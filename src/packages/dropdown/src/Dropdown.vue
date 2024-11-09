@@ -164,19 +164,9 @@ function menuClicked(e: any) {
 
 	&.is-active {
 		.dropdown-trigger > .button {
-			border-color: $link;
-			box-shadow: 0 0 0 0.125em rgba($link, .25);
-
 			.icon {
 				transform: rotate(-180deg);
 			}
-		}
-	}
-
-	&.is-disabled {
-		.dropdown-trigger > .button {
-			background-color: var(--bulma-input-disabled-background-color);
-			border-color: var(--bulma-input-disabled-border-color);
 		}
 	}
 

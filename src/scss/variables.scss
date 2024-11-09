@@ -10,7 +10,7 @@ $link-dark: darken($link, 10%);
 $danger-light: lighten($danger, 10%);
 
 $split-color: cv.getVar("border-weak");
-$input-border-color: hsl(var(--bulma-input-h), var(--bulma-input-s), calc(var(--bulma-input-border-l) + var(--bulma-input-border-l-delta)));
+$input-border-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), calc(var(--bulma-border-l) + var(--bulma-input-border-l-delta, 0%)));
 $placeholder-color: hsla(var(--bulma-text-h), var(--bulma-text-s), var(--bulma-text-strong-l), 0.3);
 
 @mixin file-bg-color() {

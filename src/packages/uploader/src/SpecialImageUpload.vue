@@ -155,7 +155,7 @@ function remove() {
 	@include file-bg-color();
 	overflow: hidden;
 	margin: .5rem 0;
-	border-radius: $radius;
+	border-radius: var(--bulma-radius);
 	border: dashed 1px $split-color;
 
 	&:hover {

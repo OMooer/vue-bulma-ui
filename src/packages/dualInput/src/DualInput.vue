@@ -63,7 +63,7 @@ defineExpose({
 	position: relative;
 	overflow: hidden;
 	padding: calc(.5em - 1px) .5em;
-	border-radius: 4px;
+	border-radius: var(--bulma-radius);
 	height: 100%;
 
 	.field.has-addons .control:not(:last-child) & {

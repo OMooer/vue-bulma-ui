@@ -251,7 +251,7 @@ defineExpose({
 			<div class="dropdown cascade-dropdown is-block" :class="classList">
 				<select
 						class="entity-shadow" tabindex="-1" aria-hidden="true" required
-						@focus="frontFocus" v-if="!modelValue && required"></select>
+						@focus="frontFocus" v-if="modelValue == undefined && required"></select>
 				<div class="dropdown-trigger">
 					<button
 							ref="frontRef" type="button" class="button is-fullwidth is-justify-content-space-between"
@@ -317,10 +317,23 @@ defineExpose({
 @import "../../../scss/variables";
 
 .vb-cascade {
-	.cascade-dropdown.is-small {
-		.button, .input, .dropdown-item {
-			line-height: 1.5;
-			font-size: 0.75rem;
+	.cascade-dropdown {
+		&.is-small {
+			.button, .input, .dropdown-item {
+				line-height: 1.5;
+				font-size: 0.75rem;
+			}
+		}
+
+		&.is-active {
+			.dropdown-trigger .button {
+				border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+				box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
+
+				.icon {
+					transform: rotate(-180deg);
+				}
+			}
 		}
 	}
 
@@ -339,14 +352,20 @@ defineExpose({
 			box-shadow: none;
 
 			&[disabled] {
-				background-color: var(--bulma-input-disabled-background-color);
-				border-color: var(--bulma-input-disabled-border-color);
-				opacity: .7;
+				background-color: var(--bulma-background);
+				border-color: var(--bulma-background);
+				color: var(--bulma-text-weak);
+				opacity: 1;
+
+				.icon {
+					opacity: .7;
+				}
 			}
 		}
 
 		.icon {
 			color: $link;
+			transition: transform .3s ease;
 		}
 	}
 

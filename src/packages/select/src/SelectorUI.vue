@@ -103,7 +103,7 @@ defineExpose({
 	<div ref="entity" :class="classList" :data-required="required">
 		<select
 				class="entity-shadow" tabindex="-1" aria-hidden="true" required
-				@focus="frontFocus" v-if="!modelValue && required"></select>
+				@focus="frontFocus" v-if="modelValue == undefined && required"></select>
 		<div class="dropdown-trigger">
 			<button
 					ref="frontRef" type="button" @click="toggleDropdown" :disabled="disabled"
@@ -174,8 +174,8 @@ defineExpose({
 
 	&.is-active {
 		.dropdown-trigger > .button {
-			border-color: $link;
-			box-shadow: 0 0 0 0.125em rgba($link, .25);
+			border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+			box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
 
 			.icon {
 				transform: rotate(-180deg);
@@ -185,9 +185,14 @@ defineExpose({
 
 	&.is-disabled {
 		.dropdown-trigger > .button {
-			background-color: var(--bulma-input-disabled-background-color);
-			border-color: var(--bulma-input-disabled-border-color);
-			opacity: .7;
+			background-color: var(--bulma-background);
+			border-color: var(--bulma-background);
+			color: var(--bulma-text-weak);
+			opacity: 1;
+
+			.icon {
+				opacity: .7;
+			}
 		}
 	}
 

@@ -16,7 +16,7 @@ declare type Prop = (CheckBox | Radio) & {
 }
 const isParentSmall = inject('isSmall', false);
 const emit = defineEmits(['error']);
-const props = withDefaults(defineProps<Prop>(), {name: Math.random().toString(36).slice(2)});
+const props = withDefaults(defineProps<Prop>(), {name: Math.random().toString(36).slice(2), type: 'checkbox'});
 const modelValue = defineModel({default: () => []});
 const isError = ref(false);
 const className = computed(() => {
@@ -90,6 +90,12 @@ defineExpose({
 			input {
 				margin-right: 0.25rem;
 			}
+		}
+	}
+
+	&:has([disabled]) {
+		label {
+			cursor: not-allowed;
 		}
 	}
 }

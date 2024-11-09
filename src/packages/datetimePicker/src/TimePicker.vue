@@ -404,10 +404,16 @@ defineExpose({
 	}
 
 	&.is-disabled {
-		.dropdown-trigger > .button {
-			background-color: var(--bulma-input-disabled-background-color);
-			border-color: var(--bulma-input-disabled-border-color);
-			opacity: .7;
+		cursor: not-allowed;
+
+		.dropdown-trigger > .time-field {
+			background-color: var(--bulma-background);
+			border-color: var(--bulma-background);
+			color: var(--bulma-text-weak);
+
+			input {
+				cursor: not-allowed;
+			}
 		}
 	}
 
@@ -454,8 +460,8 @@ defineExpose({
 			height: var(--bulma-control-height);
 
 			&:focus-within {
-				border: solid 1px $link;
-				box-shadow: 0 0 0 0.25em rgba($link, .25);
+				border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+				box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
 			}
 
 			input {

@@ -359,8 +359,32 @@ defineExpose({
 	}
 
 	&.is-disabled {
-		opacity: .5;
-		pointer-events: none;
+		cursor: not-allowed;
+
+		.uploader-label, .file-input {
+			pointer-events: none;
+		}
+
+		.file .file-cta {
+			background-color: var(--bulma-background);
+			border-color: var(--bulma-background);
+			color: var(--bulma-text-weak);
+		}
+	}
+
+	&:focus-within {
+		box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
+		border-radius: var(--bulma-radius);
+
+		.file .file-cta {
+			border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+		}
+	}
+
+	&.is-danger {
+		--bulma-focus-h: var(--bulma-danger-h);
+		--bulma-focus-s: var(--bulma-danger-s);
+		--bulma-focus-l: var(--bulma-danger-l);
 	}
 
 	.file-input {

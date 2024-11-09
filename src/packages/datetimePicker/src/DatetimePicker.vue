@@ -319,6 +319,7 @@ export default defineComponent({
 
 .vb-datetime {
 	position: relative;
+	border-radius: var(--bulma-radius);
 
 	input[type="text"],
 	input[type="datetime-local"],
@@ -355,13 +356,14 @@ export default defineComponent({
 	}
 
 	[role=calendar][data-range=true] {
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		justify-content: space-between;
 		padding: calc(.5em - 1px) calc(.75em - 1px);
 		box-sizing: border-box;
 		border: solid 1px $input-border-color;
-		border-radius: 4px;
+		border-radius: var(--bulma-radius);
 		cursor: default;
 		line-height: 20px;
 		font-size: 1rem;
@@ -375,7 +377,13 @@ export default defineComponent({
 		}
 
 		&:hover {
-			--bulma-input-border-l-delta: var(--bulma-input-hover-border-l-delta);
+			--bulma-input-border-l-delta: var(--bulma-hover-border-l-delta);
+		}
+
+		&:focus-within, &[open=open] {
+			border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+			box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
+			z-index: 3;
 		}
 
 		input[type="text"],
@@ -412,16 +420,18 @@ export default defineComponent({
 	}
 
 	&.is-disabled {
-		cursor: no-drop;
-
-		.control {
-			opacity: .7;
-		}
+		cursor: not-allowed;
 
 		[role=calendar] {
 			pointer-events: none;
-			background-color: var(--bulma-input-disabled-background-color);
-			border-color: var(--bulma-input-disabled-border-color);
+			background-color: var(--bulma-background);
+			border-color: var(--bulma-background);
+			color: var(--bulma-text-weak);
+
+			input::placeholder,
+			input::-webkit-datetime-edit-text {
+				color: var(--bulma-text-weak);
+			}
 		}
 	}
 }
@@ -468,6 +478,7 @@ export default defineComponent({
 	}
 
 	.calendar-body {
+		--calendar-radius: 4px;
 		display: flex;
 		align-items: flex-start;
 		justify-content: space-between;
@@ -498,7 +509,7 @@ export default defineComponent({
 
 			ul:last-of-type li {
 				cursor: pointer;
-				border-radius: 4px;
+				border-radius: var(--calendar-radius);
 
 				&:empty {
 					cursor: default;
@@ -515,7 +526,7 @@ export default defineComponent({
 
 				&.disabled {
 					opacity: .2;
-					cursor: no-drop;
+					cursor: not-allowed;
 
 					&:hover {
 						color: var(--bulma-text);
@@ -537,17 +548,17 @@ export default defineComponent({
 					}
 
 					&:nth-of-type(7n+1), &.first-of {
-						border-radius: 4px 0 0 4px;
+						border-radius: var(--calendar-radius) 0 0 var(--calendar-radius);
 					}
 
 					&:nth-of-type(7n), &.last-of {
-						border-top-right-radius: 4px;
-						border-bottom-right-radius: 4px;
+						border-top-right-radius: var(--calendar-radius);
+						border-bottom-right-radius: var(--calendar-radius);
 					}
 
 					&:last-of-type:not(.last-of) {
-						border-top-right-radius: 4px;
-						border-bottom-right-radius: 4px;
+						border-top-right-radius: var(--calendar-radius);
+						border-bottom-right-radius: var(--calendar-radius);
 					}
 				}
 
