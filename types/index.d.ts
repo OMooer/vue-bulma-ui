@@ -19,6 +19,8 @@ declare module 'vue' {
 		VbCollapsePanel: typeof import("../src/components")["VbCollapsePanel"];
 		VbCountdown: typeof import("../src/components")["VbCountdown"];
 		VbCountdownBar: typeof import("../src/components")["VbCountdownBar"];
+		VbDataView: typeof import("../src/components")["VbDataView"];
+		VbDataViewItem: typeof import("../src/components")["VbDataViewItem"];
 		VbDatetime: typeof import("../src/components")["VbDatetime"];
 		VbDialog: typeof import("../src/components")["VbDialog"];
 		VbDropdown: typeof import("../src/components")["VbDropdown"];

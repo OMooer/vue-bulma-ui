@@ -22,11 +22,14 @@ export { CollapsePanel as VbCollapsePanel } from './packages/collapse';
 // 倒计时
 export { default as VbCountdown } from './packages/countdown';
 export { CountdownBar as VbCountdownBar } from './packages/countdown';
-// 对话容器
-export { default as VbDialog } from './packages/dialog';
+// 内容展示容器
+export { default as VbDataView } from './packages/dataView';
+export { DataViewItem as VbDataViewItem } from './packages/dataView';
 // 日期选择器
 export { default as VbDatetime } from './packages/datetimePicker';
 export { TimePicker as VbTime } from './packages/datetimePicker';
+// 对话容器
+export { default as VbDialog } from './packages/dialog';
 // 弹出菜单
 export { default as VbDropdown } from './packages/dropdown';
 // 双态输入框
