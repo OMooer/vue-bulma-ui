@@ -92,8 +92,8 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 	}
 
 	&:focus-within {
-		border-color: $blue;
-		box-shadow: 0 0 0 0.125em rgba($link, .25);
+		border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+		box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
 	}
 
 	&.is-on {

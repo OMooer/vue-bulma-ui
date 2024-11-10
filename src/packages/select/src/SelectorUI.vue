@@ -147,7 +147,7 @@ defineExpose({
 	</div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../../../scss/variables";
 
 .vb-select {
@@ -197,10 +197,13 @@ defineExpose({
 	}
 
 	&.is-danger {
+		--bulma-focus-h: var(--bulma-danger-h);
+		--bulma-focus-s: var(--bulma-danger-s);
+		--bulma-focus-l: var(--bulma-danger-l);
+
 		.dropdown-trigger {
 			> .button {
-				border-color: $danger;
-				box-shadow: 0 0 0 0.125em rgba($danger, .25);
+				border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
 			}
 
 			.icon {
@@ -209,7 +212,7 @@ defineExpose({
 		}
 	}
 
-	&:hover:not(.is-disabled) {
+	&:hover:not(.is-disabled,.is-danger) {
 		.dropdown-trigger .icon {
 			color: var(--bulma-body-color);
 		}

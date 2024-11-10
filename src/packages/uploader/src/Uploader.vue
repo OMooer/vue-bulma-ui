@@ -340,7 +340,7 @@ defineExpose({
 	<slot name="tips" :accept="acceptExtNames" :max="abbrNumber(max, 'byte')" :limit="totalLimit"/>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .vb-uploader {
 	position: relative;
 	width: 100%;

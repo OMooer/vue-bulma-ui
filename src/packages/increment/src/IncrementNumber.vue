@@ -10,7 +10,7 @@ const props = defineProps({
 	min     : Number,
 	max     : Number,
 	step    : {
-		type   : Number,
+		type: Number,
 		default: 1
 	}
 });
@@ -94,7 +94,8 @@ function removeAuto() {
 			</button>
 		</div>
 		<div class="control">
-			<input type="number" class="input" v-bind:class="$attrs.class" readonly :disabled :step v-model.number="modelValue">
+			<input
+					type="number" class="input" v-bind:class="$attrs.class" readonly :disabled :step v-model.number="modelValue">
 		</div>
 		<div class="control">
 			<button
@@ -131,8 +132,8 @@ function removeAuto() {
 
 	&:focus-within {
 		.control {
-			--increment-box-shadow-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), var(--bulma-input-focus-shadow-alpha));
-			--increment-border-color: var(--bulma-link-text);
+			--increment-box-shadow-color: hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
+			--increment-border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
 
 			.button {
 				--bulma-button-border-width: 1px;
@@ -145,6 +146,12 @@ function removeAuto() {
 				box-shadow: 0 -0.4375em 0 -0.25em var(--increment-box-shadow-color), 0 0.4375em 0 -0.25em var(--increment-box-shadow-color);
 			}
 		}
+	}
+
+	&:has(.is-danger) {
+		--bulma-focus-h: var(--bulma-danger-h);
+		--bulma-focus-s: var(--bulma-danger-s);
+		--bulma-focus-l: var(--bulma-danger-l);
 	}
 }
 </style>

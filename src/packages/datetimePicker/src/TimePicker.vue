@@ -383,7 +383,7 @@ defineExpose({
 	</div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../../../scss/variables";
 
 .vb-time-picker {
@@ -420,14 +420,11 @@ defineExpose({
 	&.is-danger {
 		.dropdown-trigger {
 			> .time-field {
-				--bulma-input-h: var(--bulma-danger-h);
-				--bulma-input-s: var(--bulma-danger-s);
+				--bulma-focus-h: var(--bulma-danger-h);
+				--bulma-focus-s: var(--bulma-danger-s);
+				--bulma-focus-l: var(--bulma-danger-l);
 
-				border: solid 1px $danger !important;
-
-				&:focus-within {
-					box-shadow: 0 0 0 0.125em rgba($danger, .25) !important;
-				}
+				border-color: $danger;
 			}
 		}
 	}

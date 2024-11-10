@@ -81,7 +81,7 @@ defineExpose({
 	</Teleport>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../../../scss/animates";
 
 .vb-modal.modal {

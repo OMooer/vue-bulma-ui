@@ -60,7 +60,7 @@ function dismiss(e: any) {
 	</Teleport>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../../../scss/variables";
 @import "../../../scss/animates";
 

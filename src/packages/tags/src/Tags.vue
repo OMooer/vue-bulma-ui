@@ -256,7 +256,7 @@ defineExpose({
 	</div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../../../scss/variables";
 
 .vb-tags {
@@ -268,7 +268,7 @@ defineExpose({
 	cursor: default;
 	transition: border var(--bulma-duration);
 
-	&:hover:not(.is-disabled) {
+	&:hover:not(.is-disabled,.is-danger) {
 		--bulma-input-border-l-delta: var(--bulma-input-hover-border-l-delta);
 
 		> .icon {
@@ -282,10 +282,14 @@ defineExpose({
 	}
 
 	&.is-danger {
+		--bulma-focus-h: var(--bulma-danger-h);
+		--bulma-focus-s: var(--bulma-danger-s);
+		--bulma-focus-l: var(--bulma-danger-l);
+
 		border-color: $danger;
 
-		&:focus-within, &.is-active {
-			box-shadow: 0 0 0 0.125em rgba($danger, .25);
+		> .icon {
+			color: $danger;
 		}
 	}
 

@@ -172,6 +172,7 @@ export default defineComponent({
 							'vb-datetime': true,
 							'is-disabled': isTruthy(props.disabled),
 							'is-shake'   : isError.value,
+							'is-danger'  : isError.value,
 							'is-small'   : isParentSmall
 						}
 					},
@@ -314,7 +315,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../../../scss/variables";
 
 .vb-datetime {
@@ -352,6 +353,16 @@ export default defineComponent({
 			input[type="date"] {
 				font-size: 0.75rem;
 			}
+		}
+	}
+
+	&.is-danger {
+		--bulma-focus-h: var(--bulma-danger-h);
+		--bulma-focus-s: var(--bulma-danger-s);
+		--bulma-focus-l: var(--bulma-danger-l);
+
+		[role=calendar][data-range=true] {
+			border-color: $danger;
 		}
 	}
 

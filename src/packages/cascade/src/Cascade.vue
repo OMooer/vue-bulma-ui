@@ -293,7 +293,7 @@ defineExpose({
 		</template>
 		<div class="is-grouped" v-else>
 			<SelectorUI
-					class="cascade-item" :disabled="disabled" :required="item?.required"
+					class="cascade-item" :class="{'is-danger is-shake': isError}" :disabled="disabled" :required="item?.required"
 					:list="item.list" :placeholder="placeholder" :model-value="item.value"
 					@update:modelValue="selectLevel(index, $event)" v-for="(item, index) in cascadeList"/>
 			<div class="dropdown cascade-item" v-if="isLoading">
@@ -332,6 +332,20 @@ defineExpose({
 
 				.icon {
 					transform: rotate(-180deg);
+				}
+			}
+		}
+
+		&.is-danger {
+			--bulma-focus-h: var(--bulma-danger-h);
+			--bulma-focus-s: var(--bulma-danger-s);
+			--bulma-focus-l: var(--bulma-danger-l);
+
+			.dropdown-trigger .button {
+				border-color: $danger;
+
+				.icon {
+					color: $danger;
 				}
 			}
 		}

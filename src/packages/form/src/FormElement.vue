@@ -69,7 +69,7 @@ provide('isSmall', props.isSmall);
 	</div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @import "../../../scss/variables";
 
 .field {

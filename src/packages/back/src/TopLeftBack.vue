@@ -33,7 +33,7 @@ const back = useBack(emit, props.router, {home: props.indexName, login: props.lo
 	</div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .vb-back {
 	display: inline-flex;
 	align-items: center;

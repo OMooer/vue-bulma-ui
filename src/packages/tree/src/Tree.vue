@@ -248,7 +248,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../../../scss/variables";
 
 .vb-tree {

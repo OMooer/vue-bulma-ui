@@ -127,7 +127,7 @@ function menuClicked(e: any) {
 	</div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../../../scss/variables";
 
 .vb-dropdown {
