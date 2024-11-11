@@ -373,11 +373,13 @@ defineExpose({
 	}
 
 	&:focus-within {
-		box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
-		border-radius: var(--bulma-radius);
+		.file {
+			box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
+			border-radius: var(--bulma-radius);
 
-		.file .file-cta {
-			border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+			.file-cta {
+				border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+			}
 		}
 	}
 

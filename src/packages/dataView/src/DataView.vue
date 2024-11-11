@@ -22,7 +22,7 @@ const classList = computed(() => {
 
 <style scoped lang="scss">
 .vb-dataview {
-	$maxCol: 4;
+	$maxCol: 6;
 	display: grid;
 	grid-template-columns: repeat(var(--cols, 2), 1fr);
 	gap: .125rem .175rem;
@@ -78,12 +78,12 @@ const classList = computed(() => {
 
 		@for $i from 2 through 12 {
 			&.is-row-span-#{$i} {
-				grid-row: auto / span #{$i};
+				grid-row: span #{$i};
 			}
 		}
 		@for $i from 2 through $maxCol {
 			&.is-col-span-#{$i} {
-				grid-column: auto / span #{$i};
+				grid-column: span #{$i};
 			}
 		}
 

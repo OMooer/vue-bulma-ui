@@ -70,7 +70,7 @@ function deleteSource() {
 	<!-- 预览 -->
 	<Gallery
 			:list="[{origin:sourceUrl, name:sourceName}]"
-			:show-side="false" show-zoom
+			:show-side="false" show-zoom mask-close
 			@close="isPreview = false"
 			v-if="isPreview">
 		<template #tools>

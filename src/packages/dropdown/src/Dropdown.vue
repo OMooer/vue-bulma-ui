@@ -23,7 +23,7 @@ const entity = ref();
 const classList = computed(() => {
 	const cls = attrs.class as string;
 	const clsArray = cls ? cls.split(' ') : [];
-	const filterCls = Array.from(new Set(clsArray)).filter((c: string) => !['is-right', 'is-hoverable'].includes(c));
+	const filterCls = Array.from(new Set(clsArray)).filter((c: string) => !['is-hoverable'].includes(c));
 	const appendClass = filterCls.reduce((result: any, name: string) => {
 		result[name] = true;
 		return result;

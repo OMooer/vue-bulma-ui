@@ -3,9 +3,10 @@ import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, useTemplateRef
 import { debounce, flattenVNode, isPromise, scaleGenerator } from '../../../utils';
 import Loading, { AnimateDot } from '../../loading';
 
-const {current = 0, list = [], showSide = true, showZoom, showToolbar = true, confirmRemove} = defineProps<{
+const {current = 0, list = [], maskClose, showSide = true, showZoom, showToolbar = true, confirmRemove} = defineProps<{
 	current?: number;
 	list: (string | Normal.PhotoObj)[];
+	maskClose?: boolean;
 	showSide?: boolean;
 	showZoom?: boolean;
 	showToolbar?: boolean;
@@ -123,6 +124,12 @@ function deletePhoto(index: number) {
 
 function ready() {
 	photoIsReady.value = true;
+}
+
+function maskClickHandler() {
+	if (maskClose) {
+		exit();
+	}
 }
 
 function fullscreen() {
@@ -245,16 +252,18 @@ onBeforeUnmount(() => {
 					</figure>
 				</a>
 			</div>
-			<div ref="mainRef" class="vb-gallery__main" :style="`--scale: ${scale}`" @wheel.prevent.stop>
-				<figure @click.stop @wheel="movePhoto" :style="`transform: translate(${offsetX}px, ${offsetY}px)`">
+			<div
+					ref="mainRef" class="vb-gallery__main" :style="`--scale: ${scale}`"
+					@wheel.prevent.stop @click="maskClickHandler">
+				<figure @wheel="movePhoto" :style="`transform: translate(${offsetX}px, ${offsetY}px)`">
 					<Loading @wheel.stop.prevent v-if="!photoIsReady">
 						<AnimateDot class="rainbow"/>
 					</Loading>
-					<img :src="currentPhoto?.origin" :alt="currentPhoto?.name" @load="ready" v-show="photoIsReady"/>
+					<img :src="currentPhoto?.origin" :alt="currentPhoto?.name" @load="ready" @click.stop v-show="photoIsReady"/>
 				</figure>
 
 				<!-- 缩放工具 -->
-				<div class="vb-gallery__zoom" v-if="showZoom">
+				<div class="vb-gallery__zoom" @click.stop v-if="showZoom">
 					<a :class="{'is-disabled': photoScaleRatio <= -4}" @click="zoomOut">
 						<FasIcon icon="magnifying-glass-minus" size="xl"/>
 					</a>
