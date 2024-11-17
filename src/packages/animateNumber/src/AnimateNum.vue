@@ -68,7 +68,6 @@ watch(charList, (newList, oldList) => {
 }
 
 .vb-animate-number {
-	all: inherit;
 	display: inline-flex;
 
 	> span {
