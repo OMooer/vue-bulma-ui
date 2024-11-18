@@ -36,6 +36,7 @@ declare module 'vue' {
 		VbLoadingBall: typeof import("../src/components")["VbLoadingBall"];
 		VbLoadingBar: typeof import("../src/components")["VbLoadingBar"];
 		VbLoadingDot: typeof import("../src/components")["VbLoadingDot"];
+		VbLoadingWater: typeof import("../src/components")["VbLoadingWater"];
 		VbMenu: typeof import("../src/components")["VbMenu"];
 		VbModal: typeof import("../src/components")["VbModal"];
 		VbNotify: typeof import("../src/components")["VbNotify"];

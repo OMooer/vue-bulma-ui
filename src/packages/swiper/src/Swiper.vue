@@ -248,7 +248,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="vb-swiper" @wheel="wheelContainer">
+	<div class="vb-swiper" :data-autoplay="props.autoplay || null" @wheel="wheelContainer">
 		<div ref="cont" class="swiper-container" v-if="total">
 			<Component :is="swiperItems"/>
 		</div>
@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
 			</a>
 		</slot>
 		<slot
-				name="indicator" :total="total" :index="current" :moveTo="moveTo" :percent="percent"
+				name="indicator" :autoplay="props.autoplay" :total="total" :index="current" :moveTo="moveTo" :percent="percent"
 				v-if="showIndicator && total">
 			<ol class="swiper-indicator" :style="`--bg-percent: ${percent}%`">
 				<li :class="{'is-active': i === current + 1}" @click="moveTo(i - 1)" v-for="i in total"></li>
@@ -333,18 +333,31 @@ onBeforeUnmount(() => {
 
 		li {
 			margin: 0 .15em;
-			background: rgba(255, 255, 255, .3);
+			background: rgba(255, 255, 255, .5);
 			border-radius: 4px;
 			box-shadow: 0 0 3px -1px var(--bulma-grey);
 			cursor: pointer;
 			width: 1.5em;
 			height: .3em;
+			transition: width .3s ease-in-out;
 
 			&.is-active {
 				--m: min(calc(var(--bg-percent) * 50), calc(1% * 50));
 				--a: calc(100% - var(--m));
 				background-color: hsla(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l), var(--a));
 				background-image: linear-gradient(to right, var(--bulma-primary) var(--bg-percent), transparent var(--bg-percent));
+			}
+		}
+	}
+
+	&[data-autoplay=true] {
+		.swiper-indicator li:not(.is-active) {
+			width: .3em;
+		}
+
+		&:hover {
+			.swiper-indicator li:not(.is-active) {
+				width: 1.5em;
 			}
 		}
 	}

@@ -53,6 +53,7 @@ export { default as VbLoading } from './packages/loading';
 export { AnimateBall as VbLoadingBall } from './packages/loading';
 export { ProgressBar as VbLoadingBar } from './packages/loading';
 export { AnimateDot as VbLoadingDot } from './packages/loading';
+export { AnimateWater as VbLoadingWater } from './packages/loading';
 // 菜单
 export { default as VbMenu } from './packages/menu';
 export { Link as VbLink } from './packages/menu';
