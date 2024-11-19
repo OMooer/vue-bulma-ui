@@ -425,6 +425,16 @@ defineExpose({
 				--bulma-focus-l: var(--bulma-danger-l);
 
 				border-color: $danger;
+
+				color: hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-text-strong-l));
+
+				input {
+					color: hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-text-strong-l));
+
+					&::placeholder {
+						color: hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-text-strong-l));
+					}
+				}
 			}
 		}
 	}
