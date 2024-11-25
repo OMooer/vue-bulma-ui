@@ -11,7 +11,7 @@ function dateFormat(d: Date, f: string = 'YYYY-MM-DD hh:mm:ss') {
 	return `${ year }-${ month.toString().padStart(2, '0') }-${ day.toString().padStart(2, '0') }`;
 }
 
-export default defineComponent({
+export default {
 	name        : 'DatetimePicker',
 	inheritAttrs: true,
 	props       : {
@@ -163,7 +163,7 @@ export default defineComponent({
 		});
 
 		expose({
-			setError
+			setError: setError
 		});
 
 		return () => {
@@ -312,7 +312,7 @@ export default defineComponent({
 			);
 		}
 	}
-});
+};
 </script>
 
 <style scoped lang="scss">

@@ -58,11 +58,11 @@ declare namespace OP {
 
 	type FastDialogOpt = Omit<DialogOption, 'id' | 'type' | 'msg'>;
 
-	type Toast = (msg: string | MsgObj) => void
-	type Notification = (msg: string | MsgObj) => void
-	type Dialog = (opt: DialogOption) => Promise<unknown>
-	type Alert = (msg: string, options?: FastDialogOpt) => Promise<unknown>
-	type Confirm = (msg: string, options?: FastDialogOpt) => Promise<unknown>
+	type Toast = { (msg: string | MsgObj): void };
+	type Notification = { (msg: string | MsgObj): void };
+	type Dialog = { (opt: DialogOption): Promise<unknown> };
+	type Alert = { (msg: string, options?: FastDialogOpt): Promise<unknown> };
+	type Confirm = { (msg: string, options?: FastDialogOpt): Promise<unknown> };
 }
 
 declare namespace Normal {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ExifOperator, readAsDataURL, webCreateImageByUrl, webRequestImageBlob } from '@imnull/imgkit';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, useTemplateRef, watch, watchEffect } from 'vue';
 import { debounce, flattenVNode, isPromise, scaleGenerator } from '../../../utils';
 import Loading, { AnimateDot } from '../../loading';
@@ -55,6 +56,27 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 
 const currentPhoto = computed(() => photos.value?.[currentIndex.value]);
+
+async function getPhotoExif(url: string) {
+	const fileBlob = await webRequestImageBlob(url);
+	console.log(fileBlob,'blob')
+	const fileReader = new FileReader();
+	fileReader.readAsArrayBuffer(fileBlob);
+	const buf = await new Promise<ArrayBuffer>((resolve) => {
+		fileReader.onload = () => {
+			console.log(fileReader.result)
+			resolve(fileReader.result as ArrayBuffer);
+		}
+	});
+	const of = new ExifOperator(buf);
+	const exif = of.getExif();
+	console.log(exif, '=====')
+	return exif;
+}
+
+const currentPhotoExif = computed(async () => {
+	return await getPhotoExif(currentPhoto.value?.origin as string);
+});
 const scale = computed(() => {
 	return scaleGenerator(photoScaleRatio.value);
 });
@@ -102,6 +124,7 @@ function switchShow(index: number) {
 	currentIndex.value = index;
 	photoScaleRatio.value = 0;
 	offsetX.value = offsetY.value = 0;
+	console.log(currentPhotoExif.value)
 }
 
 function deletePhoto(index: number) {
