@@ -5,6 +5,10 @@
 	"main": "./src/index.ts",
 	"types": "./types/index.d.ts",
 	"type": "module",
+	"files": [
+		"src",
+		"types"
+	],
 	"scripts": {
 		"build-only": "vite build",
 		"type-check": "vue-tsc --build --force",

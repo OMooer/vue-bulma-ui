@@ -1,10 +1,11 @@
+/// <reference path="global.d.ts" />
 
-// declare module 'vue' {
-// 	export interface GlobalComponents {
+declare module 'vue' {
+	export interface GlobalComponents {
 // 		VbAnimateNum: typeof import("../src/components")["VbAnimateNum"];
-// 		VbAvatar: typeof import("../src/components")["VbAvatar"];
+		VbAvatar: typeof import("../src/components")["VbAvatar"];
 // 		VbBack: typeof import("../src/components")["VbBack"];
-// 		VbTLBack: typeof import("../src/components")["VbTLBack"];
+		VbTLBack: typeof import("vue3-bulma-ui/components")["VbTLBack"];
 // 		VbCascade: typeof import("../src/components")["VbCascade"];
 // 		VbCharts: typeof import("../src/components")["VbCharts"];
 // 		VbChartsBar: typeof import("../src/components")["VbChartsBar"];
@@ -60,15 +61,15 @@
 // 		VbTree: typeof import("../src/components")["VbTree"];
 // 		VbUploader: typeof import("../src/components")["VbUploader"];
 // 		VbUPluginSI: typeof import("../src/components")["VbUPluginSI"];
-// 	}
+	}
 
-	// export interface ComponentCustomProperties {
-		// $dialog: OP.Dialog;
-		// $alert: OP.Alert;
-		// $confirm: OP.Confirm;
-	// }
-// }
-//
+	export interface ComponentCustomProperties {
+		$dialog: OP.Dialog;
+		$alert: OP.Alert;
+		$confirm: OP.Confirm;
+	}
+}
+
 // declare module 'vue3-bulma-ui' {
 	import type { Plugin } from "vue";
 	declare const _default: Plugin;
@@ -82,5 +83,5 @@
 // 	};
 // 	export {useDialog}
 // }
-//
-// export {};
+
+export {};
