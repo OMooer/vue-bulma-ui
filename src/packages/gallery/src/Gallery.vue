@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ExifOperator, readAsDataURL, webCreateImageByUrl, webRequestImageBlob } from '@imnull/imgkit';
+import { ExifOperator } from '@imnull/exif';
+import { webRequestImageBlob } from '@imnull/imgkit-web';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, useTemplateRef, watch, watchEffect } from 'vue';
 import { debounce, flattenVNode, isPromise, scaleGenerator } from '../../../utils';
 import Loading, { AnimateDot } from '../../loading';
@@ -48,7 +49,7 @@ const currentIndex = ref(current);
 watch(() => currentIndex.value, () => {
 	nextTick(scrollSidebar);
 }, {immediate: true});
-let mainRect;
+let mainRect: any;
 const isFullscreen = ref(!!document.fullscreenElement);
 const photoIsReady = ref(false);
 const photoScaleRatio = ref(0);
@@ -56,27 +57,34 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 
 const currentPhoto = computed(() => photos.value?.[currentIndex.value]);
+const currentPhotoExif = ref();
+const showExifInfo = ref(false);
+watchEffect(() => {
+	if (currentPhoto.value?.origin) {
+		(async () => {
+			currentPhotoExif.value = await getPhotoExif(currentPhoto.value?.origin as string);
+		})();
+	}
+});
 
 async function getPhotoExif(url: string) {
-	const fileBlob = await webRequestImageBlob(url);
-	console.log(fileBlob,'blob')
-	const fileReader = new FileReader();
-	fileReader.readAsArrayBuffer(fileBlob);
-	const buf = await new Promise<ArrayBuffer>((resolve) => {
-		fileReader.onload = () => {
-			console.log(fileReader.result)
-			resolve(fileReader.result as ArrayBuffer);
-		}
-	});
-	const of = new ExifOperator(buf);
-	const exif = of.getExif();
-	console.log(exif, '=====')
-	return exif;
+	try {
+		const fileBlob = await webRequestImageBlob(url);
+		const fileReader = new FileReader();
+		fileReader.readAsArrayBuffer(fileBlob);
+		const buf = await new Promise<ArrayBuffer>((resolve) => {
+			fileReader.onload = () => {
+				resolve(fileReader.result as ArrayBuffer);
+			}
+		});
+		const of = new ExifOperator(buf);
+		return of.getExif();
+	}
+	catch (e) {
+		return null;
+	}
 }
 
-const currentPhotoExif = computed(async () => {
-	return await getPhotoExif(currentPhoto.value?.origin as string);
-});
 const scale = computed(() => {
 	return scaleGenerator(photoScaleRatio.value);
 });
@@ -121,10 +129,10 @@ function switchShow(index: number) {
 		return;
 	}
 	photoIsReady.value = false;
+	showExifInfo.value = false;
 	currentIndex.value = index;
 	photoScaleRatio.value = 0;
 	offsetX.value = offsetY.value = 0;
-	console.log(currentPhotoExif.value)
 }
 
 function deletePhoto(index: number) {
@@ -307,7 +315,7 @@ onBeforeUnmount(() => {
 							</a>
 						</div>
 						<div class="tool-item">
-							<a aria-label="toggle fullscreen" @click="fullscreen">
+							<a :class="{'is-toggle': isFullscreen}" aria-label="toggle fullscreen" @click="fullscreen">
 								<FasIcon :icon="isFullscreen ? 'compress' : 'expand'" size="xl"/>
 							</a>
 						</div>
@@ -316,8 +324,19 @@ onBeforeUnmount(() => {
 								<FasIcon icon="download" size="xl"/>
 							</a>
 						</div>
+						<div class="tool-item" v-if="currentPhotoExif">
+							<a :class="{'is-toggle': showExifInfo}" aria-label="photo exif" @click="showExifInfo = !showExifInfo">
+								<FasIcon icon="circle-info" size="xl"/>
+							</a>
+						</div>
 					</slot>
 				</div>
+			</div>
+			<!-- Exif 信息 -->
+			<div class="vb-gallery__exif-info" @click.stop v-if="currentPhotoExif" v-show="showExifInfo">
+				<p v-for="[key, value] in Object.entries(currentPhotoExif)">
+					{{ key }}: {{ value }}
+				</p>
 			</div>
 		</div>
 	</teleport>
@@ -494,8 +513,25 @@ onBeforeUnmount(() => {
 					pointer-events: none;
 					opacity: .3;
 				}
+
+				&.is-toggle {
+					color: var(--bulma-primary);
+				}
 			}
 		}
+	}
+
+	&__exif-info {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		overflow: auto;
+		margin: 1em 2em;
+		padding: 1em;
+		background: rgba(0, 0, 0, .8);
+		border-radius: var(--bulma-radius);
+		color: rgba(255, 255, 255, .8);
 	}
 }
 

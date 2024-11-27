@@ -24,7 +24,7 @@ import {
 	faGlobe,
 	faChevronRight,
 	faExpand,
-	faCompress, faDownload, faMagnifyingGlass, faMagnifyingGlassMinus, faMagnifyingGlassPlus
+	faCompress, faDownload, faMagnifyingGlass, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faCircleInfo
 } from '@fortawesome/free-solid-svg-icons';
 import {
 	faSquareMinus,
@@ -45,6 +45,7 @@ export default {
 			faChevronLeft, faChevronRight,
 			faCircleExclamation,
 			faCircleQuestion,
+			faCircleInfo,
 			faDownload,
 			faEye, faEyeSlash, faExpand, faCompress,
 			faFileArrowDown,
