@@ -1,22 +1,16 @@
 <script setup lang="ts">
 import { computed, inject, ref, watch } from 'vue';
 
-declare type CheckBox = {
-	type: 'checkbox';
+const isParentSmall = inject('isSmall', false);
+const emit = defineEmits(['error']);
+const props = withDefaults(defineProps<{
+	type: 'checkbox' | 'radio';
 	only?: boolean;
-}
-declare type Radio = {
-	type: 'radio';
-}
-declare type Prop = (CheckBox | Radio) & {
 	name?: string;
 	required?: boolean;
 	disabled?: boolean;
 	list: TVO.List;
-}
-const isParentSmall = inject('isSmall', false);
-const emit = defineEmits(['error']);
-const props = withDefaults(defineProps<Prop>(), {name: Math.random().toString(36).slice(2), type: 'checkbox'});
+}>(), {name: Math.random().toString(36).slice(2)});
 const modelValue = defineModel({default: () => []});
 const isError = ref(false);
 const className = computed(() => {
