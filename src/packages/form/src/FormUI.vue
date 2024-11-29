@@ -80,8 +80,8 @@ function reset() {
 						:required="item.required"
 						:disabled="item.disabled"
 						:readonly="item.readonly"
-						:minlength="item.min"
-						:maxlength="item.max"
+						:minlength="item.min?.toString()"
+						:maxlength="item.max?.toString()"
 						:placeholder="item.placeholder"
 						v-model="formValue[item.name]" v-if="item.type === 'input'"/>
 				<InputUI
@@ -90,8 +90,8 @@ function reset() {
 						:required="item.required"
 						:disabled="item.disabled"
 						:readonly="item.readonly"
-						:min="item.min"
-						:max="item.max"
+						:min="item.min?.toString()"
+						:max="item.max?.toString()"
 						:placeholder="item.placeholder"
 						v-model.number="formValue[item.name]" v-else-if="item.type === 'number'"/>
 

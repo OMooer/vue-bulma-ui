@@ -1,5 +1,9 @@
 declare module 'sa-calendar' {
-	import Calendar from 'sa-calendar';
+	class Calendar {
+		constructor(opt: any);
 
-	export = Calendar;
+		dismiss(): void;
+	}
+
+	export default Calendar;
 }

@@ -2,7 +2,7 @@
 import { computed, inject, ref } from 'vue';
 import Gallery from '../../gallery';
 
-declare interface Props {
+interface Props {
 	source: string | { name: string; url: string };
 	canDelete?: boolean;
 	forceFile?: boolean;

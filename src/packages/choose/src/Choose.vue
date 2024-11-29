@@ -67,7 +67,7 @@ defineExpose({
 
 <template>
 	<div class="vb-choose" :class="className">
-		<label :class="type" :key="item.value" v-for="item in list">
+		<label :class="type" :key="item.value.toString()" v-for="item in list">
 			<input :name :type :required="innerRequired(item)" :disabled :value="item.value" v-model="innerValue">
 			{{ item.title }}
 		</label>

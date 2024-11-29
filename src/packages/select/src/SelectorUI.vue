@@ -134,7 +134,7 @@ defineExpose({
 							class="dropdown-item"
 							@click="selectValue(item.value)"
 							:class="{'is-active': item.value === modelValue, 'is-disabled': item.disabled}"
-							:key="item.value" v-for="item in filterList">
+							:key="item.value.toString()" v-for="item in filterList">
 						<i :class="item.icon" v-if="item.icon"></i>
 						<span>{{ item.title }}</span>
 					</a>
