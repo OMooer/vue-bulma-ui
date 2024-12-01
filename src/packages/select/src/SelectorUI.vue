@@ -239,7 +239,8 @@ defineExpose({
 
 	.dropdown-menu {
 		&.is-fullwidth {
-			width: 100%;
+			min-width: auto;
+			width: max(6rem, 100%);
 		}
 
 		.dropdown-content {

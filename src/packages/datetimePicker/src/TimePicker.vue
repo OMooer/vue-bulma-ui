@@ -499,7 +499,8 @@ defineExpose({
 
 	.dropdown-menu {
 		&.is-fullwidth {
-			width: 100%;
+			min-width: auto;
+			width: max(9rem, 100%);
 		}
 
 		.dropdown-content {
@@ -521,10 +522,7 @@ defineExpose({
 			.dropdown-item {
 				display: flex;
 				align-items: center;
-
-				i.flags {
-					flex-shrink: 0;
-				}
+				padding-inline-end: 1rem;
 			}
 
 			.dropdown-item.is-disabled {
