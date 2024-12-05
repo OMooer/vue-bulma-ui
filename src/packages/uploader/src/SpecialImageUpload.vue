@@ -226,7 +226,6 @@ function remove() {
 
 		&:has(.image-source) {
 			padding: 0;
-
 		}
 
 		:deep(.image-source) {

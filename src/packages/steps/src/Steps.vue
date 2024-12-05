@@ -127,9 +127,9 @@ defineExpose({
 </script>
 
 <template>
-	<ul ref="steps" class="steps" :class="{'is-block-style': isBoxed}">
+	<ul ref="steps" class="steps" :class="{'is-box-style': isBoxed}">
 		<li :class="{'is-active': index === stepValue}" v-for="(item, index) in filterSteps">
-			<a @click="changeStep(index)">
+			<a :aria-readonly="allowSwitch ? undefined : 'true'" @click="changeStep(index)">
 				{{ item.text }}
 			</a>
 		</li>
@@ -159,6 +159,10 @@ defineExpose({
 		a {
 			color: $completed;
 			white-space: nowrap;
+
+			&[aria-readonly=true] {
+				cursor: default;
+			}
 
 			&::before {
 				content: "✓";
@@ -220,7 +224,7 @@ defineExpose({
 		}
 	}
 
-	&.is-block-style {
+	&.is-box-style {
 		--square-side: calc(1px * calc(var(--size, 32) * sqrt(2) / 2));
 		$borderColor: var(--bulma-border);
 
@@ -361,7 +365,7 @@ defineExpose({
 			}
 		}
 
-		&.is-block-style {
+		&.is-box-style {
 			li {
 				writing-mode: vertical-lr;
 				border-width: 0 1px;

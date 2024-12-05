@@ -20,3 +20,21 @@ export function debounce<T extends any[], R>(func: (...args: T) => R, wait: numb
 		}
 	};
 }
+
+/**
+ * 队列执行 Promise
+ * @param promises
+ * @param result
+ */
+export async function runPromiseSequence<T>(promises: Function[], result: T) {
+	for (let i = 0; i < promises.length; i++) {
+		try {
+			result = await promises[i](result);
+		}
+		catch (e) {
+			return Promise.reject(e);
+		}
+	}
+
+	return Promise.resolve(result);
+}
