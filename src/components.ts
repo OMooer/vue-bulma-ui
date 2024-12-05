@@ -48,6 +48,8 @@ export { default as VbIncrement } from './packages/increment';
 export { default as VbInput } from './packages/input';
 // 密文框
 export { PasswordInput as VbPassword } from './packages/input';
+// 交互追踪
+export { default as VbInteractiveTracker } from './packages/InteractiveTracker';
 // 加载动画
 export { default as VbLoading } from './packages/loading';
 export { AnimateBall as VbLoadingBall } from './packages/loading';

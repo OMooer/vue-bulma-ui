@@ -1,7 +1,7 @@
 import { defineComponent, h } from 'vue';
 
 export default defineComponent({
-	name     : 'dragMover',
+	name     : 'Tracker',
 	inherited: true,
 	props    : {
 		tag  : {
@@ -21,7 +21,7 @@ export default defineComponent({
 			default: 0,
 		}
 	},
-	emits    : ['update:x', 'update:y', 'start', 'end'],
+	emits    : ['update:x', 'update:y', 'update:scale', 'start', 'end'],
 	setup(props, {emit, slots}) {
 		let isMoveable = false;
 		let startX = 0;
@@ -39,6 +39,9 @@ export default defineComponent({
 		}
 
 		function moveEnd() {
+			if (!isMoveable) {
+				return;
+			}
 			isMoveable = false;
 			startX = 0;
 			startY = 0;
@@ -60,9 +63,10 @@ export default defineComponent({
 
 		return () => {
 			return h(props.tag, {
-				onMousedown: moveStart,
-				onMouseup  : moveEnd,
-				onMousemove: moving,
+				onMousedown : moveStart,
+				onMouseup   : moveEnd,
+				onMousemove : moving,
+				onMouseleave: moveEnd,
 			}, slots?.default?.())
 		}
 	}
