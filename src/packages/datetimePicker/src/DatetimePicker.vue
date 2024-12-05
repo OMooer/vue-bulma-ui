@@ -1,6 +1,6 @@
 <script lang="ts">
 import Calendar from 'sa-calendar';
-import { h, defineComponent, ref, watch, computed, withDirectives, inject, onMounted } from 'vue';
+import { h, ref, watch, computed, withDirectives, inject, onMounted } from 'vue';
 import TimePicker from './TimePicker.vue';
 import { isTruthy } from '../../../utils';
 
@@ -51,6 +51,7 @@ export default {
 		},
 		messages  : Object
 	},
+	emits       : ['update:modelValue', 'error'],
 	setup(props, {emit, expose}) {
 		const isParentSmall = inject('isSmall', false);
 		const isError = ref(false);
@@ -80,21 +81,6 @@ export default {
 			return JSON.stringify(packText);
 		});
 
-		const directiveFn = (el: any, binding?: any) => {
-			if (el.value || binding?.modifiers?.force) {
-				el.type = el.getAttribute('data-type');
-				if (binding?.modifiers?.force) {
-					entity.value?.dispatchEvent(new Event('click'));
-				}
-			}
-			else {
-				el.type = 'text';
-			}
-		}
-		const insertPlaceDirect = {
-			beforeMount: directiveFn,
-			updated    : directiveFn
-		}
 
 		// 同步组件值与内部值
 		watch(() => props.modelValue, (val: any) => {
@@ -138,7 +124,7 @@ export default {
 			emit('error', is, msg);
 		}
 
-		let instance: typeof Calendar;
+		let instance: Calendar | undefined;
 
 		onMounted(() => {
 			entity.value.addEventListener('click', (e: any) => {
@@ -163,154 +149,188 @@ export default {
 		});
 
 		expose({
-			setError: setError
+			setError
 		});
 
-		return () => {
-			return h('div', {
-						class: {
-							'vb-datetime': true,
-							'is-disabled': isTruthy(props.disabled),
-							'is-shake'   : isError.value,
-							'is-danger'  : isError.value,
-							'is-small'   : isParentSmall
-						}
-					},
-					[
-						h('div', {
-									class: {
-										'field'     : true,
-										'has-addons': isAddonTime.value,
-									}
-								},
-								[
-									// 日期主体框
-									props.isRange
-											// 范围选择
-											? h('div', {
-												'ref'            : entity,
-												'role'           : 'calendar',
-												'data-editable'  : props.editable ? 'true' : null,
-												'data-auto-close': props.autoClose ? 'true' : null,
-												'data-week-start': props.weekStart,
-												'data-today'     : props.showToday ? 'true' : null,
-												'data-show-time' : formatType.value === 'datetime-local' ? 'true' : null,
-												'data-min'       : formatMin.value,
-												'data-max'       : formatMax.value,
-												'data-range'     : true,
-												'data-split'     : props.splitText,
-												'data-language'  : props.locale,
-												'data-lang-pack' : langPack.value,
-												onChange         : (e: any) => {
-													let detail = e.detail;
-													if (e.target !== entity.value) {
-														const p = e.target.dataset?.role;
-														const v = e.target.value;
-														detail ??= {
-															start: p === 'start' ? v : innerRange.value[0] ?? '',
-															end  : p === 'end' ? v : innerRange.value[1] ?? '',
-														}
-													}
-													// 如果没有显示到秒得去掉秒
-													if (!props.step || Number(props.step) % 60 === 0) {
-														detail.start = detail.start.split(':').slice(0, 2).join(':');
-														detail.end = detail.end.split(':').slice(0, 2).join(':');
-													}
-													innerRange.value = [detail.start, detail.end];
-												}
-											}, [
-												withDirectives(h('input', {
-													'type'       : formatType.value,
-													'data-type'  : formatType.value,// ? 'datetime-local' : 'date',
-													'data-role'  : 'start',
-													'step'       : props.step,
-													'value'      : innerRange.value[0],
-													'placeholder': JSON.parse(langPack.value)?.rangeStart,
-													'required'   : isTruthy(props.required),
-													onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
-													onBlur       : (e: Event) => directiveFn(e.target)
-												}), [[insertPlaceDirect]]),
-												withDirectives(h('input', {
-													'type'       : formatType.value,
-													'data-type'  : formatType.value,// ? 'datetime-local' : 'date',
-													'data-role'  : 'end',
-													'step'       : props.step,
-													'value'      : innerRange.value[1],
-													'placeholder': JSON.parse(langPack.value)?.rangeEnd,
-													'required'   : isTruthy(props.required),
-													onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
-													onBlur       : (e: Event) => directiveFn(e.target)
-												}), [[insertPlaceDirect]])
-											])
-											// 单一时间
-											: h('div', {class: 'control is-expanded'}, h('input', {
-												'ref'  : entity,
-												'class': {
-													'input'    : true,
-													'is-danger': isError.value
-												},
-												'type' : 'date',//formatType.value,
-												'min'  : formatMin.value,
-												'max'  : formatMax.value,
-												// 'step'           : props.step,
-												'disabled'       : isTruthy(props.disabled),
-												'required'       : isTruthy(props.required),
-												'value'          : innerDate.value,
-												'role'           : 'calendar',
-												'data-editable'  : props.editable ? 'true' : null,
-												'data-auto-close': props.autoClose ? 'true' : null,
-												'data-week-start': props.weekStart,
-												'data-today'     : props.showToday ? 'true' : null,
-												'data-language'  : props.locale,
-												'data-lang-pack' : langPack.value,
-												onChange(e: any) {
-													setError(false);
-													innerDate.value = e.target.value;
-												},
-												onClick(e: any) {
-													e.preventDefault();
-												},
-												onTouchstart(e: any) {
-													if (e.target.getAttribute('open') === 'open') {
-														e.preventDefault();
-													}
-													else {
-														e.target.disabled = true;
-														setTimeout(() => {
-															e.target.disabled = false;
-															e.target.click();
-														});
-													}
-												},
-												onBlur(e: any) {
-													if (!e.target.checkValidity() && e.target.value) {
-														setError(true, e.target.validationMessage);
-													}
-													if (e.relatedTarget && !e.relatedTarget?.closest('.date-panel')) {
-														instance?.dismiss();
-													}
-													instance = undefined;
-												}
-											})),
+		return {
+			entity,
+			setError,
+			isError,
+			isParentSmall,
+			isAddonTime,
+			formatType,
+			formatMax,
+			formatMin,
+			langPack,
+			innerRange,
+			innerDate,
+			innerTime,
+			instance
+		};
+	},
+	render() {
+		const that = this;
+		const props = this.$props;
 
-									// 如果是非范围选择且是 datetime-local 类型则附加时间选择组件
-									isAddonTime.value && (
-											h(TimePicker, {
-												class     : 'control is-right',
-												showSecond: Number(props.step) % 60 !== 0,
-												step      : props.step,
-												modelValue: innerTime.value,
-												'onUpdate:modelValue'(val: string) {
-													innerTime.value = val;
-												},
-												onError: setError
-											})
-									)
-								]
-						)
-					]
-			);
+		const directiveFn = (el: any, binding?: any) => {
+			if (el.value || binding?.modifiers?.force) {
+				el.type = el.getAttribute('data-type');
+				if (binding?.modifiers?.force) {
+					that.entity?.dispatchEvent(new Event('click'));
+				}
+			}
+			else {
+				el.type = 'text';
+			}
 		}
+		const insertPlaceDirect = {
+			beforeMount: directiveFn,
+			updated    : directiveFn
+		}
+
+		return h('div', {
+					class: {
+						'vb-datetime': true,
+						'is-disabled': isTruthy(props.disabled),
+						'is-shake'   : that.isError,
+						'is-danger'  : that.isError,
+						'is-small'   : that.isParentSmall
+					}
+				},
+				[
+					h('div', {
+								class: {
+									'field'     : true,
+									'has-addons': that.isAddonTime,
+								}
+							},
+							[
+								// 日期主体框
+								props.isRange
+										// 范围选择
+										? h('div', {
+											'ref'            : el => that.entity = el,
+											'role'           : 'calendar',
+											'data-editable'  : props.editable ? 'true' : null,
+											'data-auto-close': props.autoClose ? 'true' : null,
+											'data-week-start': props.weekStart,
+											'data-today'     : props.showToday ? 'true' : null,
+											'data-show-time' : that.formatType === 'datetime-local' ? 'true' : null,
+											'data-min'       : that.formatMin,
+											'data-max'       : that.formatMax,
+											'data-range'     : true,
+											'data-split'     : props.splitText,
+											'data-language'  : props.locale,
+											'data-lang-pack' : that.langPack,
+											onChange         : (e: any) => {
+												let detail = e.detail;
+												if (e.target !== that.entity) {
+													const p = e.target.dataset?.role;
+													const v = e.target.value;
+													detail ??= {
+														start: p === 'start' ? v : that.innerRange[0] ?? '',
+														end  : p === 'end' ? v : that.innerRange[1] ?? '',
+													}
+												}
+												// 如果没有显示到秒得去掉秒
+												if (!props.step || Number(props.step) % 60 === 0) {
+													detail.start = detail.start.split(':').slice(0, 2).join(':');
+													detail.end = detail.end.split(':').slice(0, 2).join(':');
+												}
+												that.innerRange = [detail.start, detail.end];
+											}
+										}, [
+											withDirectives(h('input', {
+												'type'       : that.formatType,
+												'data-type'  : that.formatType,// ? 'datetime-local' : 'date',
+												'data-role'  : 'start',
+												'step'       : props.step,
+												'value'      : that.innerRange[0],
+												'placeholder': JSON.parse(that.langPack)?.rangeStart,
+												'required'   : isTruthy(props.required),
+												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
+												onBlur       : (e: Event) => directiveFn(e.target)
+											}), [[insertPlaceDirect]]),
+											withDirectives(h('input', {
+												'type'       : that.formatType,
+												'data-type'  : that.formatType,// ? 'datetime-local' : 'date',
+												'data-role'  : 'end',
+												'step'       : props.step,
+												'value'      : that.innerRange[1],
+												'placeholder': JSON.parse(that.langPack)?.rangeEnd,
+												'required'   : isTruthy(props.required),
+												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
+												onBlur       : (e: Event) => directiveFn(e.target)
+											}), [[insertPlaceDirect]])
+										])
+										// 单一时间
+										: h('div', {class: 'control is-expanded'}, h('input', {
+											'ref'  : el => that.entity = el,
+											'class': {
+												'input'    : true,
+												'is-danger': that.isError
+											},
+											'type' : 'date',//formatType.value,
+											'min'  : that.formatMin,
+											'max'  : that.formatMax,
+											// 'step'           : props.step,
+											'disabled'       : isTruthy(props.disabled),
+											'required'       : isTruthy(props.required),
+											'value'          : that.innerDate,
+											'role'           : 'calendar',
+											'data-editable'  : props.editable ? 'true' : null,
+											'data-auto-close': props.autoClose ? 'true' : null,
+											'data-week-start': props.weekStart,
+											'data-today'     : props.showToday ? 'true' : null,
+											'data-language'  : props.locale,
+											'data-lang-pack' : that.langPack,
+											onChange(e: any) {
+												that.setError(false);
+												that.innerDate = e.target.value;
+											},
+											onClick(e: any) {
+												e.preventDefault();
+											},
+											onTouchstart(e: any) {
+												if (e.target.getAttribute('open') === 'open') {
+													e.preventDefault();
+												}
+												else {
+													e.target.disabled = true;
+													setTimeout(() => {
+														e.target.disabled = false;
+														e.target.click();
+													});
+												}
+											},
+											onBlur(e: any) {
+												if (!e.target.checkValidity() && e.target.value) {
+													that.setError(true, e.target.validationMessage);
+												}
+												if (e.relatedTarget && !e.relatedTarget?.closest('.date-panel')) {
+													that.instance?.dismiss();
+												}
+												that.instance = undefined;
+											}
+										})),
+
+								// 如果是非范围选择且是 datetime-local 类型则附加时间选择组件
+								that.isAddonTime && (
+										h(TimePicker, {
+											class     : 'control is-right',
+											showSecond: Number(props.step) % 60 !== 0,
+											step      : props.step,
+											modelValue: that.innerTime,
+											'onUpdate:modelValue'(val: string) {
+												that.innerTime = val;
+											},
+											onError: that.setError
+										})
+								)
+							]
+					)
+				]
+		);
 	}
 };
 </script>

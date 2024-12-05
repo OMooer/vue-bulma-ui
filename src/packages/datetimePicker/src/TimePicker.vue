@@ -302,6 +302,14 @@ function checkOutRange(h: string, m: string, s: string) {
 	return [tMin.join('') < rMin.join(''), tMax.join('') > rMax.join('')];
 }
 
+function checkDatePicker() {
+	const hasOpenPicker = document.querySelector('[role=calendar][open=open]');
+	if (hasOpenPicker) {
+		document.body.click();
+		isOpen.value = true;
+	}
+}
+
 function setError(is: boolean, msg?: string) {
 	isError.value = is;
 	is && entity.value.focus();
@@ -328,20 +336,20 @@ defineExpose({
 				<input
 						type="number" placeholder="--" :required :disabled
 						@focus="isOpen = true" @blur="padValue('hour', $event)" @keydown="checkKeyBehavior"
-						min="0" max="23" @click.stop
+						min="0" max="23" @click.stop="checkDatePicker"
 						v-model="hourValueCP">
 				:
 				<input
 						type="number" placeholder="--" :required :disabled
 						@focus="isOpen = true" @blur="padValue('minute', $event)" @keydown="checkKeyBehavior"
-						min="0" max="59" @click.stop
+						min="0" max="59" @click.stop="checkDatePicker"
 						v-model="minuteValueCP">
 				<template v-if="showSecond">
 					:
 					<input
 							type="number" placeholder="--" :required :disabled
 							@focus="isOpen = true" @blur="padValue('second', $event)" @keydown="checkKeyBehavior"
-							min="0" max="59" @click.stop
+							min="0" max="59" @click.stop="checkDatePicker"
 							v-model="secondValueCP">
 				</template>
 			</div>
