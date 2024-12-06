@@ -146,6 +146,7 @@ function deletePhoto(index: number) {
 					emit('close');
 					return;
 				}
+				offsetX.value = offsetY.value = 0;
 				if (currentIndex.value >= photos.value?.length) {
 					currentIndex.value = photos.value?.length - 1;
 				}
