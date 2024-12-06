@@ -24,5 +24,9 @@ npm install vue3-bulma-ui
 // 导入插件
 import UI from 'vue3-bulma-ui';
 // 在 Vue 实例上安装插件
-vue.use(UI);
+vue.use(UI, [options]);
 ```
+
+## 捐赠一下
+
+![赞助](https://vbui.omooer.com/assets/static/wepay-CIt0BVAN.jpg)
