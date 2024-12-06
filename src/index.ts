@@ -75,3 +75,4 @@ export default {
 
 export * from './components';
 export { useDialog };
+export const version = import.meta.env.VERSION;

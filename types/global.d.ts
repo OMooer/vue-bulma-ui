@@ -85,6 +85,7 @@ declare module 'vue3-bulma-ui' {
 	};
 	export * from 'vue3-bulma-ui/components';
 	export { useDialog }
+	export const version: string;
 }
 
 export {};
