@@ -100,5 +100,7 @@ export { default as VbTree } from './packages/tree';
 export { Preview as VbPreview } from './packages/uploader';
 // 全能上传插件
 export { SpecialImageUpload as VbUPluginSI } from './packages/uploader';
+// 裁剪图片上传插件
+export { CropImageUpload as VbUPluginCI } from './packages/uploader';
 // 上传组件
 export { default as VbUploader } from './packages/uploader';

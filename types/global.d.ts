@@ -61,6 +61,7 @@ declare module 'vue' {
 		VbToast: typeof import("vue3-bulma-ui/components")["VbToast"];
 		VbTree: typeof import("vue3-bulma-ui/components")["VbTree"];
 		VbUploader: typeof import("vue3-bulma-ui/components")["VbUploader"];
+		VbUPluginCI: typeof import("vue3-bulma-ui/components")["VbUPluginCI"];
 		VbUPluginSI: typeof import("vue3-bulma-ui/components")["VbUPluginSI"];
 	}
 

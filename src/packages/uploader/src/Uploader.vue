@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
-import { abbrNumber, isTruthy } from '../../../utils';
+import { computed, inject, provide, ref, toRef } from 'vue';
+import { abbrNumber, isTruthy, runPromiseSequence } from '../../../utils';
 import { ext2mime } from '../../../utils/mime';
 import PreviewSource from './PreviewSource.vue';
+
+type HookMethod = 'select';
 
 defineOptions({
 	inheritAttrs: false
@@ -51,10 +53,14 @@ const props = defineProps({
 		type   : Number,
 		default: 0 // 不限制
 	},
-	isSmall    : Boolean
+	isSmall    : Boolean,
+	width      : Number,
+	height     : Number,
 });
 const emit = defineEmits(['update:modelValue', 'start', 'error', 'status']);
 const isReallySmall = computed(() => isParentSmall || props.isSmall);
+// Hook 信息
+const hooks = new Map();
 // 上传队列
 const uploadQueue = ref<{ [propName: string]: any }[]>([]);
 // 上传状态 init ready start success error complete
@@ -199,9 +205,27 @@ function selectFilesOrDir(ev: any) {
 	}
 }
 
-function startUpload(data: any) {
-	readyStartProgress();
-	statusChanged('start', data);
+function startUpload(formDataOfFiles: FormData) {
+	uploadState.value = 'init';
+	emit('status', {status: 'init'});
+	// 增加处理文件的扩展 hook
+	const selectHooks = hooks.get('select') ?? [];
+	selectHooks.push((d: FormData) => Promise.resolve(d));
+	runPromiseSequence(selectHooks, formDataOfFiles).then(
+			(data) => {
+				readyStartProgress();
+				statusChanged('start', data);
+			}
+	).catch(() => {});
+}
+
+function setHooks(method: HookMethod, fn: <T>(a: T) => Promise<T>) {
+	if (hooks.has(method)) {
+		hooks.get(method).push(fn);
+	}
+	else {
+		hooks.set(method, [fn]);
+	}
 }
 
 function completedUpload(data: []) {
@@ -284,13 +308,20 @@ function setError(is: boolean, msg?: string) {
 	}
 }
 
+provide('setHooks', setHooks);
+provide('startUpload', startUpload);
+provide('disabled', toRef(() => isTruthy(props.disabled)));
+provide('width', props.width);
+provide('height', props.height);
 defineExpose({
 	setError
 });
 </script>
 
 <template>
-	<div class="vb-uploader" :class="{'is-disabled': isTruthy(disabled), 'is-danger': uploadError}">
+	<div
+			class="vb-uploader" :class="{'is-disabled': isTruthy(disabled), 'is-danger': uploadError}"
+			:style="{width: width + 'px'}">
 		<div
 				:class="{
 					'vb-uploader-progress': true,
@@ -392,6 +423,7 @@ defineExpose({
 	.file-input {
 		top: auto;
 		bottom: 0;
+		width: 0;
 		height: 3em;
 		z-index: 0;
 
@@ -402,7 +434,6 @@ defineExpose({
 
 	.uploader-label {
 		position: relative;
-		//z-index: 2;
 
 		> .file > .file-label {
 			flex-grow: 1;

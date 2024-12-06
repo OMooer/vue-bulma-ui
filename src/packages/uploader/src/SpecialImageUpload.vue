@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import PreviewSource from './PreviewSource.vue';
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 
 const emit = defineEmits(['upload', 'removed', 'error']);
-const props = defineProps(['result', 'status', 'disabled']);
+const props = defineProps(['result', 'status']);
+const disabled = inject('disabled', ref(false));
 const isDragover = ref(false);
 const isUploading = computed(() => {
 	return props.status === 'start';
@@ -57,7 +58,7 @@ async function readFile(url: string) {
 }
 
 function pasteUpload(ev: ClipboardEvent) {
-	if (isUploading.value || props.disabled) {
+	if (isUploading.value || disabled.value) {
 		return;
 	}
 	const items = ev.clipboardData && ev.clipboardData.items;
@@ -230,6 +231,14 @@ function remove() {
 
 		:deep(.image-source) {
 			margin-bottom: 0;
+		}
+	}
+
+	&[contenteditable="false"] {
+		border-color: var(--bulma-background);
+
+		.upload-cont {
+			user-select: none;
 		}
 	}
 
