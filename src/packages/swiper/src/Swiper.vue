@@ -335,7 +335,6 @@ onBeforeUnmount(() => {
 			margin: 0 .15em;
 			background: rgba(255, 255, 255, .5);
 			border-radius: 4px;
-			box-shadow: 0 0 3px -1px var(--bulma-grey);
 			cursor: pointer;
 			width: 1.5em;
 			height: .3em;
