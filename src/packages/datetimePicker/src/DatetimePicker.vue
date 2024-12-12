@@ -2,7 +2,7 @@
 import Calendar from 'sa-calendar';
 import { h, ref, watch, computed, withDirectives, inject, onMounted } from 'vue';
 import TimePicker from './TimePicker.vue';
-import { isTruthy } from '../../../utils';
+import { isElementPartiallyHidden, isTruthy } from '../../../utils';
 
 function dateFormat(d: Date, f: string = 'YYYY-MM-DD hh:mm:ss') {
 	const year  = d.getFullYear(),
@@ -27,9 +27,9 @@ export default {
 			default: 'date'
 		},
 		isRange   : [Boolean, String],
-		editable  : {
+		readonly  : {
 			type   : Boolean,
-			default: true
+			default: false
 		},
 		autoClose : {
 			type   : Boolean,
@@ -55,6 +55,7 @@ export default {
 	setup(props, {emit, expose}) {
 		const isParentSmall = inject('isSmall', false);
 		const isError = ref(false);
+		const isRight = ref(false);
 		const entity = ref();
 		const innerDate = ref('');
 		const innerTime = ref('');
@@ -128,7 +129,11 @@ export default {
 
 		onMounted(() => {
 			entity.value.addEventListener('click', (e: any) => {
+				if (props.readonly) {
+					return;
+				}
 				if (entity.value.getAttribute('open') !== 'open') {
+					isRight.value = false;
 					instance = new Calendar({
 						trigger: entity.value,
 						mount  : entity.value.closest('.vb-datetime'),
@@ -143,6 +148,11 @@ export default {
 						}
 					});
 					entity.value.focus();
+					requestAnimationFrame(() => {
+						if (instance) {
+							isRight.value = isElementPartiallyHidden(instance.$parent[0]);
+						}
+					});
 				}
 				e.stopPropagation();
 			});
@@ -156,6 +166,7 @@ export default {
 			entity,
 			setError,
 			isError,
+			isRight,
 			isParentSmall,
 			isAddonTime,
 			formatType,
@@ -194,6 +205,7 @@ export default {
 						'is-disabled': isTruthy(props.disabled),
 						'is-shake'   : that.isError,
 						'is-danger'  : that.isError,
+						'is-right'   : that.isRight,
 						'is-small'   : that.isParentSmall
 					}
 				},
@@ -211,7 +223,7 @@ export default {
 										? h('div', {
 											'ref'            : el => that.entity = el,
 											'role'           : 'calendar',
-											'data-editable'  : props.editable ? 'true' : null,
+											'data-editable'  : props.readonly ? null : 'true',
 											'data-auto-close': props.autoClose ? 'true' : null,
 											'data-week-start': props.weekStart,
 											'data-today'     : props.showToday ? 'true' : null,
@@ -247,6 +259,7 @@ export default {
 												'step'       : props.step,
 												'value'      : that.innerRange[0],
 												'placeholder': JSON.parse(that.langPack)?.rangeStart,
+												'readonly'   : isTruthy(props.readonly),
 												'required'   : isTruthy(props.required),
 												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
 												onBlur       : (e: Event) => directiveFn(e.target)
@@ -258,6 +271,7 @@ export default {
 												'step'       : props.step,
 												'value'      : that.innerRange[1],
 												'placeholder': JSON.parse(that.langPack)?.rangeEnd,
+												'readonly'   : isTruthy(props.readonly),
 												'required'   : isTruthy(props.required),
 												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
 												onBlur       : (e: Event) => directiveFn(e.target)
@@ -276,9 +290,10 @@ export default {
 											// 'step'           : props.step,
 											'disabled'       : isTruthy(props.disabled),
 											'required'       : isTruthy(props.required),
+											'readonly'       : isTruthy(props.readonly),
 											'value'          : that.innerDate,
 											'role'           : 'calendar',
-											'data-editable'  : props.editable ? 'true' : null,
+											'data-editable'  : props.readonly ? null : 'true',
 											'data-auto-close': props.autoClose ? 'true' : null,
 											'data-week-start': props.weekStart,
 											'data-today'     : props.showToday ? 'true' : null,
@@ -461,6 +476,7 @@ export default {
 
 	&.is-disabled {
 		cursor: not-allowed;
+		user-select: none;
 
 		[role=calendar] {
 			pointer-events: none;
@@ -480,6 +496,10 @@ export default {
 <style lang="scss">
 @import "../../../scss/variables";
 // 弹出窗样式
+.vb-datetime.is-right > .date-panel {
+	right: 0 !important;
+}
+
 .date-panel {
 	top: auto !important;
 	left: auto !important;

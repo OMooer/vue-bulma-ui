@@ -10,7 +10,7 @@ const props = defineProps({
 	min     : Number,
 	max     : Number,
 	step    : {
-		type: Number,
+		type   : Number,
 		default: 1
 	}
 });
@@ -119,6 +119,10 @@ function removeAuto() {
 		&::-webkit-calendar-picker-indicator {
 			display: none;
 		}
+	}
+
+	input, button {
+		transition: none;
 	}
 
 	&.has-addons {
