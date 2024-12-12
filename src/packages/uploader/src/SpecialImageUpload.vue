@@ -122,7 +122,7 @@ function parentUpload(files: any[]) {
 
 function parentTrigger(ev: Event) {
 	document.getSelection()?.removeAllRanges();
-	const parentEl = (ev.currentTarget as HTMLElement).parentNode as HTMLElement;
+	const parentEl = (ev.currentTarget as HTMLElement).parentElement;
 	parentEl && parentEl.click();
 }
 

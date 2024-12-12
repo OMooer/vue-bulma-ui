@@ -64,9 +64,9 @@ const echartsReady = ref(false);
 
 // 图表子组件列表
 const chartChildren = shallowRef<any>({
-	pieChart : Pie,
-	lineChart: Line,
-	barChart : Bar,
+	pieChart  : Pie,
+	lineChart : Line,
+	barChart  : Bar,
 	radarChart: Radar,
 	gaugeChart: Gauge
 });
@@ -203,12 +203,10 @@ provide('parentChartTitle', props.title);
 	<div class="vb-chart">
 		<h3 class="title is-5" v-if="title">{{ title }}</h3>
 		<div class="toolbar" v-if="toolbar">
-			<ul>
-				<li class="tool-date" v-if="dateFilter">
-					<DatetimePicker class="is-small" :messages is-range v-model="dateRange"/>
-				</li>
-				<slot name="toolbar" :start="dateRange[0]" :end="dateRange[1]"/>
-			</ul>
+			<div class="tool-date" v-if="dateFilter">
+				<DatetimePicker class="is-small" :messages is-range v-model="dateRange"/>
+			</div>
+			<slot name="toolbar" :start="dateRange[0]" :end="dateRange[1]"/>
 		</div>
 		<Component
 				:dark="isDarkTheme" :colors="chartColors" :data="chartData"
@@ -223,23 +221,16 @@ provide('parentChartTitle', props.title);
 
 <style scoped lang="scss">
 .vb-chart {
-	margin: 1rem 0;
-
 	.toolbar {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: .5em;
+		margin: .25em 0;
+		font-size: 0.75rem;
 
-		ul {
-			display: flex;
-			align-items: center;
-			flex-wrap: wrap;
-
-			:deep(li) {
-				padding: .5rem 0;
-				font-size: .75rem;
-
-				&.tool-date {
-					width: 12rem;
-				}
-			}
+		.tool-date {
+			width: 12rem;
 		}
 	}
 }

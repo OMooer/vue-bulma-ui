@@ -17,6 +17,7 @@ const isOpen = ref(false);
 const isUp = ref(false);
 const isRight = ref(false);
 const isFixed = ref(false);
+const frSize = ref(0);
 const canMenuHoverIt = ref(true);
 const entity = ref();
 
@@ -49,7 +50,9 @@ watch(isOpen, (is) => {
 	if (is) {
 		// 计算位置决定展开方向
 		const target = entity.value?.querySelector('.dropdown-menu');
-		const overBox = isOverBoxSize(target, 0, document.querySelector(props.parentElement as string) as HTMLElement)
+		const parent = document.querySelector(props.parentElement as string) as HTMLElement;
+		const overBox = isOverBoxSize(target, 0, parent);
+		frSize.value = document.documentElement.clientWidth - parent.getBoundingClientRect().right;
 		requestAnimationFrame(() => {
 			isUp.value = overBox('bottom');
 			isRight.value = overBox('right');
@@ -113,7 +116,9 @@ function menuClicked(e: any) {
 				</span>
 			</button>
 		</div>
-		<div class="dropdown-menu is-fullwidth" role="menu" v-show="canMenuHoverIt">
+		<div
+				class="dropdown-menu is-fullwidth" role="menu" :style="isFixed ? `--fr-size: ${frSize}px` : null"
+				v-show="canMenuHoverIt">
 			<div class="dropdown-content">
 				<template :key="index" v-for="(item, index) in list">
 					<hr class="dropdown-divider" v-if="!item">
@@ -157,7 +162,9 @@ function menuClicked(e: any) {
 			position: fixed;
 			top: unset;
 			bottom: unset;
+			right: var(--fr-size);
 			width: unset;
+			min-width: unset;
 			transform: translate(-50%, -50%);
 		}
 	}
