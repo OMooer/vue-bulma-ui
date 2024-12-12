@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, useAttrs, watch } from 'vue';
-import { isOverBoxSize } from '../../../utils';
+import { computed, defineComponent, h, ref, useAttrs, watch } from 'vue';
+import { isElementPartiallyHidden, isOverBoxSize } from '../../../utils';
 
 defineOptions({
 	inheritAttrs: false
@@ -17,8 +17,11 @@ const isOpen = ref(false);
 const isUp = ref(false);
 const isRight = ref(false);
 const isFixed = ref(false);
+const isOverflowClip = ref(false);
 const frSize = ref(0);
-const canMenuHoverIt = ref(true);
+const ftSize = ref(0);
+const isOpacity = ref(0);
+const menuCanHoverIt = ref(true);
 const entity = ref();
 
 const classList = computed(() => {
@@ -52,14 +55,19 @@ watch(isOpen, (is) => {
 		const target = entity.value?.querySelector('.dropdown-menu');
 		const parent = document.querySelector(props.parentElement as string) as HTMLElement;
 		const overBox = isOverBoxSize(target, 0, parent);
-		frSize.value = document.documentElement.clientWidth - parent.getBoundingClientRect().right;
+		const entityRect = entity.value?.getBoundingClientRect();
 		requestAnimationFrame(() => {
+			frSize.value = document.documentElement.clientWidth - entityRect.left;
+			ftSize.value = entityRect.top + entityRect.height / 2 - target.offsetHeight / 2;
 			isUp.value = overBox('bottom');
 			isRight.value = overBox('right');
 			setTimeout(() => {
 				// 需要重新定位
 				isFixed.value = isUp.value && overBox('top');
-			})
+				isOverflowClip.value = isFixed.value && isElementPartiallyHidden(target);
+				// 最初菜单不可见，计算完位置后可见
+				isOpacity.value = 1;
+			});
 		});
 		document.addEventListener('click', event, {capture: true});
 	}
@@ -67,7 +75,42 @@ watch(isOpen, (is) => {
 		isUp.value = false;
 		isRight.value = false;
 		isFixed.value = false;
+		isOverflowClip.value = false;
+		isOpacity.value = 0;
 		document.removeEventListener('click', event, {capture: true});
+	}
+});
+
+const menuCont = defineComponent(() => {
+	return () => {
+		return h('div',
+				{
+					class: 'dropdown-menu',
+					role : 'menu',
+					style: isFixed.value
+							? `--fr-size: ${ frSize.value }px; --ft-size: ${ ftSize.value }px;`
+							: `opacity: ${ isOpacity.value }`
+				},
+				h('div',
+						{
+							class: 'dropdown-content',
+						},
+						props.list.map((item) => {
+							if (!item) {
+								return h('hr', {class: 'dropdown-divider'});
+							}
+							return h('a', {
+								class: {
+									'dropdown-item': true,
+									'is-disabled'  : item.disabled,
+								},
+								onClick() {
+									selectValue(item.value)
+								}
+							}, item.icon ? h('i', {class: item.icon}) : h('span', item.title));
+						})
+				)
+		);
 	}
 });
 
@@ -95,9 +138,9 @@ function leaveHandler() {
 function menuClicked(e: any) {
 	// 为了让菜单自动关闭， 因为鼠标一直 hover 菜单， 导致下拉菜单点击选择后没自动关闭
 	if (e.target.closest('a.dropdown-item')) {
-		canMenuHoverIt.value = false;
+		menuCanHoverIt.value = false;
 		setTimeout(() => {
-			canMenuHoverIt.value = true;
+			menuCanHoverIt.value = true;
 		}, 200);
 	}
 }
@@ -116,19 +159,12 @@ function menuClicked(e: any) {
 				</span>
 			</button>
 		</div>
-		<div
-				class="dropdown-menu is-fullwidth" role="menu" :style="isFixed ? `--fr-size: ${frSize}px` : null"
-				v-show="canMenuHoverIt">
-			<div class="dropdown-content">
-				<template :key="index" v-for="(item, index) in list">
-					<hr class="dropdown-divider" v-if="!item">
-					<a class="dropdown-item" :class="{'is-disabled': item.disabled}" @click="selectValue(item.value)" v-else>
-						<i :class="item.icon" v-if="item.icon"></i>
-						<span>{{ item.title }}</span>
-					</a>
-				</template>
+		<Teleport to="body" v-if="isOverflowClip">
+			<div :class="classList">
+				<Component :is="menuCont" v-show="menuCanHoverIt"/>
 			</div>
-		</div>
+		</Teleport>
+		<Component :is="menuCont" v-show="menuCanHoverIt" v-else/>
 	</div>
 </template>
 
@@ -137,35 +173,20 @@ function menuClicked(e: any) {
 
 .vb-dropdown {
 	&.is-small {
-		.button, .input, .dropdown-item {
+		.button, .input, :deep(.dropdown-item) {
 			line-height: 1.5;
 			font-size: 0.75rem;
-		}
-	}
-
-	&.is-up {
-		.dropdown-menu .dropdown-content {
-			margin-bottom: 0;
-
-			.filter {
-				order: 2;
-			}
-
-			.filter-line {
-				order: 1;
-			}
 		}
 	}
 
 	&.is-fixed.dropdown {
 		.dropdown-menu {
 			position: fixed;
-			top: unset;
+			top: var(--ft-size, unset);
 			bottom: unset;
 			right: var(--fr-size);
 			width: unset;
-			min-width: unset;
-			transform: translate(-50%, -50%);
+			//transform: translate(0, -50%);
 		}
 	}
 
@@ -185,7 +206,7 @@ function menuClicked(e: any) {
 
 	.dropdown-trigger {
 		> .button {
-			border: 0;
+			--bulma-button-border-width: 0px;
 			box-shadow: none !important;
 		}
 
@@ -197,11 +218,9 @@ function menuClicked(e: any) {
 	}
 
 	.dropdown-menu {
-		&.is-fullwidth {
-			width: 100%;
-		}
+		text-align: left;
 
-		.dropdown-content {
+		:deep(.dropdown-content) {
 			.dropdown-item {
 				display: flex;
 				align-items: center;

@@ -58,7 +58,6 @@ watch([scale, tranX, tranY], () => {
 // 增加上传组件选择文件 Hook
 if (setHooks) {
 	setHooks('select', (file: FormData) => {
-		console.log('select hook')
 		// 如果已经是裁剪过的同一个文件，则直接返回裁剪结果
 		if (!isSubmitted.value) {
 			originFormData = file;
@@ -89,8 +88,8 @@ function checkImageSafeRange() {
 	      sideVertical   = height * sideSize;
 	const changes: (() => void)[] = [];
 	// 如果图片宽高小于裁剪框宽高，则进行强制放大
-	if (imgSize.width < viewWidth || imgSize.height < viewHeight) {
-		const newScale = Math.max(viewWidth / imgSize.renderWidth, viewHeight / imgSize.renderHeight);
+	if (Math.round(imgSize.width) < viewWidth || Math.round(imgSize.height) < viewHeight) {
+		const newScale = Number(Math.max(viewWidth / imgSize.renderWidth, viewHeight / imgSize.renderHeight).toFixed(3));
 		changes.push(() => {
 			scale.value = newScale;
 			tranX.value = 0;
@@ -272,6 +271,7 @@ function remove() {
 						<input
 								type="range" min="0.1" max="3" step="0.1" :disabled @change="checkImageSafeRange"
 								v-model.number="scale">
+						<span class="is-size-7">{{ Math.round(scale * 100) }}%</span>
 					</label>
 					<div class="buttons">
 						<button type="button" class="button is-small" :disabled @click="cancelImage">取消</button>
@@ -392,12 +392,13 @@ function remove() {
 			border: 1px solid hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
 			box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
 			border-radius: inherit;
+			user-select: none;
 
 			&::after {
 				content: '';
 				position: absolute;
 				inset: 0;
-				background: rgba(0, 0, 0, 0.5);
+				background: rgba(0, 0, 0, 0.7);
 				mask-image: linear-gradient(black 20%, transparent 20%, transparent 80%, black 80%), linear-gradient(to right, black 20%, transparent 20%, transparent 80%, black 80%);
 			}
 
@@ -413,8 +414,12 @@ function remove() {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			gap: 1em;
+			gap: 0.75em;
 			margin-top: .5em;
+
+			input[type=range] {
+				width: 6.25rem;
+			}
 		}
 	}
 }

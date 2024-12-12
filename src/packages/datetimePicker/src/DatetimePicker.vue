@@ -261,6 +261,7 @@ export default {
 												'placeholder': JSON.parse(that.langPack)?.rangeStart,
 												'readonly'   : isTruthy(props.readonly),
 												'required'   : isTruthy(props.required),
+												onClick      : (e: Event) => e.preventDefault(),
 												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
 												onBlur       : (e: Event) => directiveFn(e.target)
 											}), [[insertPlaceDirect]]),
@@ -273,6 +274,7 @@ export default {
 												'placeholder': JSON.parse(that.langPack)?.rangeEnd,
 												'readonly'   : isTruthy(props.readonly),
 												'required'   : isTruthy(props.required),
+												onClick      : (e: Event) => e.preventDefault(),
 												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
 												onBlur       : (e: Event) => directiveFn(e.target)
 											}), [[insertPlaceDirect]])
@@ -303,7 +305,7 @@ export default {
 												that.setError(false);
 												that.innerDate = e.target.value;
 											},
-											onClick(e: any) {
+											onClick(e: Event) {
 												e.preventDefault();
 											},
 											onTouchstart(e: any) {
