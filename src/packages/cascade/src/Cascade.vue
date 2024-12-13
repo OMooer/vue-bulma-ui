@@ -52,7 +52,7 @@ const cascadeValue = computed(() => {
 });
 const findValue = ref();
 const internalValue = computed(() => {
-	return findValue.value || findSelectedValue(props?.modelValue || []);
+	return findSelectedValue(props?.modelValue || []) || findValue.value;
 });
 
 const captureEvent = (ev: Event) => {
