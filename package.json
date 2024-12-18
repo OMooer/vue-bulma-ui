@@ -33,7 +33,11 @@
 		"Bulma",
 		"UI"
 	],
-	"author": "AngusYoung",
+	"author": {
+		"name": "AngusYoung",
+		"email": "angusyoung@mrxcool.com",
+		"url": "mrx.cool"
+	},
 	"license": "MIT",
 	"homepage": "https://vbui.omooer.com/",
 	"devDependencies": {
