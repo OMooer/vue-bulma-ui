@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
+import { FILE_UPLOAD_FAILED } from '@/utils';
 import PreviewSource from './PreviewSource.vue';
 import { computed, inject, ref } from 'vue';
 
@@ -99,7 +100,7 @@ async function dragUpload(ev: DragEvent) {
 						readFile(url).then((d) => {
 							resolve(d);
 						}).catch(() => {
-							emit('error', true, 'file upload failed.');
+							emit('error', true, FILE_UPLOAD_FAILED);
 						});
 					});
 				}));

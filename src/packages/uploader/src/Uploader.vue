@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
 import { computed, inject, provide, ref, toRef } from 'vue';
-import { abbrNumber, isTruthy, runPromiseSequence } from '@/utils';
+import { abbrNumber, ERROR_ACCEPT, isTruthy, runPromiseSequence } from '@/utils';
 import { ext2mime } from '@/utils/mime';
 import PreviewSource from './PreviewSource.vue';
 
@@ -32,7 +32,7 @@ const props = defineProps({
 		validator: (val: string | []) => {
 			const list = typeof val === 'string' ? val.split(',') : val;
 			if (list.some((item: string) => /^\S+\/\S+$/.test(item))) {
-				console.warn('上传组件的 accept 属性，不同于原生属性，只允许设置扩展名，否则无法正常使用');
+				console.warn(ERROR_ACCEPT);
 				return false;
 			}
 			return true;

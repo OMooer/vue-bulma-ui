@@ -12,7 +12,7 @@ const lang = ref<typeof ZhCn>({} as typeof ZhCn);
 export const useUILocale = () => {
 	// 加载语言包
 	function loadLanguage(locale: string | object = 'zh-cn') {
-		console.log('Load language: ' + locale);
+		// console.log('Load language: ' + locale);
 		if (typeof locale === 'string') {
 			const l = localeFiles[`../locales/${ locale.toLowerCase() }.ts`];
 			if (l) {
