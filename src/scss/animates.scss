@@ -264,16 +264,16 @@
 
 	&-zoom {
 		&-enter-active {
-			transition: transform .3s ease-out;
+			transition: scale .3s ease-out;
 		}
 
 		&-leave-active {
-			transition: transform .25s ease-in;
+			transition: scale .25s ease-in;
 		}
 
 		&-enter-from,
 		&-leave-to {
-			transform: scale(.01);
+			scale: .01;
 		}
 	}
 }
