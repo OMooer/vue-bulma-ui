@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import * as eCharts from 'echarts';
 import { computed, onMounted, provide, ref, shallowRef, watchEffect } from 'vue';
 import { chartColors } from './colors';
@@ -25,10 +26,7 @@ const props = defineProps({
 			return false;
 		}
 	},
-	dateText  : {
-		type   : Array,
-		default: () => ['开始时间', '结束时间']
-	},
+	dateText  : Array,
 	width     : {
 		type   : [String, Number],
 		default: '100%'
@@ -57,6 +55,7 @@ const props = defineProps({
 		}
 	}
 });
+const {$vbt} = useUILocale();
 const toolbar = computed(() => {
 	return props.dateFilter || slots.toolbar;
 });
@@ -169,11 +168,12 @@ watchEffect(() => {
 	}
 });
 const messages = computed(() => {
+	const message = props.dateText || [$vbt('chart.startText'), $vbt('chart.endText')];
 	return {
 		'zh-cn': {
 			calendar: {
-				rangeStart: props.dateText[0],
-				rangeEnd  : props.dateText[1],
+				rangeStart: message[0],
+				rangeEnd  : message[1],
 			}
 		}
 	}

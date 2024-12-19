@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { provide, ref } from 'vue';
-import { isTruthy } from '../../../utils';
+import { isTruthy } from '@/utils';
 
 const emit = defineEmits(['close']);
 defineOptions({

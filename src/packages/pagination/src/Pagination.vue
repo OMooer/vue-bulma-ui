@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed } from 'vue';
 import { SelectorNative } from '../../select';
 
@@ -39,10 +40,11 @@ const props = defineProps({
 });
 const limit = defineModel<number>('limit', {default: 10});
 const emit = defineEmits(['changePage']);
+const {$vbt} = useUILocale();
 const sizes = computed(() => {
 	return props.pageSizes.map((item: any) => {
 		return {
-			title: `每页显示${ item }条`,
+			title: $vbt('pagination.pageSize', [item]),
 			value: item
 		}
 	});

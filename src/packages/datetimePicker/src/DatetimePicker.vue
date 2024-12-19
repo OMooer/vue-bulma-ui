@@ -2,7 +2,8 @@
 import Calendar from 'sa-calendar';
 import { h, ref, watch, computed, withDirectives, inject, onMounted } from 'vue';
 import TimePicker from './TimePicker.vue';
-import { isElementPartiallyHidden, isTruthy } from '../../../utils';
+import { isElementPartiallyHidden, isTruthy } from '@/utils';
+import { useUILocale } from '@/actions/locale';
 
 function dateFormat(d: Date, f: string = 'YYYY-MM-DD hh:mm:ss') {
 	const year  = d.getFullYear(),
@@ -53,6 +54,7 @@ export default {
 	},
 	emits       : ['update:modelValue', 'error'],
 	setup(props, {emit, expose}) {
+		const {$vbt} = useUILocale();
 		const isParentSmall = inject('isSmall', false);
 		const isError = ref(false);
 		const isRight = ref(false);
@@ -76,8 +78,8 @@ export default {
 			const lang = props.messages?.[props.locale] ?? props.messages;
 			let packText = lang ? (lang?.calendar || lang) : undefined;
 			packText = Object.assign({
-				rangeStart: '年/月/日',
-				rangeEnd  : '年/月/日'
+				rangeStart: $vbt('datetime.rangeStart'),
+				rangeEnd  : $vbt('datetime.rangeEnd'),
 			}, packText);
 			return JSON.stringify(packText);
 		});

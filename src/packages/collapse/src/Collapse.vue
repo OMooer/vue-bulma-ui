@@ -1,6 +1,6 @@
 <script lang="ts">
 import { cloneVNode, computed, defineComponent, h, ref } from 'vue';
-import { flattenVNode, isEmptyElement, isTruthy } from '../../../utils';
+import { flattenVNode, isEmptyElement, isTruthy } from '@/utils';
 import CollapsePanel from './CollapsePanel.vue';
 
 export default defineComponent({

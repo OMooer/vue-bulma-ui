@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, ref } from 'vue';
 import Modal from '../../modal';
 
@@ -14,15 +15,10 @@ const props = defineProps({
 	},
 	title     : String,
 	content   : String,
-	doneText  : {
-		type   : String,
-		default: '确定'
-	},
-	cancelText: {
-		type   : String,
-		default: '取消'
-	}
+	doneText  : String,
+	cancelText: String
 });
+const {$vbt} = useUILocale();
 const opened = ref(false);
 const openDialog = computed(() => {
 	return props.show && opened.value;
@@ -54,8 +50,8 @@ function chooseHandler(o: boolean) {
 		</slot>
 		<template #footer>
 			<footer class="card-footer">
-				<a class="card-footer-item has-text-weight-bold" @click="chooseHandler(true)">{{ doneText }}</a>
-				<a class="card-footer-item" @click="chooseHandler(false)" v-if="type === 'confirm'">{{ cancelText }}</a>
+				<a class="card-footer-item has-text-weight-bold" @click="chooseHandler(true)">{{ doneText || $vbt('dialog.doneText') }}</a>
+				<a class="card-footer-item" @click="chooseHandler(false)" v-if="type === 'confirm'">{{ cancelText || $vbt('dialog.cancelText') }}</a>
 			</footer>
 		</template>
 	</Modal>

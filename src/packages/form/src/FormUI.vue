@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, ref, watchEffect } from "vue";
 import DatetimePicker from '../../datetimePicker';
 import InputUI, { PasswordInput } from '../../input';
@@ -8,12 +9,13 @@ import Tags from '../../tags';
 import FormElement from './FormElement.vue';
 
 const emit = defineEmits(['submit', 'reset']);
-const props = withDefaults(defineProps<{
+const props = defineProps<{
 	config?: VBForm.Config;
 	submitText?: string;
 	disableSubmit?: boolean;
-}>(), {submitText: '提交'});
+}>();
 const modelValue = defineModel<Normal.AnyObj>();
+const {$vbt} = useUILocale();
 const innerValue = ref<Normal.AnyObj>({});
 const formValue = computed(() => {
 	return modelValue.value || innerValue.value;
@@ -165,7 +167,7 @@ function reset() {
 								type="submit" class="button is-success is-fullwidth"
 								:class="{'is-small': isSmall}"
 								:disabled="disableSubmit">
-							{{ submitText }}
+							{{ submitText || $vbt('form.submitText') }}
 						</button>
 					</div>
 				</slot>

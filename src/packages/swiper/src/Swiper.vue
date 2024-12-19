@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cloneVNode, computed, defineComponent, h, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
-import { flattenVNode } from '../../../utils';
+import { flattenVNode } from '@/utils';
 
 const props = defineProps({
 	showControl   : {

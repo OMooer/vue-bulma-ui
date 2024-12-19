@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, inject, provide, ref, toRef } from 'vue';
-import { abbrNumber, isTruthy, runPromiseSequence } from '../../../utils';
-import { ext2mime } from '../../../utils/mime';
+import { abbrNumber, isTruthy, runPromiseSequence } from '@/utils';
+import { ext2mime } from '@/utils/mime';
 import PreviewSource from './PreviewSource.vue';
 
 type HookMethod = 'select';
@@ -40,14 +41,13 @@ const props = defineProps({
 	modelValue : null,
 	placeholder: {
 		type   : String,
-		default: '选择上传文件'
 	},
 	required   : [Boolean, String],
 	disabled   : [Boolean, String],
 	multiple   : [Boolean, String],
 	max        : {
 		type   : Number,
-		default: 1024 * 1024 * 1 // 1M
+		default: 1024 * 1024 * 0.5 // 500Kb
 	},
 	limit      : {
 		type   : Number,
@@ -58,6 +58,7 @@ const props = defineProps({
 	height     : Number,
 });
 const emit = defineEmits(['update:modelValue', 'start', 'error', 'status']);
+const {$vbt} = useUILocale();
 const isReallySmall = computed(() => isParentSmall || props.isSmall);
 // Hook 信息
 const hooks = new Map();
@@ -361,7 +362,7 @@ defineExpose({
 							<span class="file-icon">
 								<FasIcon icon="upload"/>
 							</span>
-							<span class="file-label">{{ placeholder }}</span>
+							<span class="file-label">{{ placeholder || $vbt('uploader.placeholder') }}</span>
 						</span>
 					</div>
 				</div>

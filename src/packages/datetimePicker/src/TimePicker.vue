@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue';
-import { isOverBoxSize, OUT_OF_RANGE } from '../../../utils';
+import { isOverBoxSize, OUT_OF_RANGE } from '@/utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{

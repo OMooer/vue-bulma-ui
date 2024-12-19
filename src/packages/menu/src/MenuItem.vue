@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getI18nData } from '../../../utils';
+import { getI18nData } from '@/utils';
 import Link from './Link.vue';
 
 const props = withDefaults(defineProps<{

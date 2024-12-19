@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref, watchEffect } from 'vue';
 
 defineOptions({
@@ -13,11 +14,11 @@ const props = withDefaults(defineProps<{
 	isSmall?: boolean;
 	allowNull?: boolean;
 }>(), {
-	modelValue : '',
-	allowNull  : true,
-	placeholder: '请选择'
+	modelValue: '',
+	allowNull : true
 });
 const emit = defineEmits(['update:modelValue', 'error']);
+const {$vbt} = useUILocale();
 const isError = ref(false);
 const entity = ref();
 const isReallySmall = computed(() => isParentSmall || props.isSmall);
@@ -61,7 +62,7 @@ defineExpose({
 <template>
 	<div class="select is-fullwidth" :class="{'is-small': isReallySmall, 'is-shake is-danger': isError}">
 		<select ref="entity" v-bind="$attrs" :required @change="update" v-model="selectedValue">
-			<option value="" :disabled="isNotNull">{{ placeholder }}</option>
+			<option value="" :disabled="isNotNull">{{ placeholder || $vbt('select.placeholder') }}</option>
 			<option :value="item.value" :disabled="item.disabled" :key="item.value as string" v-for="item in list">
 				{{ item.title }}
 			</option>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref } from 'vue';
 import Gallery from '../../gallery';
 
@@ -9,6 +10,7 @@ interface Props {
 	isSmall?: boolean;
 }
 
+const {$vbt} = useUILocale();
 const isParentSmall = inject('isSmall', false);
 const props = defineProps<Props>();
 const emit = defineEmits(['delete']);
@@ -18,7 +20,7 @@ const sourceName = computed(() => {
 	if (typeof props.source === 'object') {
 		return props.source?.name || props.source?.url;
 	}
-	return props.source.substring(props.source.lastIndexOf('/') + 1) || '点击查看';
+	return props.source.substring(props.source.lastIndexOf('/') + 1) || $vbt('uploader.preview.show');
 });
 const sourceUrl = computed(() => {
 	let _url = props.source as string;

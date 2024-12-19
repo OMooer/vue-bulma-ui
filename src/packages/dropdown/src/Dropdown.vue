@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineComponent, h, ref, useAttrs, watch } from 'vue';
-import { isElementPartiallyHidden, isOverBoxSize } from '../../../utils';
+import { isElementPartiallyHidden, isOverBoxSize } from '@/utils';
 
 defineOptions({
 	inheritAttrs: false

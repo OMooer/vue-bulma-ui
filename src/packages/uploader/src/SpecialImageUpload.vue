@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import PreviewSource from './PreviewSource.vue';
 import { computed, inject, ref } from 'vue';
 
 const emit = defineEmits(['upload', 'removed', 'error']);
 const props = defineProps(['result', 'status']);
+const {$vbt} = useUILocale();
 const disabled = inject('disabled', ref(false));
 const isDragover = ref(false);
 const isUploading = computed(() => {
@@ -141,9 +143,9 @@ function remove() {
 		<div class="upload-cont" contenteditable="false">
 			<PreviewSource :source="result[0]" can-delete @delete="remove" v-if="result && result.length"/>
 			<slot v-else>
-				<p>在此按下<kbd>⌘</kbd>+<kbd>v</kbd>/<kbd>CTRL</kbd>+<kbd>v</kbd>
-					粘贴图片上传<br>
-					或者双击选择文件上传</p>
+				<p>{{ $vbt('pasteUploader.press') }}<kbd>⌘</kbd>+<kbd>v</kbd>/<kbd>CTRL</kbd>+<kbd>v</kbd>
+					{{ $vbt('pasteUploader.pasteImage') }}<br>
+					{{ $vbt('pasteUploader.dblClick') }}</p>
 			</slot>
 		</div>
 	</div>

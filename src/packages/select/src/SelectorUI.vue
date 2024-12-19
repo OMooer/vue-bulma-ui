@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, inject, onUpdated, ref, watch } from 'vue';
-import { isOverBoxSize, vFocus } from '../../../utils';
+import { isOverBoxSize, vFocus } from '@/utils';
 import Empty from '../../empty';
 
 const isParentSmall = inject('isSmall', false);
-const props = withDefaults(defineProps<{
+const props = defineProps<{
 	modelValue?: any;
 	list: TVO.List;
 	placeholder?: string;
@@ -14,8 +15,9 @@ const props = withDefaults(defineProps<{
 	required?: boolean;
 	filterText?: string;
 	emptyText?: string;
-}>(), {placeholder: '请选择', emptyText: '无数据', filterText: '筛选'});
+}>();
 const emit = defineEmits(['update:modelValue', 'error']);
+const {$vbt} = useUILocale();
 const isError = ref(false);
 const isOpen = ref(false);
 const isUp = ref(false);
@@ -114,7 +116,7 @@ defineExpose({
 					{{ findValue.title }}
 				</span>
 				<span class="has-text-grey-light" v-else>
-						<FasIcon :icon="holderIcon" v-if="holderIcon"/> {{ placeholder }}
+						<FasIcon :icon="holderIcon" v-if="holderIcon"/> {{ placeholder || $vbt('select.placeholder') }}
 				</span>
 				<span class="icon is-small">
 					<FasIcon icon="angle-down" aria-hidden="true"/>
@@ -125,7 +127,9 @@ defineExpose({
 			<div class="dropdown-content">
 				<template v-if="filter">
 					<div class="dropdown-item filter">
-						<input type="search" class="input" :placeholder="filterText" v-focus v-model="keyword">
+						<input
+								type="search" class="input" :placeholder="filterText || $vbt('select.filterText')"
+								v-focus v-model="keyword">
 					</div>
 					<hr class="dropdown-divider filter-line"/>
 				</template>
@@ -139,7 +143,7 @@ defineExpose({
 						<span>{{ item.title }}</span>
 					</a>
 					<div class="dropdown-item is-disabled" v-if="!filterList.length">
-						<Empty :text="emptyText"></Empty>
+						<Empty :text="emptyText || $vbt('select.emptyText')"></Empty>
 					</div>
 				</div>
 			</div>

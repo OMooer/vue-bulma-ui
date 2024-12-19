@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref, useTemplateRef, watch } from 'vue';
 import InteractiveTracker from '../../InteractiveTracker';
 import PreviewSource from './PreviewSource.vue';
@@ -8,6 +9,7 @@ const {result, status = 'init'} = defineProps<{
 	status?: string;
 }>();
 const emit = defineEmits(['removed', 'error']);
+const {$vbt} = useUILocale();
 const startUpload = inject('startUpload') as Function;
 const setHooks = inject('setHooks') as Function;
 const width = inject('width', 200);
@@ -244,14 +246,14 @@ function remove() {
 				<div class="buttons">
 					<button
 							type="button" class="button is-small is-light" :disabled="cropperStep === 'progress' || disabled"
-							@click="cropperStep = 'crop'">返回
+							@click="cropperStep = 'crop'">{{ $vbt('uploader.back') }}
 					</button>
 					<button type="button" class="button is-small is-ghost" :disabled>
-						{{ cropperStep === 'confirm' ? '等待上传' : '正在上传' }}
+						{{ cropperStep === 'confirm' ? $vbt('uploader.wait') : $vbt('uploader.progress') }}
 					</button>
 					<button
 							type="button" class="button is-small is-primary" :class="{'is-loading': cropperStep === 'progress'}"
-							:disabled @click="confirmImage">确定上传
+							:disabled @click="confirmImage">{{ $vbt('uploader.confirm') }}
 					</button>
 				</div>
 			</div>
@@ -267,15 +269,15 @@ function remove() {
 				</InteractiveTracker>
 				<div class="cropper__controller">
 					<label class="is-flex is-gap-0.5">
-						<span class="is-size-7">缩放</span>
+						<span class="is-size-7">{{ $vbt('uploader.scale') }}</span>
 						<input
 								type="range" min="0.1" max="3" step="0.1" :disabled @change="checkImageSafeRange"
 								v-model.number="scale">
 						<span class="is-size-7">{{ Math.round(scale * 100) }}%</span>
 					</label>
 					<div class="buttons">
-						<button type="button" class="button is-small" :disabled @click="cancelImage">取消</button>
-						<button type="button" class="button is-small is-dark" :disabled @click="cropImage">确定</button>
+						<button type="button" class="button is-small" :disabled @click="cancelImage">{{ $vbt('uploader.cancel') }}</button>
+						<button type="button" class="button is-small is-dark" :disabled @click="cropImage">{{ $vbt('uploader.done') }}</button>
 					</div>
 				</div>
 			</div>

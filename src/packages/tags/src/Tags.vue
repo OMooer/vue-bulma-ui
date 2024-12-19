@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
-import { isOverBoxSize, isTruthy, vFocus } from '../../../utils';
+import { isOverBoxSize, isTruthy, vFocus } from '@/utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
@@ -14,13 +15,11 @@ const props = withDefaults(defineProps<{
 	required?: boolean;
 	disabled?: boolean;
 	emptyText?: string;
-}>(), {collapse: 0, emptyText: '无数据'});
+}>(), {collapse: 0});
 const emit = defineEmits(['update:modelValue', 'error']);
+const {$vbt} = useUILocale();
 const isReallySmall = computed(() => isParentSmall || props.isSmall);
 const isError = ref(false);
-const placeholderText = computed(() => {
-	return props.placeholder;
-});
 // 内置值，在未提供 modelValue 时也保证 UI 的可用性
 const innerValue = ref<TVO.Value[]>([]);
 // 当前值
@@ -225,7 +224,7 @@ defineExpose({
 						type="text" autocomplete="off" class="input"
 						ref="tagEntity"
 						:class="{'is-small': isReallySmall, 'is-expanded': isTruthy(collapse)}"
-						:placeholder="placeholderText"
+						:placeholder="placeholder || $vbt('tags.placeholder')"
 						:required="isRequired"
 						:disabled="disabled"
 						v-focus="isOpen"
@@ -248,7 +247,7 @@ defineExpose({
 						</a>
 					</li>
 					<li class="dropdown-item is-disabled" v-if="!filterList.length">
-						<Empty :text="emptyText"></Empty>
+						<Empty :text="emptyText || $vbt('tags.emptyText')"></Empty>
 					</li>
 				</ul>
 			</div>

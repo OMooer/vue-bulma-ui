@@ -2,7 +2,7 @@
 import { ExifOperator } from '@imnull/exif';
 import { webRequestImageBlob } from '@imnull/imgkit-web';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, useTemplateRef, watch, watchEffect } from 'vue';
-import { debounce, flattenVNode, isPromise, scaleGenerator } from '../../../utils';
+import { debounce, flattenVNode, isPromise, scaleGenerator } from '@/utils';
 import Loading, { AnimateDot } from '../../loading';
 
 const {current = 0, list = [], maskClose, showSide = true, showZoom, showToolbar = true, confirmRemove} = defineProps<{
