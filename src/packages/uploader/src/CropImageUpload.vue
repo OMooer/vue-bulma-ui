@@ -20,6 +20,7 @@ const isSubmitted = ref(false);
 const tranX = ref(0);
 const tranY = ref(0);
 const scale = ref(1);
+const maxScale = ref(3);
 const brightSize = 0.6;
 const sideSize = (1 - brightSize) / 2;
 let originFormData: FormData | null = null;
@@ -89,8 +90,14 @@ function checkImageSafeRange() {
 	const sideHorizontal = width * sideSize,
 	      sideVertical   = height * sideSize;
 	const changes: (() => void)[] = [];
+	// 如果放大超过了最大放大倍数则回缩至最大放大倍数
+	if (scale.value > maxScale.value) {
+		changes.push(() => {
+			scale.value = maxScale.value;
+		});
+	}
 	// 如果图片宽高小于裁剪框宽高，则进行强制放大
-	if (Math.round(imgSize.width) < viewWidth || Math.round(imgSize.height) < viewHeight) {
+	else if (Math.round(imgSize.width) < viewWidth || Math.round(imgSize.height) < viewHeight) {
 		const newScale = Number(Math.max(viewWidth / imgSize.renderWidth, viewHeight / imgSize.renderHeight).toFixed(3));
 		changes.push(() => {
 			scale.value = newScale;
@@ -271,13 +278,19 @@ function remove() {
 					<label class="is-flex is-gap-0.5">
 						<span class="is-size-7">{{ $vbt('uploader.scale') }}</span>
 						<input
-								type="range" min="0.1" max="3" step="0.1" :disabled @change="checkImageSafeRange"
+								type="range" min="0.1" :max="maxScale" step="0.1" :disabled @change="checkImageSafeRange"
 								v-model.number="scale">
 						<span class="is-size-7">{{ Math.round(scale * 100) }}%</span>
 					</label>
 					<div class="buttons">
-						<button type="button" class="button is-small" :disabled @click="cancelImage">{{ $vbt('uploader.cancel') }}</button>
-						<button type="button" class="button is-small is-dark" :disabled @click="cropImage">{{ $vbt('uploader.done') }}</button>
+						<button type="button" class="button is-small" :disabled @click="cancelImage">{{
+								$vbt('uploader.cancel')
+							}}
+						</button>
+						<button type="button" class="button is-small is-dark" :disabled @click="cropImage">{{
+								$vbt('uploader.done')
+							}}
+						</button>
 					</div>
 				</div>
 			</div>
@@ -360,6 +373,7 @@ function remove() {
 		flex-direction: column;
 		gap: .5em;
 		border-radius: inherit;
+		margin-bottom: 2.25rem;
 
 		figure {
 			overflow: hidden;
@@ -369,6 +383,8 @@ function remove() {
 		}
 
 		.buttons {
+			position: absolute;
+			bottom: -2.25rem;
 			justify-content: center;
 			width: 100%;
 
@@ -416,11 +432,37 @@ function remove() {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			gap: 0.75em;
+			gap: 0.5em;
 			margin-top: .5em;
 
 			input[type=range] {
 				width: 6.25rem;
+			}
+
+			.buttons {
+				gap: 0.25em;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.cropper {
+		&__controller {
+			label.is-flex {
+				display: none !important;
+			}
+
+			.buttons {
+				flex-grow: 1;
+
+				.button {
+					flex-grow: 1;
+
+					&.is-dark {
+						flex-grow: 3;
+					}
+				}
 			}
 		}
 	}
