@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, ref, watch } from 'vue';
 import Empty from '../../empty';
 import SortUI from '../../sort';
 
 const emit = defineEmits(['sort', 'select']);
-const props = withDefaults(defineProps<{
+const props = defineProps<{
 	tableConfig: VBTable.Config;
 	tableData: Normal.AnyObj[];
 	emptyText?: string;
-}>(), {emptyText: '无数据'});
+}>();
+const {$vbt} = useUILocale();
 // 是否显示可勾选
 const showCheck = computed(() => {
 	return props.tableConfig?.showSelectColumn;
@@ -94,14 +96,14 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 						v-for="(item, idx) in tableConfig?.columns">
 					<!-- 如果有插槽则显示插槽的内容，否则显示纯数据值 -->
 					<template v-if="item.slot">
-						<slot :name="item.slot" :row="data" :val="data[item.field]">未设置插槽内容</slot>
+						<slot :name="item.slot" :row="data" :val="data[item.field]">{{ $vbt('table.unknownSlot') }}</slot>
 					</template>
 					<template v-else>{{ data[item.field] }}</template>
 				</td>
 			</tr>
 			<tr v-if="!tableData?.length">
 				<td :colspan="columnCount">
-					<Empty :text="emptyText"/>
+					<Empty :text="emptyText || $vbt('table.emptyText')"/>
 				</td>
 			</tr>
 			</tbody>

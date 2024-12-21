@@ -1,4 +1,5 @@
 import { createApp, defineComponent, getCurrentInstance, h, ref } from 'vue';
+import { useUILocale } from './locale';
 import Modal from '../packages/modal';
 
 // 创建 dialog vnode 组件
@@ -52,8 +53,8 @@ const dialogVNode = defineComponent(
 /**
  * useDialog
  */
-export function useDialog(language?: OP.DialogText) {
-	language = Object.assign({doneText: '确定', cancelText: '取消'}, language ?? {});
+export function useDialog(optionLanguage?: OP.DialogText) {
+	optionLanguage = Object.assign({}, optionLanguage ?? {});
 
 	// 创建 dialog 页面根容器
 	function getDialogRoot() {
@@ -68,6 +69,8 @@ export function useDialog(language?: OP.DialogText) {
 
 	// dialog 实现
 	const $dialog = (options: OP.DialogOption) => {
+		const {lang} = useUILocale();
+		const language = Object.assign({}, lang.value.dialog ?? {}, optionLanguage);
 		const dialogEl = getDialogRoot();
 		// 返回一个 Promise 用来回调 confirm 的选择
 		return new Promise((resolve, reject) => {

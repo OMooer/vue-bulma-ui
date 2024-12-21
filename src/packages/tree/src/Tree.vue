@@ -1,6 +1,7 @@
 <script lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, defineComponent, h, ref, type VNode, watchEffect } from 'vue';
-import { isTruthy } from '../../../utils';
+import { isTruthy } from '@/utils';
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 
 export default defineComponent({
@@ -28,16 +29,11 @@ export default defineComponent({
 			type   : String,
 			default: 'current-active'
 		},
-		expandText : {
-			type   : String,
-			default: '展开'
-		},
-		foldText   : {
-			type   : String,
-			default: '折叠'
-		}
+		expandText : String,
+		foldText   : String
 	},
 	setup(props, {emit}) {
+		const {$vbt} = useUILocale();
 		const selectValues = ref<string[]>([]);
 		const activeNode = ref();
 		const treeData = ref<Tree.Leaf[]>([]);
@@ -224,7 +220,7 @@ export default defineComponent({
 									}, buildTree(item.children)),
 									h('a', {
 										class: 'opera-icon',
-										title: item.folded ? props.expandText : props.foldText,
+										title: item.folded ? (props.expandText || $vbt('tree.expand')) : (props.foldText || $vbt('tree.fold')),
 										onClick(event: any) {
 											item.folded = !item.folded;
 											event.preventDefault();

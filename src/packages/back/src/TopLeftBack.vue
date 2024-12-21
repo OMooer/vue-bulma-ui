@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { useBack } from './navigationBack';
 
 const emit = defineEmits();
@@ -7,10 +8,7 @@ const props = defineProps({
 		type    : null,
 		required: true
 	},
-	text     : {
-		type   : String,
-		default: '返回'
-	},
+	text     : String,
 	indexName: {
 		type   : String,
 		default: 'home'
@@ -20,6 +18,7 @@ const props = defineProps({
 		default: 'login'
 	}
 });
+const {$vbt} = useUILocale();
 const back = useBack(emit, props.router, {home: props.indexName, login: props.loginName});
 </script>
 
@@ -27,7 +26,7 @@ const back = useBack(emit, props.router, {home: props.indexName, login: props.lo
 	<div class="vb-back">
 		<a class="back-link is-link" @click="back">
 			<FasIcon icon="chevron-left"/>
-			<slot name="back">{{ text }}</slot>
+			<slot name="back">{{ text || $vbt('back.text') }}</slot>
 		</a>
 		<slot/>
 	</div>

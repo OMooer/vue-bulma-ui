@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue';
-import { isOverBoxSize, OUT_OF_RANGE } from '../../../utils';
+import { isOverBoxSize, OUT_OF_RANGE } from '@/utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
@@ -10,6 +10,7 @@ const props = withDefaults(defineProps<{
 	showSecond?: boolean;
 	disabled?: boolean;
 	required?: boolean;
+	readonly?: boolean;
 }>(), {min: '00:00:00', max: '23:59:59'});
 const emit = defineEmits(['error']);
 const modelValue = defineModel<string>();
@@ -77,7 +78,7 @@ const classList = computed(() => {
 		'vb-time-picker': true,
 		'dropdown'      : true,
 		'is-block'      : true,
-		'is-active'     : isOpen.value,
+		'is-active'     : isOpen.value && !props.readonly,
 		'is-disabled'   : props.disabled,
 		'is-up'         : isUp.value,
 		'is-shake'      : isError.value,
@@ -302,6 +303,14 @@ function checkOutRange(h: string, m: string, s: string) {
 	return [tMin.join('') < rMin.join(''), tMax.join('') > rMax.join('')];
 }
 
+function checkDatePicker() {
+	const hasOpenPicker = document.querySelector('[role=calendar][open=open]');
+	if (hasOpenPicker) {
+		document.body.click();
+		isOpen.value = true;
+	}
+}
+
 function setError(is: boolean, msg?: string) {
 	isError.value = is;
 	is && entity.value.focus();
@@ -318,7 +327,7 @@ defineExpose({
 		<div class="dropdown-trigger">
 			<input
 					ref="shadow"
-					class="shadow-time" type="time" :step="shadowStep" :disabled :required
+					class="shadow-time" type="time" :step="shadowStep" :disabled :required :readonly
 					:min="rangeLimit.min.slice(0, showSecond ? 3 : 2).join(':')"
 					:max="rangeLimit.max.slice(0, showSecond ? 3 : 2).join(':')"
 					tabindex="-1" @focus="focusIn"
@@ -326,27 +335,27 @@ defineExpose({
 			>
 			<div class="time-field" @click="focusIn">
 				<input
-						type="number" placeholder="--" :required :disabled
+						type="number" placeholder="--" :required :disabled :readonly
 						@focus="isOpen = true" @blur="padValue('hour', $event)" @keydown="checkKeyBehavior"
-						min="0" max="23" @click.stop
+						min="0" max="23" @click.stop="checkDatePicker"
 						v-model="hourValueCP">
 				:
 				<input
-						type="number" placeholder="--" :required :disabled
+						type="number" placeholder="--" :required :disabled :readonly
 						@focus="isOpen = true" @blur="padValue('minute', $event)" @keydown="checkKeyBehavior"
-						min="0" max="59" @click.stop
+						min="0" max="59" @click.stop="checkDatePicker"
 						v-model="minuteValueCP">
 				<template v-if="showSecond">
 					:
 					<input
-							type="number" placeholder="--" :required :disabled
+							type="number" placeholder="--" :required :disabled :readonly
 							@focus="isOpen = true" @blur="padValue('second', $event)" @keydown="checkKeyBehavior"
-							min="0" max="59" @click.stop
+							min="0" max="59" @click.stop="checkDatePicker"
 							v-model="secondValueCP">
 				</template>
 			</div>
 		</div>
-		<div class="dropdown-menu is-fullwidth" role="menu">
+		<div class="dropdown-menu is-fullwidth" role="menu" v-if="!readonly">
 			<div class="dropdown-content">
 				<div class="dropdown-scroll-view">
 					<a
@@ -499,7 +508,8 @@ defineExpose({
 
 	.dropdown-menu {
 		&.is-fullwidth {
-			width: 100%;
+			min-width: auto;
+			width: max(9rem, 100%);
 		}
 
 		.dropdown-content {
@@ -521,10 +531,7 @@ defineExpose({
 			.dropdown-item {
 				display: flex;
 				align-items: center;
-
-				i.flags {
-					flex-shrink: 0;
-				}
+				padding-inline-end: 1rem;
 			}
 
 			.dropdown-item.is-disabled {

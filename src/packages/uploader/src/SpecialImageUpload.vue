@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
+import { FILE_UPLOAD_FAILED } from '@/utils';
 import PreviewSource from './PreviewSource.vue';
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 
 const emit = defineEmits(['upload', 'removed', 'error']);
-const props = defineProps(['result', 'status', 'disabled']);
+const props = defineProps(['result', 'status']);
+const {$vbt} = useUILocale();
+const disabled = inject('disabled', ref(false));
 const isDragover = ref(false);
 const isUploading = computed(() => {
 	return props.status === 'start';
@@ -57,7 +61,7 @@ async function readFile(url: string) {
 }
 
 function pasteUpload(ev: ClipboardEvent) {
-	if (isUploading.value || props.disabled) {
+	if (isUploading.value || disabled.value) {
 		return;
 	}
 	const items = ev.clipboardData && ev.clipboardData.items;
@@ -96,7 +100,7 @@ async function dragUpload(ev: DragEvent) {
 						readFile(url).then((d) => {
 							resolve(d);
 						}).catch(() => {
-							emit('error', true, 'file upload failed.');
+							emit('error', true, FILE_UPLOAD_FAILED);
 						});
 					});
 				}));
@@ -121,7 +125,7 @@ function parentUpload(files: any[]) {
 
 function parentTrigger(ev: Event) {
 	document.getSelection()?.removeAllRanges();
-	const parentEl = (ev.currentTarget as HTMLElement).parentNode as HTMLElement;
+	const parentEl = (ev.currentTarget as HTMLElement).parentElement;
 	parentEl && parentEl.click();
 }
 
@@ -140,9 +144,9 @@ function remove() {
 		<div class="upload-cont" contenteditable="false">
 			<PreviewSource :source="result[0]" can-delete @delete="remove" v-if="result && result.length"/>
 			<slot v-else>
-				<p>在此按下<kbd>⌘</kbd>+<kbd>v</kbd>/<kbd>CTRL</kbd>+<kbd>v</kbd>
-					粘贴图片上传<br>
-					或者双击选择文件上传</p>
+				<p>{{ $vbt('pasteUploader.press') }}<kbd>⌘</kbd>+<kbd>v</kbd>/<kbd>CTRL</kbd>+<kbd>v</kbd>
+					{{ $vbt('pasteUploader.pasteImage') }}<br>
+					{{ $vbt('pasteUploader.dblClick') }}</p>
 			</slot>
 		</div>
 	</div>
@@ -226,11 +230,18 @@ function remove() {
 
 		&:has(.image-source) {
 			padding: 0;
-
 		}
 
 		:deep(.image-source) {
 			margin-bottom: 0;
+		}
+	}
+
+	&[contenteditable="false"] {
+		border-color: var(--bulma-background);
+
+		.upload-cont {
+			user-select: none;
 		}
 	}
 

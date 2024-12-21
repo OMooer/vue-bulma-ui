@@ -159,6 +159,15 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 		border-color: var(--bulma-background);
 		color: var(--bulma-text-weak);
 
+		&:hover {
+			border-color: var(--bulma-background);
+			box-shadow: none;
+		}
+
+		&::before {
+			opacity: .5;
+		}
+
 		&::after {
 			box-shadow: none;
 		}

@@ -1,13 +1,25 @@
 {
 	"name": "vue3-bulma-ui",
-	"version": "0.4.2",
+	"version": "0.5.27",
 	"description": "UI 组件基于 Vue 3 + Bulma",
-	"main": "./src/index.ts",
-	"types": "./types/index.d.ts",
+	"main": "./dist/index.js",
+	"types": "./dist/types/global.d.ts",
 	"type": "module",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs",
+			"types": "./dist/types/global.d.ts"
+		},
+		"./style": "./dist/index.css",
+		"./components": {
+			"types": "./dist/types/components.d.ts"
+		}
+	},
 	"scripts": {
-		"dev": "vite",
-		"preview": "vite preview",
 		"build-only": "vite build",
 		"type-check": "vue-tsc --build --force",
 		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
@@ -21,8 +33,13 @@
 		"Bulma",
 		"UI"
 	],
-	"author": "AngusYoung",
+	"author": {
+		"name": "AngusYoung",
+		"email": "angusyoung@mrxcool.com",
+		"url": "mrx.cool"
+	},
 	"license": "MIT",
+	"homepage": "https://vbui.omooer.com/",
 	"devDependencies": {
 		"@rushstack/eslint-patch": "^1.3.3",
 		"@tsconfig/node20": "^20.1.2",
@@ -37,6 +54,7 @@
 		"sass-embedded": "~1.78.0",
 		"typescript": "~5.4.0",
 		"vite": "^5.1.5",
+		"vite-plugin-dts": "^4.3.0",
 		"vue-tsc": "^2.0.6"
 	},
 	"peerDependencies": {
@@ -49,6 +67,8 @@
 		"vue-router": "^4.4.3"
 	},
 	"dependencies": {
+		"@imnull/exif": "^1.0.0",
+		"@imnull/imgkit-web": "^1.0.0",
 		"echarts": "^5.4.3",
 		"mime-db": "^1.53.0",
 		"sa-calendar": "^1.1.12"

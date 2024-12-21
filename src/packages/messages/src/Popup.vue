@@ -1,7 +1,7 @@
 <script setup lang="ts">
-
 import { computed, ref, watch } from 'vue';
-import { useTellMe } from '../../../actions/inform';
+import { useTellMe } from '@/actions/inform';
+import { useUILocale } from '@/actions/locale';
 
 const emit = defineEmits(['remove', 'hover']);
 const props = defineProps({
@@ -14,6 +14,7 @@ const props = defineProps({
 		default: () => []
 	}
 });
+const {$vbt} = useUILocale();
 const {add, remove, list} = useTellMe();
 const timerMap: { [propName: symbol]: number } = {};
 const never = ref(false);
@@ -97,7 +98,7 @@ defineExpose({
 				</slot>
 			</div>
 			<div class="never-show" v-if="!currentPopup.autoClose">
-				<label class="checkbox"><input type="checkbox" v-model="never">不再显示</label>
+				<label class="checkbox"><input type="checkbox" v-model="never">{{ $vbt('popup.doNotShow') }}</label>
 			</div>
 		</div>
 	</Transition>

@@ -1,4 +1,5 @@
 import { useAttrs } from 'vue';
+import { ERROR_NEED_ROUTER } from '@/utils';
 
 export const useBack = (
 		$emit: any,
@@ -15,7 +16,7 @@ export const useBack = (
 		}
 
 		if (!$router) {
-			console.warn('组件需要传入 $router');
+			console.warn(ERROR_NEED_ROUTER);
 			return;
 		}
 

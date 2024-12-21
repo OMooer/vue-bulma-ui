@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watchEffect } from 'vue';
 
 const props = defineProps({
 	sets       : {
@@ -10,9 +10,11 @@ const props = defineProps({
 	allowSwitch: {
 		type   : Boolean,
 		default: true
-	}
+	},
+	isBoxed    : Boolean
 });
 const emit = defineEmits(['change']);
+const stepsRef = useTemplateRef('steps');
 const stepHistory = ref<{ n: number; text: string; }[]>([]);
 // 步骤值
 const stepValue = ref(0);
@@ -108,6 +110,14 @@ function resolve(n: number): [number, number] {
 	return [next, stepHistory.value[next].n];
 }
 
+onMounted(() => {
+	if (stepsRef.value) {
+		const li = stepsRef.value.querySelector('li');
+		const min = Math.min(li?.offsetWidth || 0, li?.offsetHeight || 0);
+		stepsRef.value.style.setProperty('--size', `${ min }`);
+	}
+});
+
 defineExpose({
 	// go fn is deprecated
 	go: step,
@@ -117,9 +127,9 @@ defineExpose({
 </script>
 
 <template>
-	<ul class="steps">
+	<ul ref="steps" class="steps" :class="{'is-box-style': isBoxed}">
 		<li :class="{'is-active': index === stepValue}" v-for="(item, index) in filterSteps">
-			<a @click="changeStep(index)">
+			<a :aria-readonly="allowSwitch ? undefined : 'true'" @click="changeStep(index)">
 				{{ item.text }}
 			</a>
 		</li>
@@ -130,6 +140,9 @@ defineExpose({
 @import "../../../scss/variables";
 
 .steps {
+	$normal: $grey-lighter;
+	$completed: $link-light;
+	$active: $primary;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -144,30 +157,34 @@ defineExpose({
 		counter-increment: stepList;
 
 		a {
-			color: $info;
+			color: $completed;
 			white-space: nowrap;
-		}
 
-		&::before {
-			content: "✓";
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			margin-right: .25rem;
-			background-color: $info;
-			border: solid 1px $info;
-			border-radius: 50%;
-			color: $white;
-			width: 1.5rem;
-			height: 1.5rem;
+			&[aria-readonly=true] {
+				cursor: default;
+			}
+
+			&::before {
+				content: "✓";
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				margin-right: .5em;
+				background-color: $completed;
+				border: solid 1px $completed;
+				border-radius: 50%;
+				color: $white;
+				width: 1.5em;
+				height: 1.5em;
+			}
 		}
 
 		&:not(:last-of-type)::after {
 			content: "";
-			margin: 0 .5rem;
-			background-color: $info;
+			margin: 0 .5em;
+			background-color: $completed;
 			height: 1px;
-			width: 8rem;
+			width: 8em;
 		}
 
 		&.is-active {
@@ -175,35 +192,139 @@ defineExpose({
 
 			a {
 				color: var(--bulma-body-color);
-			}
 
-			&::before {
-				content: counter(stepList);
-				background-color: $primary;
-				border-color: $primary;
-				color: $white;
+				&::before {
+					content: counter(stepList);
+					background-color: $active;
+					border-color: $active;
+					color: $white;
+				}
 			}
 
 			&::after {
-				background-color: $grey-lighter;
+				background-color: $normal;
 			}
 
 			~ li {
 				a {
 					color: var(--bulma-body-color);
-				}
 
-				&::before {
-					content: counter(stepList);
-					background-color: transparent;
-					border-color: $grey-lighter;
-					color: var(--bulma-body-color);
+					&::before {
+						content: counter(stepList);
+						background-color: transparent;
+						border-color: $normal;
+						color: var(--bulma-body-color);
+					}
 				}
 
 				&::after {
-					background-color: $grey-lighter;
+					background-color: $normal;
 				}
 			}
+		}
+	}
+
+	&.is-box-style {
+		--square-side: calc(1px * calc(var(--size, 32) * sqrt(2) / 2));
+		$borderColor: var(--bulma-border);
+
+		li {
+			overflow: hidden;
+			position: relative;
+			padding-block: 0;
+			padding-inline-start: calc(1.2 * var(--square-side));
+			padding-inline-end: 1em;
+			background-color: var(--bulma-background);
+			border: solid $borderColor;
+			border-width: 1px 0;
+			height: 2.5rem;
+
+			&::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				background-color: $completed;
+				border: none;
+				border-radius: inherit;
+				width: 100%;
+				height: 100%;
+			}
+
+			&::after {
+				content: '';
+				position: absolute;
+				margin: 0;
+				background-color: $completed;
+				width: var(--square-side);
+				height: var(--square-side);
+				left: 0;
+				border: solid var(--bulma-info-15-invert);
+				border-width: 1px 1px 0 0;
+				box-shadow: 2px -2px 2px 0 rgba(90, 90, 90, 0.1);
+				transform: translateX(-50%) rotate(45deg);
+				pointer-events: none;
+			}
+
+			&:first-child {
+				padding-inline-start: 1.5em;
+				border-top-left-radius: var(--bulma-radius);
+				border-bottom-left-radius: var(--bulma-radius);
+				border-left-width: 1px;
+
+				&::after {
+					display: none;
+				}
+			}
+
+			&:last-child {
+				padding-inline-end: 1.5em;
+				border-top-right-radius: var(--bulma-radius);
+				border-bottom-right-radius: var(--bulma-radius);
+				border-right-width: 1px;
+			}
+
+			a {
+				position: relative;
+				order: 1;
+				color: #FFF;
+
+				&::before {
+					border-color: var(--bulma-border-weak);
+				}
+			}
+
+			&.is-active {
+				&::before {
+					background-color: $active;
+				}
+
+				+ li::after {
+					background-color: $active !important;
+				}
+
+				~ li {
+					&::before {
+						content: '';
+						background-color: transparent;
+						border-color: transparent;
+					}
+
+					&::after {
+						background-color: inherit;
+						border-color: var(--bulma-border);
+						box-shadow: none;
+					}
+				}
+			}
+		}
+	}
+
+	&.is-icoless {
+		a::before {
+			display: none !important;
 		}
 	}
 }
@@ -216,20 +337,23 @@ defineExpose({
 		li {
 			display: flex;
 			flex-direction: column;
+			justify-content: center;
 
 			a {
-				order: 0;
-			}
+				display: flex;
+				flex-direction: column-reverse;
+				align-items: center;
+				justify-content: center;
 
-			&::before, &::after {
-				margin: 0;
-				order: 1;
+				&::before {
+					margin: .25em 0 0;
+				}
 			}
 
 			&:not(:last-of-type)::after {
-				margin: .5rem 0;
+				margin: .5em 0;
 				width: 1px;
-				height: 4rem;
+				height: 4em;
 			}
 
 			&.is-active {
@@ -237,6 +361,44 @@ defineExpose({
 
 				+ li {
 					display: flex;
+				}
+			}
+		}
+
+		&.is-box-style {
+			li {
+				writing-mode: vertical-lr;
+				border-width: 0 1px;
+				width: 2.5rem;
+				height: auto;
+
+				a {
+					flex-direction: row;
+
+					&::before {
+						margin: 0 0 .5em;
+						writing-mode: initial;
+					}
+				}
+
+				&:first-child {
+					border-radius: var(--bulma-radius) var(--bulma-radius) 0 0;
+				}
+
+				&:last-child {
+					border-radius: 0 0 var(--bulma-radius) var(--bulma-radius);
+					border-bottom-width: 1px;
+				}
+
+				&::after {
+					margin: 0;
+					top: 0;
+					left: 50%;
+					width: var(--square-side);
+					height: var(--square-side);
+					border-width: 0 1px 1px 0;
+					box-shadow: 2px 2px 2px 0 rgba(90, 90, 90, .1);
+					transform: translate(-50%, -50%) rotate(45deg);
 				}
 			}
 		}

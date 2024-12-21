@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, inject, provide, ref, watch } from 'vue';
-import { isOverBoxSize } from '../../../utils';
+import { useUILocale } from '@/actions/locale';
+import { isOverBoxSize } from '@/utils';
 import Empty from '../../empty';
 import SelectorUI from '../../select';
 
+const {$vbt} = useUILocale();
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	modelValue?: any[];
@@ -19,7 +21,7 @@ const props = withDefaults(defineProps<{
 	placeholder?: string;
 	loadingText?: string;
 	isSmall?: boolean;
-}>(), {mode: 'detach', cache: false, placeholder: '选择', loadingText: '加载中'});
+}>(), {mode: 'detach', cache: false});
 const emit = defineEmits(['update:modelValue', 'error']);
 
 const isLoading = ref(false);
@@ -52,7 +54,7 @@ const cascadeValue = computed(() => {
 });
 const findValue = ref();
 const internalValue = computed(() => {
-	return findValue.value || findSelectedValue(props?.modelValue || []);
+	return findSelectedValue(props?.modelValue || []) || findValue.value;
 });
 
 const captureEvent = (ev: Event) => {
@@ -112,7 +114,7 @@ async function updatePresetValue() {
 // 获取组件选择值
 function findSelectedValue(modelValue: any[]) {
 	const matchVal = modelValue.reduce((result: any, value: any) => {
-		let find;
+		let find: any;
 		for (const item of cascadeList.value) {
 			find = item.list.find((l: any) => l.value === value);
 			if (find) {
@@ -258,10 +260,11 @@ defineExpose({
 							aria-haspopup="true" aria-controls="dropdown-menu" @click="toggleDropdown" :disabled="disabled">
 						<span class="is-flex is-align-items-center" style="overflow: hidden;" v-if="internalValue">
 							<i :class="internalValue.icon" v-if="internalValue.icon"></i>
+							<FasIcon :icon="holderIcon" v-else-if="holderIcon"/>
 							{{ internalValue.title }}
 						</span>
 						<span class="has-text-grey-light" v-else>
-								<FasIcon :icon="holderIcon" v-if="holderIcon"/> {{ placeholder }}
+							<FasIcon :icon="holderIcon" v-if="holderIcon"/> {{ placeholder || $vbt('cascade.placeholder') }}
 						</span>
 						<span class="icon is-small">
 							<FasIcon icon="angle-down" aria-hidden="true"/>
@@ -284,7 +287,7 @@ defineExpose({
 								</a>
 							</template>
 							<div class="dropdown-item is-disabled" v-if="!item?.list.length">
-								<Empty text="- 空 -"></Empty>
+								<Empty :text="$vbt('cascade.empty')"></Empty>
 							</div>
 						</div>
 					</div>
@@ -294,7 +297,7 @@ defineExpose({
 		<div class="is-grouped" v-else>
 			<SelectorUI
 					class="cascade-item" :class="{'is-danger is-shake': isError}" :disabled="disabled" :required="item?.required"
-					:list="item.list" :placeholder="placeholder" :model-value="item.value"
+					:list="item.list" :placeholder="placeholder || $vbt('cascade.placeholder')" :model-value="item.value"
 					@update:modelValue="selectLevel(index, $event)" v-for="(item, index) in cascadeList"/>
 			<div class="dropdown cascade-item" v-if="isLoading">
 				<div class="dropdown-trigger is-fullwidth">
@@ -302,7 +305,7 @@ defineExpose({
 							type="button" class="button is-fullwidth is-justify-content-space-between"
 							:class="{'is-small': isReallySmall}"
 							aria-label="loading" aria-busy="true">
-						<span class="has-text-grey-light">{{ loadingText }}</span>
+						<span class="has-text-grey-light">{{ loadingText || $vbt('cascade.loading') }}</span>
 						<span class="icon is-small has-text-grey-light">
 							<FasIcon icon="spinner" spin-pulse/>
 						</span>

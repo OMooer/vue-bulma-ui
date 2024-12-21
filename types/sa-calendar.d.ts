@@ -1,5 +1,12 @@
 declare module 'sa-calendar' {
-	import Calendar from 'sa-calendar';
+	class Calendar {
+		constructor(opt: any);
 
-	export = Calendar;
+		$el: HTMLElement[];
+		$parent: HTMLElement[];
+
+		dismiss(): void;
+	}
+
+	export default Calendar;
 }

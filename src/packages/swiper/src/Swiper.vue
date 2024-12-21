@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cloneVNode, computed, defineComponent, h, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
-import { flattenVNode } from '../../../utils';
+import { flattenVNode } from '@/utils';
 
 const props = defineProps({
 	showControl   : {
@@ -51,7 +51,7 @@ const isEnd = computed(() => {
 	return !props.seamless && current.value >= total.value - 1;
 });
 
-const cont = useTemplateRef<HTMLElement>('cont');
+const cont = useTemplateRef<HTMLElement>('contRef');
 const swiperItems = defineComponent(() => {
 	return () => {
 		return h(getItems)
@@ -215,8 +215,8 @@ function getNewChild(node: any, _index: number) {
 			containerOffsetTrans(offsetX);
 			e.preventDefault();
 		},
-		onTouchend(e: any) {
-			const target = e.target.parentNode as HTMLElement;
+		onTouchend(e: TouchEvent) {
+			const target = (e.target as HTMLElement)?.parentElement as HTMLElement;
 			// 如果两次相差超过30%则认为是滑动切换
 			const {clientX} = e.changedTouches[0];
 			if (Math.abs(startX - clientX) >= target.offsetWidth * .3) {
@@ -249,7 +249,7 @@ onBeforeUnmount(() => {
 
 <template>
 	<div class="vb-swiper" :data-autoplay="props.autoplay || null" @wheel="wheelContainer">
-		<div ref="cont" class="swiper-container" v-if="total">
+		<div ref="contRef" class="swiper-container" v-if="total">
 			<Component :is="swiperItems"/>
 		</div>
 		<slot name="control" :index="current" :left="()=>left()" :right="()=>right()" v-if="showControl && total">
@@ -335,7 +335,6 @@ onBeforeUnmount(() => {
 			margin: 0 .15em;
 			background: rgba(255, 255, 255, .5);
 			border-radius: 4px;
-			box-shadow: 0 0 3px -1px var(--bulma-grey);
 			cursor: pointer;
 			width: 1.5em;
 			height: .3em;

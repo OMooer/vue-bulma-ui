@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, ref } from 'vue';
 import DataView from './DataView.vue';
+import { ERROR_DATA_ITEM_OUTSIDE } from '@/utils';
 
 defineOptions({inheritAttrs: false});
 const {label, vertical, fullWidth, bordered, colspan, rowspan, start} = defineProps<{
@@ -28,7 +29,7 @@ const classList = computed(() => {
 	]
 });
 if (currentThis?.parent?.type !== DataView) {
-	console.error('DataViewItem must be a child of DataView');
+	console.error(ERROR_DATA_ITEM_OUTSIDE);
 	isOverused.value = true;
 }
 </script>

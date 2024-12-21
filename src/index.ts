@@ -24,18 +24,30 @@ import {
 	faGlobe,
 	faChevronRight,
 	faExpand,
-	faCompress, faDownload, faMagnifyingGlass, faMagnifyingGlassMinus, faMagnifyingGlassPlus
+	faCompress, faDownload, faMagnifyingGlass, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faCircleInfo, faCirclePlus
 } from '@fortawesome/free-solid-svg-icons';
 import {
 	faSquareMinus,
 	faSquarePlus
 } from '@fortawesome/free-regular-svg-icons';
-import type { App } from 'vue';
+import { type App, isRef, type Ref, toValue, watchEffect } from 'vue';
+import { useUILocale } from './actions/locale';
 import { useDialog } from './actions/dialog';
 import * as components from './components';
 
 export default {
-	install(Vue: App, opt?: { icon?: IconDefinition[]; dialog?: OP.DialogText }) {
+	install(Vue: App, opt?: { locale?: string | Ref<string>; icon?: IconDefinition[]; dialog?: OP.DialogText }) {
+		// 设置内置语言包
+		const {loadLanguage} = useUILocale();
+		if (isRef(opt?.locale)) {
+			// 监听这个数据的变化动态更新语言包
+			watchEffect(() => {
+				loadLanguage(toValue(opt?.locale) || 'zh-cn');
+			});
+		}
+		else {
+			loadLanguage(opt?.locale || 'zh-cn');
+		}
 		const {$dialog, $alert, $confirm} = useDialog(opt?.dialog);
 		// UI 使用图标
 		const iconSet = [
@@ -45,6 +57,8 @@ export default {
 			faChevronLeft, faChevronRight,
 			faCircleExclamation,
 			faCircleQuestion,
+			faCircleInfo,
+			faCirclePlus,
 			faDownload,
 			faEye, faEyeSlash, faExpand, faCompress,
 			faFileArrowDown,
@@ -71,4 +85,6 @@ export default {
 	}
 }
 
+export * from './components';
 export { useDialog };
+export const version = import.meta.env.VERSION;

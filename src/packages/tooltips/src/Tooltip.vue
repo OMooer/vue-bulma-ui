@@ -75,6 +75,7 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean});
 		&:before, &:after {
 			visibility: visible;
 			opacity: 1;
+			z-index: 9999;
 		}
 	}
 }
