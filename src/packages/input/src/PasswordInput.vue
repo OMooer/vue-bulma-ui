@@ -5,15 +5,25 @@ defineOptions({
 	inheritAttrs: false
 });
 const isParentSmall = inject('isSmall', false);
-const props = defineProps({
-	'modelValue': null,
-	'type'      : null, // 禁止此属性被 $attrs 作用到 input 上
-});
+const props = defineProps<{
+	modelValue?: any;
+	type?: 'password' | 'text';
+	readonly?: boolean;
+	required?: boolean;
+	disabled?: boolean;
+	placeholder?: string;
+	pattern?: string;
+	minlength?: string | number;
+	maxlength?: string | number;
+}>();
 const emit = defineEmits(['update:modelValue', 'showPlain', 'error']);
 const showPassword = ref(false);
 const isError = ref(false);
 const entity = ref();
-
+const bindProps = computed(() => {
+	const {modelValue, type, ...binds} = props;
+	return binds;
+});
 const inner = ref('');
 const innerValue = computed({
 	get() {
@@ -60,10 +70,9 @@ defineExpose({
 <template>
 	<div class="vb-password control is-expanded has-icons-right">
 		<input
-				ref="entity" :type="showPassword ? 'text' : 'password'"
+				ref="entity" :type="showPassword ? 'text' : 'password'" autocomplete="off"
 				:class="['input', isError ? 'is-shake is-danger' : null, isParentSmall ? 'is-small' : null]"
-				autocomplete="off"
-				v-bind="$attrs" v-model="innerValue" @change="checkInput">
+				v-bind="bindProps" v-model="innerValue" @change="checkInput">
 		<span :class="['icon', 'is-small', 'is-right', {'show': showPassword}]" @click="toggleShow">
 			<FasIcon :icon="['fas', showPassword ? 'eye' : 'eye-slash']"/>
 		</span>

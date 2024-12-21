@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
+import { computed, inject, ref, InputHTMLAttributes } from 'vue';
 
+type InputProps = /* @vue-ignore */Omit<InputHTMLAttributes, 'onError'> & {
+	modelValue?: any;
+};
 const isParentSmall = inject('isSmall', false);
-const props = defineProps(['modelValue']);
+const props = defineProps<InputProps>();
 const emit = defineEmits(['update:modelValue', 'error']);
 const isError = ref(false);
 const entity = ref();
