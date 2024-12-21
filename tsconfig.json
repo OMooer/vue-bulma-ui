@@ -1,0 +1,32 @@
+{
+	"include": [
+		"env.d.ts",
+		"types/*.d.ts",
+		"src/**/*",
+		"src/**/*.vue"
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	],
+	"compilerOptions": {
+		"declaration": true,
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+		"moduleResolution": "Node",
+		"target": "ESNext",
+		"module": "ESNext",
+		"jsx": "preserve",
+		"jsxImportSource": "vue",
+		"baseUrl": ".",
+		"paths": {
+			"@/*": [
+				"src/*"
+			],
+			"vue3-bulma-ui/*": [
+				"src/*"
+			]
+		}
+	}
+}
