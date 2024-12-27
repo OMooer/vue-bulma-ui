@@ -2,8 +2,17 @@
 import { ExifOperator } from '@imnull/exif';
 import { webRequestImageBlob } from '@imnull/imgkit-web';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, useTemplateRef, watch, watchEffect } from 'vue';
-import { debounce, flattenVNode, isPromise, scaleGenerator } from '@/utils';
+import {
+	debounce,
+	EVENT_TO_BOTTOM,
+	EVENT_TO_LEFT,
+	EVENT_TO_RIGHT, EVENT_TO_TOP,
+	flattenVNode,
+	isPromise,
+	scaleGenerator
+} from '@/utils';
 import Loading, { AnimateDot } from '../../loading';
+import InteractiveTracker from '../../InteractiveTracker';
 
 const {current = 0, list = [], maskClose, showSide = true, showZoom, showToolbar = true, confirmRemove} = defineProps<{
 	current?: number;
@@ -50,9 +59,13 @@ watch(() => currentIndex.value, () => {
 	nextTick(scrollSidebar);
 }, {immediate: true});
 let mainRect: any;
+let moveDirection: { x: string; y: string };
 const isFullscreen = ref(!!document.fullscreenElement);
 const photoIsReady = ref(false);
 const photoScaleRatio = ref(0);
+const scale = ref(1);
+const minScaleRatio = 0;
+const maxScaleRatio = 5;
 const offsetX = ref(0);
 const offsetY = ref(0);
 
@@ -85,9 +98,6 @@ async function getPhotoExif(url: string) {
 	}
 }
 
-const scale = computed(() => {
-	return scaleGenerator(photoScaleRatio.value);
-});
 const showTools = computed(() => {
 	// 如果选项设置了不显示则直接不显示
 	if (!showToolbar) {
@@ -103,9 +113,45 @@ const showTools = computed(() => {
 	return len.length > 0;
 });
 
-watch(() => photoScaleRatio.value, () => {
-	offsetX.value = offsetY.value = 0;
-});
+function getMainRect() {
+	let {width, height, top, bottom, left, right} = mainer.value?.getBoundingClientRect() ?? {};
+	width ??= document.documentElement.clientWidth;
+	height ??= document.documentElement.clientHeight;
+	top ??= 0;
+	bottom ??= height;
+	left ??= 0;
+	right ??= width;
+
+	return {
+		width,
+		height,
+		top,
+		bottom,
+		left,
+		right
+	}
+}
+
+function imgBoundaryInfo() {
+	const target = mainer.value?.querySelector('figure img') as HTMLElement;
+	const {width = 0, height = 0, top = 0, bottom = 0, left = 0, right = 0} = target?.getBoundingClientRect() ?? {};
+	mainRect ??= getMainRect();
+
+	return {
+		width,
+		height,
+		top,
+		bottom,
+		left,
+		right,
+		isOverflowWidth : width > mainRect.width,
+		isOverflowHeight: height > mainRect.height,
+		isNotLeftAlign  : left > mainRect.left,
+		isNotTopAlign   : top > mainRect.top,
+		isNotRightAlign : right < mainRect.right,
+		isNotBottomAlign: bottom < mainRect.bottom
+	}
+}
 
 function scrollSidebar() {
 	const active = sidebar.value?.querySelector('.is-active');
@@ -131,8 +177,81 @@ function switchShow(index: number) {
 	photoIsReady.value = false;
 	showExifInfo.value = false;
 	currentIndex.value = index;
-	photoScaleRatio.value = 0;
-	offsetX.value = offsetY.value = 0;
+	zoomReset();
+}
+
+function jumpPhoto(e: 'x' | 'y', {dir, detail}: Tracker.MoveEventData) {
+	// 多指操作不执行跳转
+	if (detail.multiple) {
+		return;
+	}
+	// 如果滑动距离小于80px，则不进行跳转
+	if (Math.abs(detail.offset) < 80) {
+		return;
+	}
+	// 如果滑动的方向有超出容器的也不进行跳转
+	const info = imgBoundaryInfo();
+	if ((e === 'x' && info.isOverflowWidth) || (e === 'y' && info.isOverflowHeight)) {
+		return;
+	}
+	// 在小屏上只接受 x 轴滑动，相反的只接受 y 轴滑动
+	const clientWidth = document.documentElement.clientWidth;
+	const smallScreen = 1024;
+	if (clientWidth <= smallScreen && e === 'y') {
+		return;
+	}
+	if (clientWidth > smallScreen && e === 'x') {
+		return;
+	}
+	// 根据滑动的方向进行跳转
+	let index: number;
+	// 上一张
+	if (dir === (e === 'x' ? EVENT_TO_RIGHT : EVENT_TO_TOP)) {
+		index = (currentIndex.value - 1 + photos.value?.length) % photos.value?.length;
+	}
+	// 下一张
+	else {
+		index = (currentIndex.value + 1) % photos.value?.length;
+	}
+	switchShow(index);
+}
+
+function movePhoto(d: 'x' | 'y', n: number) {
+	// 如果是低于一倍的缩小比例，则不进行移动
+	if (photoScaleRatio.value < 1) {
+		return;
+	}
+	// 获取容器与图片的边界信息
+	const info = imgBoundaryInfo();
+	// 如果展示图片的宽高并未超出容器，也不允许在该方向的移动
+	if (!info.isOverflowWidth && d === 'x') {
+		return;
+	}
+	if (!info.isOverflowHeight && d === 'y') {
+		return;
+	}
+
+	// 允许移动，但不可以超出边界
+	if (d === 'x') {
+		if (
+				(info.isNotLeftAlign && moveDirection.x === EVENT_TO_RIGHT)
+				||
+				(info.isNotRightAlign && moveDirection.x === EVENT_TO_LEFT)
+		) {
+			return;
+		}
+		offsetX.value = n;
+	}
+	if (d === 'y') {
+		if (
+				(info.isNotTopAlign && moveDirection.y === EVENT_TO_BOTTOM)
+				||
+				(info.isNotBottomAlign && moveDirection.y === EVENT_TO_TOP)
+		) {
+			return;
+		}
+		offsetY.value = n;
+	}
 }
 
 function deletePhoto(index: number) {
@@ -152,6 +271,34 @@ function deletePhoto(index: number) {
 				}
 			}
 	);
+}
+
+function fixPosition() {
+	const info = imgBoundaryInfo();
+	// 如果宽度小于容器那么 x 轴复位
+	if (!info.isOverflowWidth) {
+		offsetX.value = 0;
+	}
+	// 如果宽度大于容器且没有左对齐，那么进行对齐
+	else if (info.isNotLeftAlign) {
+		offsetX.value = info.width / 2 - mainRect.width / 2;
+	}
+	// 如果宽度大于容器且没有右对齐，那么进行对齐
+	else if (info.isNotRightAlign) {
+		offsetX.value = mainRect.width / 2 - info.width / 2;
+	}
+	// 如果高度小于容器那么 y 轴复位
+	if (!info.isOverflowHeight) {
+		offsetY.value = 0;
+	}
+	// 如果高度大于容器且没有上对齐，那么进行对齐
+	else if (info.isNotTopAlign) {
+		offsetY.value = info.height / 2 - mainRect.height / 2;
+	}
+	// 如果高度大于容器且没有下对齐，那么进行对齐
+	else if (info.isNotBottomAlign) {
+		offsetY.value = mainRect.height / 2 - info.height / 2;
+	}
 }
 
 function ready() {
@@ -180,69 +327,47 @@ function exit() {
 	emit('close');
 }
 
+// 放大
 function zoomIn() {
 	photoScaleRatio.value++;
-	if (photoScaleRatio.value > 5) {
-		photoScaleRatio.value = 5;
+	if (photoScaleRatio.value > maxScaleRatio) {
+		photoScaleRatio.value = maxScaleRatio;
 	}
+	setScale();
 }
 
+// 缩小
 function zoomOut() {
 	photoScaleRatio.value--;
-	if (photoScaleRatio.value < -4) {
-		photoScaleRatio.value = -4;
+	if (photoScaleRatio.value < minScaleRatio) {
+		photoScaleRatio.value = minScaleRatio;
 	}
+	setScale();
 }
 
-function getMainRect() {
-	let {width, height, top, bottom, left, right} = mainer.value?.getBoundingClientRect() ?? {};
-	width ??= document.documentElement.clientWidth;
-	height ??= document.documentElement.clientHeight;
-	top ??= 0;
-	bottom ??= height;
-	left ??= 0;
-	right ??= width;
-
-	return {
-		width,
-		height,
-		top,
-		bottom,
-		left,
-		right
-	}
+// 重置1倍
+function zoomReset() {
+	photoScaleRatio.value = 0;
+	setScale();
 }
 
-function movePhoto(e: any) {
-	e.preventDefault();
-	const target = mainer.value?.querySelector('figure img') as HTMLElement;
-	const {width = 0, height = 0, top = 0, bottom = 0, left = 0, right = 0} = target?.getBoundingClientRect() ?? {};
-	mainRect ??= getMainRect();
-	// 正值是减，负值是加
-	// x轴允许滚动
-	if (width > mainRect.width) {
-		// 目标到右边界不再移动
-		if (e.deltaX > 0 && right <= mainRect.right) {
-			return;
+// 设置缩放比例
+function setScale() {
+	offsetX.value = offsetY.value = 0;
+	scale.value = scaleGenerator(photoScaleRatio.value);
+}
+
+function updateScale(s: number) {
+	for (let i = minScaleRatio; i < maxScaleRatio; i++) {
+		if (s < scaleGenerator(i)) {
+			photoScaleRatio.value = Math.max(minScaleRatio, i - 1);
+			break;
 		}
-		// 目标到左边界则不再移动
-		if (e.deltaX < 0 && left >= mainRect.left) {
-			return;
+		else if (i === maxScaleRatio) {
+			photoScaleRatio.value = maxScaleRatio;
 		}
-		offsetX.value -= e.deltaX;
 	}
-	// y轴允许滚动
-	if (height > mainRect.height) {
-		// 目标到底部边界则不再移动
-		if (e.deltaY > 0 && bottom <= mainRect.bottom) {
-			return;
-		}
-		// 目标到顶部边界则不再移动
-		if (e.deltaY < 0 && top >= mainRect.top) {
-			return;
-		}
-		offsetY.value -= e.deltaY;
-	}
+	scale.value = s;
 }
 
 function fullscreenChangeHandler() {
@@ -274,7 +399,7 @@ onBeforeUnmount(() => {
 <template>
 	<teleport to="body">
 		<div ref="galleryRef" class="vb-gallery" :class="{'is-fullscreen': isFullscreen}">
-			<a class="vb-gallery__delete delete" aria-label="Close" @click="exit"></a>
+			<a class="vb-gallery__close delete" aria-label="Close" @click="exit"></a>
 			<div ref="sideRef" class="vb-gallery__side" v-if="showSide">
 				<a
 						class="vb-gallery__side__item" :class="{'is-active': index === currentIndex}" @click="switchShow(index)"
@@ -286,23 +411,33 @@ onBeforeUnmount(() => {
 			</div>
 			<div
 					ref="mainRef" class="vb-gallery__main" :style="`--scale: ${scale}`"
-					@wheel.prevent.stop @click="maskClickHandler">
-				<figure @wheel="movePhoto" :style="`transform: translate(${offsetX}px, ${offsetY}px)`">
-					<Loading @wheel.stop.prevent v-if="!photoIsReady">
+					@wheel.prevent.stop @touchmove.prevent @click="maskClickHandler">
+				<InteractiveTracker
+						tag="figure" :style="`transform: translate(${offsetX}px, ${offsetY}px)`"
+						:x="offsetX" :y="offsetY" :scale="scale"
+						@direction="moveDirection = $event"
+						@xSlide="jumpPhoto('x', $event)" @ySlide="jumpPhoto('y', $event)"
+						@end="fixPosition"
+						@update:scale="updateScale"
+						@update:x="movePhoto('x', $event)"
+						@update:y="movePhoto('y', $event)">
+					<Loading :timeout="1000*60*10" v-if="!photoIsReady">
 						<AnimateDot class="rainbow"/>
 					</Loading>
-					<img :src="currentPhoto?.origin" :alt="currentPhoto?.name" @load="ready" @click.stop v-show="photoIsReady"/>
-				</figure>
+					<img
+							draggable="false" :src="currentPhoto?.origin" :alt="currentPhoto?.name" @load="ready" @click.stop
+							v-show="photoIsReady"/>
+				</InteractiveTracker>
 
 				<!-- 缩放工具 -->
 				<div class="vb-gallery__zoom" @click.stop v-if="showZoom">
-					<a :class="{'is-disabled': photoScaleRatio <= -4}" @click="zoomOut">
+					<a :class="{'is-disabled': photoScaleRatio <= minScaleRatio}" @click="zoomOut">
 						<FasIcon icon="magnifying-glass-minus" size="xl"/>
 					</a>
-					<a :class="{'is-disabled': photoScaleRatio === 0}" @click="photoScaleRatio=0">
+					<a :class="{'is-disabled': photoScaleRatio === 0}" @click="zoomReset">
 						<FasIcon icon="magnifying-glass" size="xl"/>
 					</a>
-					<a :class="{'is-disabled': photoScaleRatio >= 5}" @click="zoomIn">
+					<a :class="{'is-disabled': photoScaleRatio >= maxScaleRatio}" @click="zoomIn">
 						<FasIcon icon="magnifying-glass-plus" size="xl"/>
 					</a>
 				</div>
@@ -373,7 +508,7 @@ onBeforeUnmount(() => {
 		}
 	}
 
-	&__delete {
+	&__close {
 		position: absolute;
 		right: 0.5rem;
 		top: 0.5rem;
@@ -427,11 +562,14 @@ onBeforeUnmount(() => {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		overscroll-behavior: none;
 
 		figure {
 			display: flex;
 			align-items: center;
+			justify-content: center;
 			user-select: none;
+			overscroll-behavior: none;
 			margin: auto;
 			max-width: 100%;
 			max-height: 100%;
@@ -439,6 +577,13 @@ onBeforeUnmount(() => {
 			img {
 				display: block;
 				transform: scale(var(--scale, 1));
+				background: #FEFEFE;
+				overscroll-behavior: none;
+				object-fit: contain;
+				min-width: 1rem;
+				min-height: 1rem;
+				max-width: 100%;
+				max-height: 100%;
 			}
 
 			&:hover + .vb-gallery__tools {
@@ -545,6 +690,7 @@ onBeforeUnmount(() => {
 		&__side {
 			flex-direction: row;
 			white-space: nowrap;
+			overflow-y: clip;
 			width: 100%;
 			height: 5em;
 

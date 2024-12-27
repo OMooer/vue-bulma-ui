@@ -187,3 +187,13 @@ declare namespace VBMenu {
 		folded?: boolean;
 	}
 }
+
+declare namespace Tracker {
+	interface MoveEventData {
+		dir: string;
+		detail: {
+			multiple: boolean;
+			offset: number;
+		}
+	}
+}

@@ -52,6 +52,7 @@ function runBar() {
 		percent.value += 1;
 		// 模拟进度条只模拟到90%，剩下的等待异步结果或者设置超时
 		if (percent.value >= 90) {
+			// 停止当前的定时器再执行
 			clearInterval(timer);
 			// 如果存在完成标识则执行完成操作
 			if (isEnd.value) {

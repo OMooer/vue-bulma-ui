@@ -266,10 +266,11 @@ function remove() {
 			</div>
 		</template>
 		<template v-else-if="cropperStep === 'crop'">
-			<div class="cropper" @click.stop.prevent>
+			<div class="cropper" @click.stop.prevent @touchmove.prevent @wheel.prevent>
 				<InteractiveTracker
 						class="cropper__image-container image-opacity-bg" @end="checkImageSafeRange"
 						:style="{width:`${width}px`, height:`${height}px`, '--scale': scale, '--x': `${tranX}px`, '--y': `${tranY}px`}"
+						:event-trigger="['drag', 'touch']"
 						v-model:scale="scale" v-model:x="tranX" v-model:y="tranY"
 				>
 					<img ref="preview" :src="previewImage" alt="preview" @load="checkImageSafeRange" v-if="previewImage"/>

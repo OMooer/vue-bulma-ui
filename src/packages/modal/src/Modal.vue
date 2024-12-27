@@ -60,7 +60,7 @@ defineExpose({
 				<div :class="[title ? 'modal-card' : 'modal-content']" :style="style" v-show="isShow">
 					<template v-if="title">
 						<InteractiveTracker
-								tag="header" class="modal-card-head" :class="{'is-moving': isMoving}"
+								tag="header" class="modal-card-head" :class="{'is-moving': isMoving}" :event-trigger="['drag']"
 								@start="isMoving = true" @end="isMoving = false" v-model:x="modalX" v-model:y="modalY">
 							<p class="modal-card-title">{{ title }}</p>
 							<button
