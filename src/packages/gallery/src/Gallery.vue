@@ -14,10 +14,20 @@ import {
 import Loading, { AnimateDot } from '../../loading';
 import InteractiveTracker from '../../InteractiveTracker';
 
-const {current = 0, list = [], maskClose, showSide = true, showZoom, showToolbar = true, confirmRemove} = defineProps<{
+const {
+	      current     = 0,
+	      list        = [],
+	      maskClose,
+	      showExif,
+	      showSide    = true,
+	      showZoom,
+	      showToolbar = true,
+	      confirmRemove
+      } = defineProps<{
 	current?: number;
 	list: (string | Normal.PhotoObj)[];
 	maskClose?: boolean;
+	showExif?: boolean;
 	showSide?: boolean;
 	showZoom?: boolean;
 	showToolbar?: boolean;
@@ -73,7 +83,7 @@ const currentPhoto = computed(() => photos.value?.[currentIndex.value]);
 const currentPhotoExif = ref();
 const showExifInfo = ref(false);
 watchEffect(() => {
-	if (currentPhoto.value?.origin) {
+	if (currentPhoto.value?.origin && showExif) {
 		(async () => {
 			currentPhotoExif.value = await getPhotoExif(currentPhoto.value?.origin as string);
 		})();
