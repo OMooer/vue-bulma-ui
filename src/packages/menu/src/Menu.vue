@@ -8,7 +8,7 @@ defineProps({
 	},
 	menuData   : {
 		type   : Array<VBMenu.Item>,
-		default: () => []
+		default: []
 	},
 	activeClass: String,
 	exactClass : String

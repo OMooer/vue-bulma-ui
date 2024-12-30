@@ -8,7 +8,7 @@ const emit = defineEmits(['remove']);
 const props = defineProps({
 	data: {
 		type   : Array,
-		default: () => []
+		default: []
 	},
 	max : Number
 });

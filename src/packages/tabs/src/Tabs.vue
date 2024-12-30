@@ -8,7 +8,7 @@ const props = defineProps({
 	},
 	list        : {
 		type   : Array,
-		default: () => []
+		default: []
 	}
 });
 const emit = defineEmits(['change']);

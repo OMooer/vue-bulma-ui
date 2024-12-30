@@ -9,7 +9,7 @@ const props = defineProps({
 	max      : Number,
 	fill     : {
 		type   : Array,
-		default: () => ['★']
+		default: ['★']
 	},
 	showScore: Boolean,
 	readonly : Boolean

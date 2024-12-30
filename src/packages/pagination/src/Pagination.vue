@@ -17,7 +17,7 @@ const props = defineProps({
 	},
 	pageSizes      : {
 		type   : Array,
-		default: () => [10, 20, 30, 50, 100]
+		default: [10, 20, 30, 50, 100]
 	},
 	prevText       : {
 		type   : String,

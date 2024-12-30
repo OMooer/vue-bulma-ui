@@ -11,7 +11,7 @@ const props = defineProps({
 	},
 	list   : {
 		type   : Array,
-		default: () => []
+		default: []
 	}
 });
 const {$vbt} = useUILocale();

@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<{
 	disabled?: boolean;
 	list: TVO.List;
 }>(), {name: Math.random().toString(36).slice(2)});
-const modelValue = defineModel({default: () => []});
+const modelValue = defineModel({default: []});
 const isError = ref(false);
 const className = computed(() => {
 	return [
@@ -25,7 +25,7 @@ const innerValue = computed({
 		return modelValue.value;
 	},
 	set(val) {
-		if ('only' in props && props.only) {
+		if (props.type === 'checkbox' && props.only) {
 			modelValue.value = val.slice(-1);
 		}
 		else {
