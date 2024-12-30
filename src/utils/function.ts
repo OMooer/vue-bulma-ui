@@ -54,7 +54,7 @@ export function deepMerge(target: Normal.AnyObj, source: Normal.AnyObj, ignoreNu
 			const targetValue = target[key];
 			const sourceValue = source[key];
 
-			if (sourceValue === null) {
+			if (sourceValue === null || sourceValue === undefined) {
 				if (!ignoreNull) {
 					target[key] = null;
 				}

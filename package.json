@@ -55,7 +55,12 @@
 		"typescript": "~5.4.0",
 		"vite": "^5.1.5",
 		"vite-plugin-dts": "^4.3.0",
-		"vue-tsc": "^2.0.6"
+		"vue-tsc": "^2.0.6",
+		"@imnull/exif": "^1.0.0",
+		"@imnull/imgkit-web": "^1.0.0",
+		"echarts": "^5.4.3",
+		"mime-db": "^1.53.0",
+		"sa-calendar": "^1.1.12"
 	},
 	"peerDependencies": {
 		"@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -65,12 +70,5 @@
 		"bulma": "^1.0.2",
 		"vue": "^3.5.0",
 		"vue-router": "^4.4.3"
-	},
-	"dependencies": {
-		"@imnull/exif": "^1.0.0",
-		"@imnull/imgkit-web": "^1.0.0",
-		"echarts": "^5.4.3",
-		"mime-db": "^1.53.0",
-		"sa-calendar": "^1.1.12"
 	}
 }
