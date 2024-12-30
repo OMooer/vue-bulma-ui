@@ -69,8 +69,8 @@ export function useDialog(optionLanguage?: OP.DialogText) {
 
 	// dialog 实现
 	const $dialog = (options: OP.DialogOption) => {
-		const {lang} = useUILocale();
-		const language = Object.assign({}, lang.value.dialog ?? {}, optionLanguage);
+		const {raw} = useUILocale();
+		const language = Object.assign({}, raw.value.dialog ?? {}, optionLanguage);
 		const dialogEl = getDialogRoot();
 		// 返回一个 Promise 用来回调 confirm 的选择
 		return new Promise((resolve, reject) => {

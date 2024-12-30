@@ -201,7 +201,7 @@ provide('parentChartTitle', props.title);
 
 <template>
 	<div class="vb-chart">
-		<h3 class="title is-5" v-if="title">{{ title }}</h3>
+		<h3 class="title is-5 mt-5" v-if="title">{{ title }}</h3>
 		<div class="toolbar" v-if="toolbar">
 			<div class="tool-date" v-if="dateFilter">
 				<DatetimePicker class="is-small" :messages is-range v-model="dateRange"/>

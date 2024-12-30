@@ -16,7 +16,7 @@ const props = defineProps({
 		default: 60
 	}
 });
-const emit = defineEmits(['running', 'stop']);
+const emit = defineEmits(['start', 'stop']);
 const showBar = ref(false);
 const current = ref(100);
 const stepTime = 20;
@@ -24,7 +24,7 @@ const split = computed(() => 100 / (props.time * 1000 / stepTime));
 let timer: any;
 
 function startBar() {
-	emit('running');
+	emit('start');
 	showBar.value = true;
 	timer = setInterval(() => {
 		current.value -= split.value;
@@ -43,7 +43,7 @@ function stopBar() {
 </script>
 
 <template>
-	<Countdown :appear :time @running="startBar" @stop="stopBar" #default="cdSlots">
+	<Countdown :appear :time @start="startBar" @stop="stopBar" #default="cdSlots">
 		<progress
 				class="vb-countdown-bar progress is-link" :style="{height: size + 'px'}" max="100" :value="current"
 				v-if="showBar"></progress>

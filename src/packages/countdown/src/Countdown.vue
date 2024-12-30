@@ -11,12 +11,12 @@ const props = defineProps({
 		default: 60
 	}
 });
-const emit = defineEmits(['running', 'stop']);
+const emit = defineEmits(['start', 'stop']);
 const seconds = ref(props.time);
 const running = ref(false);
 
 function countdown() {
-	emit('running');
+	emit('start');
 	running.value = true;
 	const timer = setInterval(() => {
 		seconds.value--;

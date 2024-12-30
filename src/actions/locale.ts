@@ -1,35 +1,62 @@
+import { deepMerge } from '@/utils';
 import { ref } from 'vue';
 import type ZhCn from '@/locales/zh-cn';
 
 type LangData = string[] | { [propName: string]: string };
+type UseOption = {
+	extensions?: Normal.DeepPartial<typeof ZhCn>;
+};
 
 const localeFiles = import.meta.glob('../locales/*.ts', {
 	eager : true,
 	import: 'default'
 });
-const lang = ref<typeof ZhCn>({} as typeof ZhCn);
+const langRaw = ref<typeof ZhCn>({} as typeof ZhCn);
+let globalOptions: UseOption;
 
-export const useUILocale = () => {
+export const useUILocale = (option?: UseOption) => {
+	const _locale = ref('zh-cn');
+	// 在安装插件的时候会首次设置选项，之后都不再接受更改
+	globalOptions ??= option;
+
 	// 加载语言包
-	function loadLanguage(locale: string | object = 'zh-cn') {
-		// console.log('Load language: ' + locale);
-		if (typeof locale === 'string') {
-			const l = localeFiles[`../locales/${ locale.toLowerCase() }.ts`];
-			if (l) {
-				lang.value = l as any;
-			}
-			else {
-				throw Error('Load locale message failed\nCannot find locale: ' + locale);
-			}
+	function loadLanguage(name: string, langPackage: typeof ZhCn) {
+		const localeName = name.toLowerCase();
+		// 如果没有传入对应语言包，则尝试加载内置语言包
+		if (!langPackage) {
+			return;
 		}
-		else {
-			Object.assign(lang.value, locale);
-		}
+		// 将导入的语言包合并到内置语言包
+		localeFiles[localeName] = langPackage;
+		langRaw.value = langPackage;
+		_locale.value = localeName;
 	}
 
 	// 切换语言
 	function switchLanguage(locale: string) {
-		loadLanguage(locale.toLowerCase());
+		if (!locale) {
+			throw Error('Need locale name to load language');
+		}
+		// console.log('Load language: ' + locale);
+		const localeName = locale.toLowerCase();
+		let innerLang = localeFiles[localeName];
+		innerLang ??= localeFiles[`../locales/${ localeName }.ts`];
+		if (innerLang) {
+			langRaw.value = innerLang as unknown as typeof ZhCn;
+			_locale.value = localeName;
+			// 合并选项扩展的语言设置
+			mergeOptionLanguageContent();
+		}
+		else {
+			throw Error('Load locale messages failed\nCannot find locale: ' + locale);
+		}
+	}
+
+	function mergeOptionLanguageContent() {
+		if (globalOptions.extensions) {
+			// 深度合并
+			deepMerge(langRaw.value, globalOptions.extensions);
+		}
 	}
 
 	// 获取路径对应的语言信息
@@ -67,7 +94,7 @@ export const useUILocale = () => {
 		// 解析路径
 		const resolvePath = path.split('.');
 		// 取回信息
-		const msg = getLocaleMessage(resolvePath, lang.value);
+		const msg = getLocaleMessage(resolvePath, langRaw.value);
 		if (!msg) {
 			return path;
 		}
@@ -81,7 +108,8 @@ export const useUILocale = () => {
 	return {
 		loadLanguage,
 		switchLanguage,
-		lang,
+		raw   : langRaw,
+		locale: _locale,
 		$vbt
 	}
 }

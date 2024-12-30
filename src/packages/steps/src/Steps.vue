@@ -292,7 +292,7 @@ defineExpose({
 				color: #FFF;
 
 				&::before {
-					border-color: var(--bulma-border-weak);
+					border-color: #FFF;
 				}
 			}
 

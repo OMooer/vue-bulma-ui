@@ -73,18 +73,23 @@ declare module 'vue' {
 }
 
 declare module 'vue3-bulma-ui' {
-	import type { Plugin } from "vue";
+	import type { Plugin, Ref } from "vue";
 	const _default: Plugin;
 	export default _default;
-	const {useDialog}: {
+	const {useDialog, useUILocale}: {
 		useDialog: (textOpt?: OP.DialogText) => {
 			$alert: OP.Alert;
 			$confirm: OP.Confirm;
 			$dialog: OP.Dialog;
+		},
+		useUILocale: () => {
+			loadLanguage: (name: string, langPackage: object) => void;
+			switchLanguage: (locale: string) => void;
+			locale: Ref<string>;
 		}
 	};
 	export * from 'vue3-bulma-ui/components';
-	export { useDialog }
+	export { useDialog, useUILocale };
 	export const version: string;
 }
 

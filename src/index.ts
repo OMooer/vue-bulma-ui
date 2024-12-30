@@ -38,15 +38,15 @@ import * as components from './components';
 export default {
 	install(Vue: App, opt?: { locale?: string | Ref<string>; icon?: IconDefinition[]; dialog?: OP.DialogText }) {
 		// 设置内置语言包
-		const {loadLanguage} = useUILocale();
+		const {switchLanguage} = useUILocale({extensions: {dialog: opt?.dialog}});
 		if (isRef(opt?.locale)) {
 			// 监听这个数据的变化动态更新语言包
 			watchEffect(() => {
-				loadLanguage(toValue(opt?.locale) || 'zh-cn');
+				switchLanguage(toValue(opt?.locale) || 'zh-cn');
 			});
 		}
 		else {
-			loadLanguage(opt?.locale || 'zh-cn');
+			switchLanguage(opt?.locale || 'zh-cn');
 		}
 		const {$dialog, $alert, $confirm} = useDialog(opt?.dialog);
 		// UI 使用图标
@@ -86,5 +86,5 @@ export default {
 }
 
 export * from './components';
-export { useDialog };
+export { useDialog, useUILocale };
 export const version = import.meta.env.VERSION;

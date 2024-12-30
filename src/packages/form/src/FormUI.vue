@@ -43,7 +43,7 @@ const classList = computed(() => {
 });
 
 const colClassName = computed(() => {
-	return props.config?.rowCols ? 'is-' + Math.round(12 / props.config?.rowCols) : 'is-full';
+	return props.config?.rowSplits ? 'is-' + Math.round(12 / props.config?.rowSplits) : 'is-full';
 });
 
 //表单提交

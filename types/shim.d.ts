@@ -68,6 +68,9 @@ declare namespace OP {
 declare namespace Normal {
 	type AnyObj = { [key: string]: any };
 	type PhotoObj = { name?: string; small?: string; origin?: string; };
+	type DeepPartial<T> = {
+		[P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+	};
 }
 
 declare namespace VBTable {
@@ -156,7 +159,7 @@ declare namespace VBForm {
 	}
 
 	interface Config {
-		rowCols?: number;
+		rowSplits?: number;
 		isSmall?: boolean;
 		items: Item[];
 		buttons: Btn[];
