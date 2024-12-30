@@ -10,10 +10,12 @@
 		"dist"
 	],
 	"compilerOptions": {
+		"strict": true,
 		"declaration": true,
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,
 		"skipLibCheck": true,
+		"noImplicitAny": true,
 		"moduleResolution": "Node",
 		"target": "ESNext",
 		"module": "ESNext",

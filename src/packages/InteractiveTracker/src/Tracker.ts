@@ -49,9 +49,9 @@ export default defineComponent({
 		let oldScale = 1;
 		let multiple = false;
 		let initialDistance = 0;
-		let initialTouches = [];
-		const inertialX = [];
-		const inertialY = [];
+		let initialTouches: { x: number; y: number; }[] = [];
+		const inertialX: number[] = [];
+		const inertialY: number[] = [];
 		let wheelEnding = false;
 		let wheelTimer = 0;
 		let wheelX = 0;

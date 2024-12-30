@@ -45,7 +45,7 @@ export async function runPromiseSequence<T>(promises: Function[], result: T) {
  * @param source 要复制数据的对象
  * @param ignoreNull 是否忽略空值不合并
  */
-export function deepMerge(target: object, source: object, ignoreNull: boolean = true): object {
+export function deepMerge(target: Normal.AnyObj, source: Normal.AnyObj, ignoreNull: boolean = true) {
 	if (!target || !source || typeof target !== 'object' || typeof source !== 'object') {
 		return;
 	}

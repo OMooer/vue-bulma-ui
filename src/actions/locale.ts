@@ -12,7 +12,7 @@ const localeFiles = import.meta.glob('../locales/*.ts', {
 	import: 'default'
 });
 const langRaw = ref<typeof ZhCn>({} as typeof ZhCn);
-let globalOptions: UseOption;
+let globalOptions: UseOption | undefined;
 
 export const useUILocale = (option?: UseOption) => {
 	const _locale = ref('zh-cn');
@@ -53,7 +53,7 @@ export const useUILocale = (option?: UseOption) => {
 	}
 
 	function mergeOptionLanguageContent() {
-		if (globalOptions.extensions) {
+		if (globalOptions?.extensions) {
 			// 深度合并
 			deepMerge(langRaw.value, globalOptions.extensions);
 		}
@@ -99,7 +99,7 @@ export const useUILocale = (option?: UseOption) => {
 			return path;
 		}
 		// 对信息存在格式的特殊处理
-		if (/\{[\d_A-Za-z]+?}/g.test(msg)) {
+		if (/\{[\d_A-Za-z]+?}/g.test(msg) && data) {
 			return format(msg, data);
 		}
 		return msg;
