@@ -26,6 +26,9 @@
 			"@/*": [
 				"src/*"
 			],
+			"@/types/*": [
+				"types/*"
+			],
 			"vue3-bulma-ui/*": [
 				"src/*"
 			]

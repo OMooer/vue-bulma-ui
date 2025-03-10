@@ -63,6 +63,7 @@ declare module 'vue' {
 		VbUploader: typeof import("vue3-bulma-ui/components")["VbUploader"];
 		VbUPluginCI: typeof import("vue3-bulma-ui/components")["VbUPluginCI"];
 		VbUPluginSI: typeof import("vue3-bulma-ui/components")["VbUPluginSI"];
+		VbWatermark: typeof import("vue3-bulma-ui/components")["VbWatermark"];
 	}
 
 	export interface ComponentCustomProperties {

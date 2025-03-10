@@ -130,3 +130,5 @@ export {
 	// 裁剪图片上传插件
 	CropImageUpload as VbUPluginCI
 } from './packages/uploader';
+// 水印
+export { default as VbWatermark } from './packages/watermark';
