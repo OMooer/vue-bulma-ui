@@ -87,14 +87,13 @@ a:not(.is-less)[target=_blank] {
 	justify-content: flex-start !important;
 
 	&::after {
-		content: '↗';
+		content: "";
 		display: inline-block;
-		margin-left: 0.5em;
-		border: 1px solid;
-		border-radius: 2px;
+		background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA3klEQVR4nO2WQQ6CMBRE5xIaD2DM/114Ds8tC2L6IUQW7jEx3gJDgJgIxX5EjNpJuuiCeWU6aQsEfaMEFAm47BsWHH8ELOAScyjFeiHg46zgDNulgPMGmHuBE5idgM5DkXUHXVMY0wdt5uVTsICKKaG1J/uAx+3Hw56eDjArlaeMALv+9O5JkQXtJwW7oG383hIF2BWvYEMCvrwFnA3EWxVO3RPxAA8VSbN4aD+yYOsqkq/HWHBswdIH9fXoaIpzNYC9FKL+h3KR8j523tOFCpzUL5AX4VRUPsqggn5MN6OccPVbCFdjAAAAAElFTkSuQmCC") center no-repeat;
+		background-size: contain;
+		margin-left: 0.1em;
 		line-height: 1;
-		font-family: "system-ui", -apple-system, "Helvetica Neue", Arial, sans-serif;
-		font-size: smaller;
+		text-align: center;
 		width: 1em;
 		height: 1em;
 	}
