@@ -153,23 +153,23 @@ function remove() {
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .special-upload {
-	@include file-bg-color();
+	@include va.file-bg-color();
 	overflow: hidden;
 	margin: .5rem 0;
 	border-radius: var(--bulma-radius);
-	border: dashed 1px $split-color;
+	border: dashed 1px va.$split-color;
 
 	&:hover {
-		border-color: $link;
+		border-color: va.$link;
 	}
 
 	&:focus, &.is-dragover {
-		outline: solid 1px $link;
+		outline: solid 1px va.$link;
 		border-color: transparent;
-		box-shadow: 0 0 0 0.2em rgba($link, .25);
+		box-shadow: 0 0 0 0.2em rgba(va.$link, .25);
 	}
 
 	&.is-success {
@@ -179,14 +179,14 @@ function remove() {
 	// 不允许拖动上传
 	&.is-deny {
 		position: relative;
-		outline-color: $warning;
-		border-color: $warning-light;
-		box-shadow: 0 0 0 0.2em rgba($warning, .25);
+		outline-color: va.$warning;
+		border-color: va.$warning-light;
+		box-shadow: 0 0 0 0.2em rgba(va.$warning, .25);
 
 		&::before {
 			content: "";
 			position: absolute;
-			background-color: rgba($warning-dark, .25);
+			background-color: rgba(va.$warning-dark, .25);
 			top: 0;
 			right: 0;
 			z-index: 10;
@@ -213,19 +213,19 @@ function remove() {
 
 		p {
 			font-size: .875rem;
-			color: $grey;
+			color: va.$grey;
 		}
 
 		kbd {
 			margin: 0 5px;
 			padding: 0 .5em;
-			border: solid 1px $grey-lightest;
-			background-color: $grey;
-			border-radius: $radius;
-			box-shadow: 1px 1px 1px 0 $grey-light;
+			border: solid 1px va.$grey-lightest;
+			background-color: va.$grey;
+			border-radius: va.$radius;
+			box-shadow: 1px 1px 1px 0 va.$grey-light;
 			line-height: 1;
 			font-size: .75rem;
-			color: $white;
+			color: va.$white;
 		}
 
 		&:has(.image-source) {
@@ -246,16 +246,16 @@ function remove() {
 	}
 
 	&.is-error {
-		border: solid 1px $danger;
+		border: solid 1px va.$danger;
 
 		&:focus {
-			outline-color: $danger;
+			outline-color: va.$danger;
 			border-color: transparent;
-			box-shadow: 0 0 0 0.2em rgba($danger, .25);
+			box-shadow: 0 0 0 0.2em rgba(va.$danger, .25);
 		}
 
 		.upload-cont {
-			background-color: $danger-light;
+			background-color: va.$danger-light;
 		}
 	}
 }

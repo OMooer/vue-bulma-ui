@@ -113,7 +113,7 @@ provide('status', status);
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 @property --text-ani {
 	syntax: '<string>';
@@ -165,7 +165,7 @@ provide('status', status);
 		line-height: 4;
 		font-family: monospace;
 		font-size: .875rem;
-		color: $grey;
+		color: va.$grey;
 		animation: loading-text 1.2s ease-in-out alternate-reverse infinite;
 
 		&::before {

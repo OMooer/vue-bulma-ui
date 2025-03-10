@@ -40,14 +40,14 @@ function changeSort() {
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .sort-btn {
 	margin: 0 .2em;
 	cursor: pointer;
 
 	&:hover {
-		color: $blue;
+		color: va.$blue;
 	}
 }
 </style>

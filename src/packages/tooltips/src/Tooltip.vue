@@ -29,13 +29,13 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean});
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-tips.icon {
 	display: inline-flex;
 	align-items: flex-end;
 	justify-content: center;
-	color: $link;
+	color: va.$link;
 	height: auto;
 
 	&:before {

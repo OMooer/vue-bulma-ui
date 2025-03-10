@@ -24,7 +24,7 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-switch {
 	position: relative;
@@ -78,8 +78,8 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 
 	&::after {
 		right: 0;
-		background: $white;
-		box-shadow: $shadow;
+		background: va.$white;
+		box-shadow: va.$shadow;
 		border-radius: 50%;
 		width: 2.4em;
 		height: 2.4em;
@@ -97,10 +97,10 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 	}
 
 	&.is-on {
-		border-color: $success;
+		border-color: va.$success;
 
 		&::before {
-			background-color: $green;
+			background-color: va.$green;
 		}
 
 		&::after {
@@ -109,8 +109,8 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 		}
 
 		&:focus-within, &:hover {
-			border-color: $success;
-			box-shadow: 0 0 0 0.125em rgba($success, .25);
+			border-color: va.$success;
+			box-shadow: 0 0 0 0.125em rgba(va.$success, .25);
 		}
 
 		input {
@@ -118,7 +118,7 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 		}
 
 		.text {
-			color: $white;
+			color: va.$white;
 		}
 	}
 
@@ -139,7 +139,7 @@ const isReallySmall = computed(() => isParentSmall || props.isSmall);
 			position: absolute;
 			left: 0;
 			right: 0;
-			box-shadow: $shadow;
+			box-shadow: va.$shadow;
 			border-radius: 50%;
 			width: 2.4em;
 			height: 2.4em;

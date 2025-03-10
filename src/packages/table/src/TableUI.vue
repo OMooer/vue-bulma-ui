@@ -112,12 +112,12 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-table {
 	margin: 2em 0;
 	overflow-x: auto;
-	border: solid $split-color;
+	border: solid va.$split-color;
 	border-width: 0 1px;
 	min-width: 100%;
 
@@ -132,7 +132,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 
 			tr th {
 				border-bottom-width: 2px;
-				border-bottom-color: $split-color;
+				border-bottom-color: va.$split-color;
 				font-weight: bold;
 			}
 		}
@@ -152,7 +152,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				position: sticky;
 				z-index: 10;
 				background-color: var(--bulma-table-background-color);
-				box-shadow: -1px 0 0 0 $split-color inset, 1px 0 0 0 $split-color inset;
+				box-shadow: -1px 0 0 0 va.$split-color inset, 1px 0 0 0 va.$split-color inset;
 				border-right: 0;
 
 				&:has(.dropdown.is-active) {
@@ -164,11 +164,11 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				}
 
 				&:first-child {
-					box-shadow: -1px 0 0 0 $split-color inset;
+					box-shadow: -1px 0 0 0 va.$split-color inset;
 				}
 
 				&:last-child {
-					box-shadow: 1px 0 0 0 $split-color inset;
+					box-shadow: 1px 0 0 0 va.$split-color inset;
 				}
 			}
 

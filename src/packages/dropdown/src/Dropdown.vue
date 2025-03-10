@@ -169,7 +169,7 @@ function menuClicked(e: any) {
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-dropdown {
 	&.is-small {
@@ -211,7 +211,7 @@ function menuClicked(e: any) {
 		}
 
 		.icon {
-			color: $link;
+			color: va.$link;
 			transition: transform .3s ease;
 			height: auto;
 		}

@@ -55,7 +55,7 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .dual-input {
 	display: flex;
@@ -71,13 +71,13 @@ defineExpose({
 	}
 
 	&:focus-within {
-		outline: solid 1px $link;
+		outline: solid 1px va.$link;
 		background-color: transparent !important;
 		box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
 	}
 
 	&:hover {
-		@include file-bg-color();
+		@include va.file-bg-color();
 		cursor: text;
 	}
 
@@ -124,7 +124,7 @@ defineExpose({
 		z-index: 1;
 
 		&.is-empty {
-			color: $grey-lighter !important;
+			color: va.$grey-lighter !important;
 			font-weight: normal !important;
 		}
 	}

@@ -14,8 +14,8 @@ defineProps(['text']);
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
-@import "../../../scss/animates";
+@use "@/scss/variables" as va;
+@use "@/scss/animates";
 
 .vb-loading.top-loading {
 	.dot-loading {
@@ -28,7 +28,7 @@ defineProps(['text']);
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	color: $grey;
+	color: va.$grey;
 	width: 100%;
 	height: 100%;
 
@@ -50,7 +50,7 @@ defineProps(['text']);
 		span {
 			display: inline-block;
 			margin: calc($pointSize / 2);
-			background-color: $grey-darker;
+			background-color: va.$grey-darker;
 			border-radius: 50%;
 			width: $pointSize;
 			height: $pointSize;

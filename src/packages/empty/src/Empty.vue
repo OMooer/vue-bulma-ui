@@ -64,7 +64,7 @@ ZXRyaWNJbnRlcnByZXRhdGlvbgAyI8IwkAAAAABJRU5ErkJggg==" alt="empty data">
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-empty {
 	display: flex;
@@ -73,7 +73,7 @@ ZXRyaWNJbnRlcnByZXRhdGlvbgAyI8IwkAAAAABJRU5ErkJggg==" alt="empty data">
 	flex-grow: 2;
 	padding: 1rem 0;
 	font-size: .75rem;
-	color: $grey-light;
+	color: va.$grey-light;
 	user-select: none;
 	overflow: hidden;
 }

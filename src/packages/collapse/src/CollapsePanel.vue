@@ -92,7 +92,7 @@ const isArrowStart = computed(() => {
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .card {
 	--bulma-block-spacing: 0;
@@ -149,7 +149,7 @@ const isArrowStart = computed(() => {
 
 	.card-body {
 		margin: 0 .75rem;
-		border-top: solid 1px $split-color;
+		border-top: solid 1px va.$split-color;
 		transition: height .3s ease-in, opacity .3s ease-in, border .3s ease-in;
 
 		.panel-content {

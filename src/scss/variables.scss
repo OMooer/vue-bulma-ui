@@ -1,14 +1,16 @@
+@use "sass:color";
 @use 'bulma/sass/utilities/css-variables' as cv;
-@import 'bulma/sass/utilities/initial-variables';
-@import 'bulma/sass/utilities/derived-variables';
+@use 'bulma/sass/utilities/derived-variables' as dv;
+@forward 'bulma/sass/utilities/derived-variables';
+@forward "bulma/sass/utilities/initial-variables";
 
 $shadow: cv.getVar('shadow');
-$primary-dark: darken($primary, 10%);
-$warning-light: lighten($warning, 10%);
-$warning-dark: darken($warning, 10%);
-$link-light: lighten($link, 8%);
-$link-dark: darken($link, 10%);
-$danger-light: lighten($danger, 10%);
+$primary-dark: color.adjust(dv.$primary, $lightness: -10%);
+$warning-light: color.adjust(dv.$warning, $lightness: 10%);
+$warning-dark: color.adjust(dv.$warning, $lightness: -10%);
+$link-light: color.adjust(dv.$link, $lightness: 8%);
+$link-dark: color.adjust(dv.$link, $lightness: -10%);
+$danger-light: color.adjust(dv.$danger, $lightness: 10%);
 
 $split-color: cv.getVar("border-weak");
 $input-border-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), calc(var(--bulma-border-l) + var(--bulma-input-border-l-delta, 0%)));

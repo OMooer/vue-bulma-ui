@@ -137,12 +137,12 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .steps {
-	$normal: $grey-lighter;
-	$completed: $link-light;
-	$active: $primary;
+	$normal: va.$grey-lighter;
+	$completed: va.$link-light;
+	$active: va.$primary;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -173,7 +173,7 @@ defineExpose({
 				background-color: $completed;
 				border: solid 1px $completed;
 				border-radius: 50%;
-				color: $white;
+				color: va.$white;
 				width: 1.5em;
 				height: 1.5em;
 			}
@@ -197,7 +197,7 @@ defineExpose({
 					content: counter(stepList);
 					background-color: $active;
 					border-color: $active;
-					color: $white;
+					color: va.$white;
 				}
 			}
 

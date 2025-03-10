@@ -1,3 +1,4 @@
+@use "sass:color";
 /****
  * VUE CSS 动画
  **/
@@ -39,7 +40,7 @@
 		border-color: #F14668;
 	}
 	50% {
-		border-color: lighten(#F14668, 30%);
+		border-color: color.adjust(#F14668, $lightness: 30%);
 	}
 	100% {
 		border-color: #F14668;

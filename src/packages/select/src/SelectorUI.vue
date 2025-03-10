@@ -152,7 +152,7 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-select {
 	&.is-small {
@@ -211,7 +211,7 @@ defineExpose({
 			}
 
 			.icon {
-				color: $danger;
+				color: va.$danger;
 			}
 		}
 	}
@@ -236,7 +236,7 @@ defineExpose({
 		}
 
 		.icon {
-			color: $link;
+			color: va.$link;
 			transition: transform .3s ease;
 		}
 	}

@@ -84,7 +84,7 @@ function deleteSource() {
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .image-source, .file-source {
 	margin-bottom: .25rem;
@@ -127,7 +127,7 @@ function deleteSource() {
 		height: 100%;
 
 		&:hover {
-			color: $danger;
+			color: va.$danger;
 		}
 
 		&:focus {
@@ -141,7 +141,7 @@ function deleteSource() {
 	height: 100%;
 
 	.image {
-		background-color: $light;
+		background-color: va.$light;
 		min-width: 4.5rem;
 		min-height: 3rem;
 		width: fit-content;
@@ -157,10 +157,10 @@ function deleteSource() {
 	padding: 1rem;
 	box-sizing: border-box;
 	font-size: 1.5rem;
-	color: $white;
+	color: va.$white;
 
 	&:hover {
-		color: $danger;
+		color: va.$danger;
 	}
 }
 </style>

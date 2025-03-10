@@ -317,7 +317,7 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-cascade {
 	.cascade-dropdown {
@@ -345,10 +345,10 @@ defineExpose({
 			--bulma-focus-l: var(--bulma-danger-l);
 
 			.dropdown-trigger .button {
-				border-color: $danger;
+				border-color: va.$danger;
 
 				.icon {
-					color: $danger;
+					color: va.$danger;
 				}
 			}
 		}
@@ -381,7 +381,7 @@ defineExpose({
 		}
 
 		.icon {
-			color: $link;
+			color: va.$link;
 			transition: transform .3s ease;
 		}
 	}
@@ -406,7 +406,7 @@ defineExpose({
 				max-height: 15em;
 
 				&:not(:last-child) {
-					border-right: solid 1px $split-color;
+					border-right: solid 1px va.$split-color;
 				}
 
 				> .dropdown-item {

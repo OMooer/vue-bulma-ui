@@ -9,8 +9,8 @@
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
-@import "../../../scss/animates";
+@use "@/scss/variables" as va;
+@use "@/scss/animates";
 
 .vb-loading.top-loading {
 	.ball-loading {
@@ -29,7 +29,7 @@
 	// 阴影
 	&::after {
 		content: '';
-		background-color: $black;
+		background-color: va.$black;
 		border-radius: 50%;
 		opacity: .3;
 		width: calc($ballSize * 2.5);
@@ -39,7 +39,7 @@
 
 	// 小球
 	.ball {
-		background-image: radial-gradient(closest-corner circle at 50% 15%, $white-bis, $grey-darker);
+		background-image: radial-gradient(closest-corner circle at 50% 15%, va.$white-bis, va.$grey-darker);
 		border-radius: 50%;
 		width: $ballSize;
 		height: $ballSize;

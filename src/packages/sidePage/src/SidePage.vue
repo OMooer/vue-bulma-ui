@@ -61,8 +61,8 @@ function dismiss(e: any) {
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
-@import "../../../scss/animates";
+@use "@/scss/variables" as va;
+@use "@/scss/animates";
 
 .side-page {
 	position: fixed;
@@ -77,8 +77,8 @@ function dismiss(e: any) {
 		position: absolute;
 		background: var(--bulma-background);
 		padding: 0 1rem;
-		border: $split-color solid;
-		box-shadow: $shadow;
+		border: va.$split-color solid;
+		box-shadow: va.$shadow;
 		box-sizing: border-box;
 
 		&.is-left {

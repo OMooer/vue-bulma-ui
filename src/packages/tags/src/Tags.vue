@@ -256,13 +256,13 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-tags {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border: solid 1px $input-border-color;
+	border: solid 1px va.$input-border-color;
 	border-radius: var(--bulma-radius);
 	cursor: default;
 	transition: border var(--bulma-duration);
@@ -285,10 +285,10 @@ defineExpose({
 		--bulma-focus-s: var(--bulma-danger-s);
 		--bulma-focus-l: var(--bulma-danger-l);
 
-		border-color: $danger;
+		border-color: va.$danger;
 
 		> .icon {
-			color: $danger;
+			color: va.$danger;
 		}
 	}
 
@@ -340,7 +340,7 @@ defineExpose({
 		right: 0.75em;
 		margin: 0;
 		cursor: pointer;
-		color: $link;
+		color: va.$link;
 		z-index: 1;
 		transition: transform .3s ease;
 	}

@@ -105,14 +105,14 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-popup.box {
 	position: fixed;
 	bottom: 1.5rem;
 	right: 1.5rem;
 	z-index: 9999;
-	border: solid 1px $split-color;
+	border: solid 1px va.$split-color;
 
 	> .delete {
 		position: absolute;

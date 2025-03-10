@@ -70,14 +70,14 @@ provide('isSmall', props.isSmall);
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .field {
 	&:has([required],[data-required=true]) {
 		.form-el-label {
 			&::before {
 				content: '*';
-				color: $danger;
+				color: va.$danger;
 				vertical-align: middle;
 				line-height: 1;
 			}
@@ -155,20 +155,20 @@ provide('isSmall', props.isSmall);
 		.form-el-label {
 			//background-clip: content-box;
 			//background-color: var(--bulma-body-background-color);
-			color: $placeholder-color;
+			color: va.$placeholder-color;
 			font-weight: bold;
 			transform: scale(.875) translate(-.2em, -.5em) !important;
 		}
 
 		:deep(input::placeholder) {
-			color: $placeholder-color;
+			color: va.$placeholder-color;
 		}
 
 		:deep(textarea.textarea) {
 			padding-top: calc(var(--bulma-control-height) * .875 - .5em);
 
 			&::placeholder {
-				color: $placeholder-color;
+				color: va.$placeholder-color;
 			}
 		}
 	}
@@ -205,9 +205,9 @@ provide('isSmall', props.isSmall);
 				opacity: 1;
 				padding: .5rem .75rem;
 				background-color: $bgColor;
-				border: solid 1px $split-color;
-				border-radius: $radius;
-				box-shadow: $shadow;
+				border: solid 1px va.$split-color;
+				border-radius: va.$radius;
+				box-shadow: va.$shadow;
 				word-break: break-all;
 				white-space: pre-wrap;
 				font-size: .75rem;
@@ -224,7 +224,7 @@ provide('isSmall', props.isSmall);
 				opacity: 1;
 				margin: .25rem 0 0 0;
 				background-color: $bgColor;
-				border: solid $split-color;
+				border: solid va.$split-color;
 				border-width: 1px 1px 0 0;
 				width: .5rem;
 				height: .5rem;

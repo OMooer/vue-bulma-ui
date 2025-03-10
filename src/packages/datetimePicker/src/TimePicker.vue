@@ -393,7 +393,7 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-time-picker {
 	&.is-small {
@@ -433,7 +433,7 @@ defineExpose({
 				--bulma-focus-s: var(--bulma-danger-s);
 				--bulma-focus-l: var(--bulma-danger-l);
 
-				border-color: $danger;
+				border-color: va.$danger;
 
 				color: hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-text-strong-l));
 
@@ -491,7 +491,7 @@ defineExpose({
 				text-align: center;
 
 				&::placeholder {
-					color: $placeholder-color;
+					color: va.$placeholder-color;
 				}
 
 				&::-webkit-inner-spin-button, &::-webkit-calendar-picker-indicator {
@@ -521,7 +521,7 @@ defineExpose({
 				overscroll-behavior: contain;
 				max-height: 12em;
 				flex-grow: 1;
-				border-right: solid 1px $split-color;
+				border-right: solid 1px va.$split-color;
 
 				&:last-of-type {
 					border-right: 0;

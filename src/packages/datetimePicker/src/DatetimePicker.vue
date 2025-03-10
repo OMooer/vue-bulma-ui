@@ -355,7 +355,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-datetime {
 	position: relative;
@@ -401,7 +401,7 @@ export default {
 		--bulma-focus-l: var(--bulma-danger-l);
 
 		[role=calendar][data-range=true] {
-			border-color: $danger;
+			border-color: va.$danger;
 			color: hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-text-strong-l));
 
 			input {
@@ -421,7 +421,7 @@ export default {
 		justify-content: space-between;
 		padding: calc(.5em - 1px) calc(.75em - 1px);
 		box-sizing: border-box;
-		border: solid 1px $input-border-color;
+		border: solid 1px va.$input-border-color;
 		border-radius: var(--bulma-radius);
 		cursor: default;
 		line-height: 20px;
@@ -498,7 +498,7 @@ export default {
 </style>
 
 <style lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 // 弹出窗样式
 .vb-datetime.is-right > .date-panel {
 	right: 0 !important;
@@ -582,12 +582,12 @@ export default {
 					}
 
 					&:hover {
-						color: $link;
+						color: va.$link;
 					}
 
 					&.today {
-						background-color: $primary-dark;
-						color: $white;
+						background-color: va.$primary-dark;
+						color: va.$white;
 					}
 
 					&.disabled {
@@ -600,17 +600,17 @@ export default {
 					}
 
 					&.selected {
-						background-color: $primary-dark;
+						background-color: va.$primary-dark;
 						border-top-right-radius: 0;
 						border-bottom-right-radius: 0;
-						color: $white;
+						color: va.$white;
 
 						~ .selected {
 							border-radius: 0;
 						}
 
 						&.first-of, &.last-of {
-							background-color: $link-dark;
+							background-color: va.$link-dark;
 						}
 
 						&:nth-of-type(7n+1), &.first-of {
@@ -687,14 +687,14 @@ export default {
 							color: var(--bulma-text);
 
 							&:hover {
-								color: $link;
+								color: va.$link;
 							}
 						}
 					}
 				}
 
 				&:first-of-type {
-					box-shadow: $shadow;
+					box-shadow: va.$shadow;
 					background: var(--bulma-body-background-color);
 
 					ol li {

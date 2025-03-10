@@ -245,7 +245,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "../../../scss/variables";
+@use "@/scss/variables" as va;
 
 .vb-tree {
 	li {
