@@ -69,7 +69,7 @@ watch(() => currentIndex.value, () => {
 	nextTick(scrollSidebar);
 }, {immediate: true});
 let mainRect: any;
-let moveDirection: { x: string; y: string };
+let moveDirection: { x: string; y: string } = {x: '', y: ''};
 const isFullscreen = ref(!!document.fullscreenElement);
 const photoIsReady = ref(false);
 const photoScaleRatio = ref(0);

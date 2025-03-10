@@ -26,7 +26,7 @@ const sideSize = (1 - brightSize) / 2;
 let originFormData: FormData | null = null;
 const imageData = ref({
 	key : '',
-	data: null,
+	data: null as unknown as File,
 	name: '',
 	type: ''
 });
@@ -65,7 +65,7 @@ if (setHooks) {
 		if (!isSubmitted.value) {
 			originFormData = file;
 			// 选取出文件数据，只取第一张图片
-			const [key, image] = file.entries().next().value;
+			const [key, image] = file.entries().next().value as [string, File];
 			imageData.value = {
 				key,
 				data: image,
