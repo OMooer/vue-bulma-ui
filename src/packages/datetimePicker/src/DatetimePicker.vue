@@ -340,8 +340,8 @@ export default {
 											showSecond: Number(props.step) % 60 !== 0,
 											step      : props.step,
 											modelValue: that.innerTime,
-											'onUpdate:modelValue'(val: string) {
-												that.innerTime = val;
+											'onUpdate:modelValue'(val: string | undefined) {
+												that.innerTime = val ?? '';
 											},
 											onError: that.setError
 										})
