@@ -16,7 +16,6 @@
 npm install vue3-bulma-ui
 ```
 <br>
-<br>
 
 ## 项目中调用
 
@@ -26,6 +25,9 @@ import UI from 'vue3-bulma-ui';
 // 在 Vue 实例上安装插件
 vue.use(UI, [options]);
 ```
+
+## 帮助文档
+请访问我们的官方网站了解更多信息：[https://vbui.omooer.com](https://vbui.omooer.com/get-started#usage)
 
 ## 捐赠一下
 
