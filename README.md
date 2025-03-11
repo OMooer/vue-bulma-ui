@@ -29,4 +29,4 @@ vue.use(UI, [options]);
 
 ## 捐赠一下
 
-![赞助](https://vbui.omooer.com/assets/static/wepay-CIt0BVAN.jpg)
+![赞助](https://vbui.omooer.com/wepay.jpg)

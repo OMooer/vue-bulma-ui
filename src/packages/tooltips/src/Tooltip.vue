@@ -4,18 +4,18 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean});
 
 <template>
 	<span class="vb-tips icon" :data-tips="tips" v-if="!$slots?.default">
-		<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-exclamation']"/>
+		<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
 	</span>
 	<div class="vb-tips inline" v-else-if="inline">
 		<span class="icon">
-			<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-exclamation']"/>
+			<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
 		</span>
 		<slot/>
 	</div>
 	<div class="vb-tips dropdown is-hoverable" v-else>
 		<div class="dropdown-trigger">
 			<span class="icon">
-				<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-exclamation']"/>
+				<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
 			</span>
 		</div>
 		<div class="dropdown-menu">
