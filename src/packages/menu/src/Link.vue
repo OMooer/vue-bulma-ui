@@ -61,22 +61,31 @@ const isExternalLink = computed(() => {
 			|| props.to.startsWith('mailto:')
 	);
 });
+const nonAttrProps = computed(() => {
+	const {exactClass, noExternalIcon, ...resets} = props;
+	return resets;
+});
 
+function setClass(isExactActive: boolean) {
+	const cls: string[] = [];
+	if (isExactActive) {
+		cls.push(props.exactClass);
+	}
+	if (props.noExternalIcon) {
+		cls.push('is-less');
+	}
+	return cls.length > 0 ? cls : undefined;
+}
 </script>
 
 <template>
 	<a
-			v-if="isExternalLink" v-bind="$attrs" :href="props.to" :class="{'is-less': props.noExternalIcon}" target="_blank"
-			rel="nofollow noreferrer noopener">
+			v-if="isExternalLink" v-bind="$attrs" :href="props.to" :class="setClass(false)"
+			target="_blank" rel="nofollow noreferrer noopener">
 		<slot/>
 	</a>
-	<router-link v-else v-bind="$props" custom :to="route.fullPath" v-slot="{isExactActive, href, navigate}">
-		<a
-				:href="href"
-				:title="($attrs as any).title"
-				:class="[{[props.exactClass]: isExactActive}, $attrs.class]"
-				@click="navigate"
-		>
+	<router-link v-else v-bind="nonAttrProps" custom :to="route.fullPath" v-slot="{isExactActive, href, navigate}">
+		<a v-bind="$attrs" :href="href" :class="setClass(isExactActive)" @click="navigate">
 			<slot/>
 		</a>
 	</router-link>
