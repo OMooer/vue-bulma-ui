@@ -24,6 +24,7 @@ declare namespace Tree {
 		children?: Leaf[];
 		checked?: boolean;
 		folded?: boolean;
+		flags?: string;
 	}
 
 	interface RelationNodes {

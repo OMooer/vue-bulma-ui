@@ -26,16 +26,20 @@ function getMenuTitle(title: string | { [propName: string]: string }): string {
 	}
 	return title;
 }
+
+function toggleSub(item: VBMenu.Item) {
+	item.folded = !item.folded;
+}
 </script>
 
 <template>
 	<ul>
-		<li :class="{[activeClass]: !item.folded, 'is-active': !item.folded}" v-for="item in menuList">
+		<li :class="item.folded ? undefined : [activeClass, 'is-active']" v-for="item in menuList">
 			<Link
 					class="menu-link" :exactClass
 					:to="item.external === true ? item.url : {name: item.name}"
 					:title="getMenuTitle(item.title)"
-					@state="item.folded =! $event">
+					@state="item.folded = !$event">
 				<span class="menu-title">
 					<span class="icon" v-if="item.icon">
 						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
@@ -45,7 +49,9 @@ function getMenuTitle(title: string | { [propName: string]: string }): string {
 						{{ getMenuTitle(item.title) }}
 					</span>
 				</span>
-				<span class="icon next-icon" :class="{'roll-down': !item?.folded}" v-if="item.children?.length">
+				<span
+						class="icon next-icon" :class="{'roll-down': !item?.folded}" @click.prevent.stop="toggleSub(item)"
+						v-if="item.children?.length">
 					<FasIcon icon="angle-right"/>
 				</span>
 			</Link>

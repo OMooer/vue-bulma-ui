@@ -145,13 +145,16 @@ export default defineComponent({
 			return item === activeNode.value;
 		}
 
-		function reduceTree(data: Tree.Leaf[]): Tree.Leaf[] {
-			return data.map((item: Tree.Leaf) => {
+		function reduceTree(data: Tree.Leaf[], padStartFlag: string = ''): Tree.Leaf[] {
+			return data.map((item: Tree.Leaf, index: number) => {
+				const isLastNode = index === data.length - 1;
+				const tabSpace = ' ';
 				const newItem = {
-					checked: props.selected.includes(item.value)
+					checked: props.selected.includes(item.value),
+					flags  : padStartFlag + (isLastNode ? '└─' : '├─')
 				} as Tree.Leaf;
 				if (item.children && item.children?.length) {
-					newItem.children = reduceTree(item.children);
+					newItem.children = reduceTree(item.children, `${ padStartFlag }${ isLastNode ? '' : '│' }${ tabSpace }`);
 				}
 				return Object.assign({}, item, newItem, {folded: props.status === 'fold'});
 			});
@@ -165,7 +168,18 @@ export default defineComponent({
 		return () => {
 			function buildTree(data: Tree.Leaf[]): VNode[] {
 				return data.map(item => {
-					return h('li', [
+					const hasChildren = item.children && item.children.length;
+					return h('li', {'data-flag': item.flags}, [
+						hasChildren
+								? h('a', {
+									class: 'opera-icon',
+									title: item.folded ? (props.expandText || $vbt('tree.expand')) : (props.foldText || $vbt('tree.fold')),
+									onClick(event: any) {
+										item.folded = !item.folded;
+										event.preventDefault();
+										event.stopPropagation();
+									}
+								}, h(FontIcon, {icon: ['far', item.folded ? 'square-plus' : 'square-minus']})) : null,
 						h('label', {
 									onClick(event: any) {
 										nodeClick(item);
@@ -211,28 +225,7 @@ export default defineComponent({
 								]),
 						// 存在子级节点数据
 						item.children && item.children.length
-								? [
-									h('ul', {
-										class: {
-											'sub-node' : true,
-											'hide-node': item.folded
-										}
-									}, buildTree(item.children)),
-									h('a', {
-										class: 'opera-icon',
-										title: item.folded ? (props.expandText || $vbt('tree.expand')) : (props.foldText || $vbt('tree.fold')),
-										onClick(event: any) {
-											item.folded = !item.folded;
-											event.preventDefault();
-											event.stopPropagation();
-										}
-									}, [
-										h(FontIcon, {
-											icon: ['far', item.folded ? 'square-plus' : 'square-minus']
-										})
-									])
-								]
-								: null
+								? h('ul', {class: {'sub-node': true, 'hide-node': item.folded}}, buildTree(item.children)) : null
 					]);
 				});
 			}
@@ -252,12 +245,8 @@ export default defineComponent({
 		position: relative;
 
 		&:before {
-			content: "├─";
-			font-family: Monaco, serif;
-		}
-
-		&:last-of-type:before {
-			content: "└─";
+			content: attr(data-flag);
+			font-family: sans-serif, serif;
 		}
 
 		.node-name {
@@ -272,25 +261,16 @@ export default defineComponent({
 			line-height: 1;
 			background-color: var(--bulma-body-background-color);
 			color: var(--bulma-text);
+			transform: translateX(-200%);
 		}
 
 		&:hover > .opera-icon {
-			display: block;
+			display: inline-block;
 		}
 	}
 
-	.sub-node {
-		margin-left: .27em;
-		padding-left: 1.5em;
-		border-left: solid 1px var(--bulma-text);
-
-		&.hide-node {
-			display: none;
-		}
-	}
-
-	li:last-of-type > .sub-node {
-		border: 0 !important;
+	.sub-node.hide-node {
+		display: none;
 	}
 }
 </style>

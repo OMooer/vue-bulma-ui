@@ -85,7 +85,7 @@ function setClass(isExactActive: boolean) {
 		<slot/>
 	</a>
 	<router-link v-else v-bind="nonAttrProps" custom :to="route.fullPath" v-slot="{isExactActive, href, navigate}">
-		<a v-bind="$attrs" :href="href" :class="setClass(isExactActive)" @click="navigate">
+		<a v-bind="$attrs" :href="href" :class="setClass(isExactActive)" @click.prevent="()=>{navigate();$emit('state', true);}">
 			<slot/>
 		</a>
 	</router-link>
