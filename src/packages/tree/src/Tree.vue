@@ -87,8 +87,9 @@ export default defineComponent({
 		}
 
 		function nodeClick(item: any) {
+			const {checked, flags, folded, children, ...safeNode} = item;
 			activeNode.value = item;
-			emit('click', item);
+			emit('click', safeNode);
 		}
 
 		function updateSelect(val: string, isAdd: boolean) {
