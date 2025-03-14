@@ -8,8 +8,10 @@ const props = withDefaults(defineProps<{
 	locale?: string;
 	activeClass?: string;
 	exactClass?: string;
+	level?: number;
 }>(), {
-	activeClass: 'is-active'
+	activeClass: 'is-active',
+	level      : 0
 });
 
 const menuList = ref(props.data);
@@ -33,7 +35,7 @@ function toggleSub(item: VBMenu.Item) {
 </script>
 
 <template>
-	<ul>
+	<ul :style="`--level: ${props.level}`">
 		<li :class="item.folded ? undefined : [activeClass, 'is-active']" v-for="item in menuList">
 			<Link
 					class="menu-link" :exactClass
@@ -56,7 +58,7 @@ function toggleSub(item: VBMenu.Item) {
 				</span>
 			</Link>
 			<div class="next-menu" v-if="item.children?.length">
-				<MenuItem :locale :data="item.children" :exactClass :activeClass/>
+				<MenuItem :level="level + 1" :locale :data="item.children" :exactClass :activeClass/>
 			</div>
 		</li>
 	</ul>
@@ -72,7 +74,7 @@ ul {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0 .25em;
+		padding: 0 0.25em 0 var(--padding-left, 0.25em);
 
 		.menu-title {
 			display: flex;
@@ -108,11 +110,7 @@ ul {
 				overflow: hidden;
 
 				> li > :deep(.menu-link) {
-					padding-left: 1.5em;
-
-					~ .next-menu .menu-link {
-						padding-left: 2.5em;
-					}
+					--padding-left: calc(1em * var(--level) + 0.5em);
 				}
 			}
 		}
