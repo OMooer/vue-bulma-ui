@@ -32,6 +32,7 @@ export default defineComponent({
 		expandText : String,
 		foldText   : String
 	},
+	emits: ['select', 'click'],
 	setup(props, {emit}) {
 		const {$vbt} = useUILocale();
 		const selectValues = ref<string[]>([]);
