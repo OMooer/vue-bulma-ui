@@ -1,25 +1,16 @@
 <script setup lang="ts">
-import { computed, inject, ref, InputHTMLAttributes } from 'vue';
+import { inject, ref, InputHTMLAttributes, watch } from 'vue';
 
-type InputProps = /* @vue-ignore */Omit<InputHTMLAttributes, 'onError'> & {
-	modelValue?: any;
-};
+type InputProps = /* @vue-ignore */Omit<InputHTMLAttributes, 'onError'> & {};
+defineProps<InputProps>();
 const isParentSmall = inject('isSmall', false);
-const props = defineProps<InputProps>();
-const emit = defineEmits(['update:modelValue', 'error']);
+const innerValue = defineModel({default: ''});
+const emit = defineEmits(['error']);
 const isError = ref(false);
 const entity = ref();
 
-const inner = ref('');
-const innerValue = computed({
-	get() {
-		return typeof props.modelValue === 'undefined' ? inner.value : props.modelValue;
-	},
-	set(value: any) {
-		inner.value = value;
-		setError(false);
-		emit('update:modelValue', inner.value);
-	}
+watch(innerValue, () => {
+	setError(false);
 });
 
 function checkInput(e: Event) {
