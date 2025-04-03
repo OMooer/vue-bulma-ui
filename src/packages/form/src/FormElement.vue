@@ -56,8 +56,13 @@ provide('isSmall', props.isSmall);
 					'has-addons': !group && ($slots?.addonLeft || $slots?.addonRight)
 				}">
 			<slot name="addonLeft"/>
-			<div class="control is-expanded" @invalid.capture="catchInvalid">
+			<div
+					class="control is-expanded"
+					:class="{'has-icons-left': $slots?.leftIcon, 'has-icons-right': $slots?.rightIcon}"
+					@invalid.capture="catchInvalid">
 				<slot :setError="setError"/>
+				<slot name="leftIcon"/>
+				<slot name="rightIcon"/>
 			</div>
 			<slot name="addonRight"/>
 		</div>
@@ -86,18 +91,20 @@ provide('isSmall', props.isSmall);
 }
 
 .is-float-form:has(input,textarea) {
+	$sizes: small, medium, large;
 	--float-height: 1em;
 
-	&:has(.field .control .is-small) {
-		font-size: var(--bulma-size-small);
-	}
-
-	&:has(.field .control .is-medium) {
-		font-size: var(--bulma-size-medium);
-	}
-
-	&:has(.field .control .is-large) {
-		font-size: var(--bulma-size-large);
+	@each $size in $sizes {
+		&:has(.field .control input.is-#{$size}),
+		&:has(.field .control textarea.is-#{$size}) {
+			@if $size == small {
+				font-size: var(--bulma-size-small);
+			} @else if $size == medium {
+				font-size: var(--bulma-size-medium);
+			} @else if $size == large {
+				font-size: var(--bulma-size-large);
+			}
+		}
 	}
 
 	.form-el-label {
@@ -107,6 +114,7 @@ provide('isSmall', props.isSmall);
 		padding: var(--bulma-control-padding-vertical) .75em var(--bulma-control-padding-vertical);
 		pointer-events: none;
 		font-weight: normal;
+		font-size: inherit;
 		color: var(--bulma-body-color);
 		line-height: 1.7;
 		height: var(--bulma-control-height);
@@ -115,18 +123,6 @@ provide('isSmall', props.isSmall);
 
 		&:has(+.field .control input) {
 			transform: translateY(.5em);
-		}
-
-		&:has(+.field .control .is-small) {
-			font-size: var(--bulma-size-small);
-		}
-
-		&:has(+.field .control .is-medium) {
-			font-size: var(--bulma-size-medium);
-		}
-
-		&:has(+.field .control .is-large) {
-			font-size: var(--bulma-size-large);
 		}
 
 		+ .field {
@@ -143,6 +139,12 @@ provide('isSmall', props.isSmall);
 			color: transparent;
 			font-size: .875em;
 		}
+
+		+ .icon {
+			visibility: hidden;
+			top: unset;
+			bottom: 0;
+		}
 	}
 
 	:deep(textarea::placeholder) {
@@ -158,6 +160,12 @@ provide('isSmall', props.isSmall);
 			color: va.$placeholder-color;
 			font-weight: bold;
 			transform: scale(.875) translate(-.2em, -.5em) !important;
+		}
+
+		:deep(input) {
+			+ .icon {
+				visibility: visible;
+			}
 		}
 
 		:deep(input::placeholder) {
@@ -177,8 +185,12 @@ provide('isSmall', props.isSmall);
 .is-float-tips {
 	--floatTop: 2.5rem;
 
-	&:has(.is-small) {
+	&:has(input.is-small) {
 		--floatTop: 1.875rem;
+	}
+
+	&:has(input.is-medium) {
+		--floatTop: 3.25rem;
 	}
 
 	> .field:first-of-type {
