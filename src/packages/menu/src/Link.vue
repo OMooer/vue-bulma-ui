@@ -74,7 +74,8 @@ function setClass(isExactActive: boolean) {
 	if (props.noExternalIcon) {
 		cls.push('is-less');
 	}
-	return cls.length > 0 ? cls : undefined;
+	const uniqueCls = Array.from(new Set(cls));
+	return uniqueCls.length > 0 ? uniqueCls : undefined;
 }
 </script>
 
