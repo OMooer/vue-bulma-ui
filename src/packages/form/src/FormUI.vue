@@ -85,7 +85,7 @@ function reset() {
 						:minlength="item.min?.toString()"
 						:maxlength="item.max?.toString()"
 						:placeholder="item.placeholder"
-						v-model="formValue[item.name]" v-if="item.type === 'input'"/>
+						v-model.trim="formValue[item.name]" v-if="item.type === 'input'"/>
 				<InputUI
 						type="number"
 						:name="item.name"
@@ -104,7 +104,7 @@ function reset() {
 						:disabled="item.disabled"
 						:readonly="item.readonly"
 						:placeholder="item.placeholder"
-						v-model="formValue[item.name]" v-else-if="item.type==='password'"/>
+						v-model.trim="formValue[item.name]" v-else-if="item.type==='password'"/>
 
 				<!-- 日期 -->
 				<DatetimePicker

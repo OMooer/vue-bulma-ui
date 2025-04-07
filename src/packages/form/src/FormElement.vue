@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, ref, watchEffect } from 'vue';
+import { computed, provide, ref, useSlots, watchEffect } from 'vue';
 
 const props = defineProps({
 	label     : String,
@@ -9,11 +9,21 @@ const props = defineProps({
 	floatLabel: Boolean,
 	isSmall   : Boolean
 });
-
+const slots = useSlots();
 const isError = ref(false);
 const helpMsg = ref();
 const wrapTips = computed(() => {
 	return props.floatTips ? props.tips?.replace(/\\n/g, '\n') : null;
+});
+const comIsPassword = computed(() => {
+	const defaultSlot = slots.default?.({setError});
+	if (defaultSlot && defaultSlot.length > 0) {
+		const child = defaultSlot[0];
+		if (typeof child?.type === 'object' && 'name' in child.type && child.type.name === 'VbPassword') {
+			return true;
+		}
+	}
+	return false;
 });
 
 watchEffect(() => {
@@ -44,6 +54,7 @@ function setError(is: boolean, msg?: string) {
 }
 
 provide('isSmall', props.isSmall);
+provide('formElement', true);
 </script>
 
 <template>
@@ -58,11 +69,12 @@ provide('isSmall', props.isSmall);
 			<slot name="addonLeft"/>
 			<div
 					class="control is-expanded"
-					:class="{'has-icons-left': $slots?.leftIcon, 'has-icons-right': $slots?.rightIcon}"
+					:class="{'has-icons-left': $slots?.leftIcon, 'has-icons-right': $slots?.rightIcon || comIsPassword}"
 					@invalid.capture="catchInvalid">
+				<!-- 默认插槽 -->
 				<slot :setError="setError"/>
 				<slot name="leftIcon"/>
-				<slot name="rightIcon"/>
+				<slot name="rightIcon" v-if="!comIsPassword"/>
 			</div>
 			<slot name="addonRight"/>
 		</div>

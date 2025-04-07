@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import InputUI from './InputUI.vue';
+import { computed, defineComponent, h, inject, ref, useAttrs, watch } from 'vue';
 
 defineOptions({
-	inheritAttrs: false
+	inheritAttrs: false,
+	name        : 'VbPassword'
 });
-const isParentSmall = inject('isSmall', false);
+const isAtElement = inject('formElement', false);
+const attrs = useAttrs();
 const props = defineProps<{
-	modelValue?: any;
 	type?: 'password' | 'text';
 	readonly?: boolean;
 	required?: boolean;
@@ -17,39 +20,37 @@ const props = defineProps<{
 	maxlength?: string | number;
 }>();
 const emit = defineEmits(['update:modelValue', 'showPlain', 'error']);
+const innerValue = defineModel({default: ''});
 const showPassword = ref(false);
 const isError = ref(false);
 const entity = ref();
 const bindProps = computed(() => {
-	const {modelValue, type, ...binds} = props;
+	const {type, ...binds} = props;
 	return binds;
 });
-const inner = ref('');
-const innerValue = computed({
-	get() {
-		return typeof props.modelValue === 'undefined' ? inner.value : props.modelValue;
-	},
-	set(value: any) {
-		inner.value = value;
-		update(value);
-	}
+
+watch(innerValue, () => {
+	setError(false);
 });
 
-function update(val: any) {
-	setError(false);
-	emit('update:modelValue', val);
-}
-
-function checkInput(e: Event) {
-	const el = e.target as HTMLInputElement;
-	if (!el.checkValidity()) {
-		let errorMessage = el.validationMessage;
-		if (el.validity.patternMismatch) {
-			errorMessage = el.getAttribute('data-error-pattern') || errorMessage;
-		}
-		setError(true, errorMessage);
-	}
-}
+const inputVNode = defineComponent(() => {
+	return () => [
+		h(InputUI, {
+			type : showPassword.value ? 'text' : 'password',
+			class: [attrs.class, 'vb-password'],
+			...bindProps.value,
+			modelValue: innerValue.value,
+			'onUpdate:modelValue'(val: string) {
+				innerValue.value = val;
+			},
+			onError: setError
+		}),
+		h('span', {
+			class  : ['icon', 'is-small', 'is-right', {'show': showPassword.value}],
+			onClick: toggleShow
+		}, h(FontAwesomeIcon, {icon: ['fas', showPassword.value ? 'eye' : 'eye-slash']}))
+	]
+});
 
 function toggleShow() {
 	showPassword.value = !showPassword.value;
@@ -68,42 +69,38 @@ defineExpose({
 </script>
 
 <template>
-	<div class="vb-password control is-expanded has-icons-right">
-		<input
-				ref="entity" :type="showPassword ? 'text' : 'password'" autocomplete="off"
-				:class="['input', isError ? 'is-shake is-danger' : null, isParentSmall ? 'is-small' : null]"
-				v-bind="bindProps" v-model="innerValue" @change="checkInput">
-		<span :class="['icon', 'is-small', 'is-right', {'show': showPassword}]" @click="toggleShow">
-			<FasIcon :icon="['fas', showPassword ? 'eye' : 'eye-slash']"/>
-		</span>
+	<template v-if="isAtElement">
+		<Component :is="inputVNode"/>
+	</template>
+	<div class="control is-expanded has-icons-right" :class="{'has-icons-left': $slots?.leftIcon}" v-else>
+		<Component :is="inputVNode"/>
+		<slot name="leftIcon"/>
 	</div>
 </template>
 
-<style scoped lang="scss">
-.vb-password {
-	&.control {
-		.icon {
-			pointer-events: auto;
-			cursor: pointer;
+<style lang="scss">
+.vb-password.vb-password {
+	+ .icon {
+		pointer-events: auto;
+		cursor: pointer;
 
-			&:hover {
-				color: var(--bulma-input-icon-hover-color);
-			}
-
-			[data-theme=dark] & {
-				--bulma-input-icon-color: hsla(221deg, 14%, 89%, .5);
-			}
-
-			&.show {
-				color: var(--bulma-text-strong);
-			}
-
+		&:hover {
+			color: var(--bulma-input-icon-hover-color);
 		}
 
-		[disabled] + .icon {
-			pointer-events: none;
-			color: var(--bulma-input-icon-color) !important;
+		[data-theme=dark] & {
+			--bulma-input-icon-color: hsla(221deg, 14%, 89%, .5);
 		}
+
+		&.show {
+			color: var(--bulma-text-strong);
+		}
+
+	}
+
+	&[disabled] + .icon {
+		pointer-events: none;
+		color: var(--bulma-input-icon-color) !important;
 	}
 }
 </style>

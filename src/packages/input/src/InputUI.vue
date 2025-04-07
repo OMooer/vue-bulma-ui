@@ -40,7 +40,7 @@ defineExpose({
 <template>
 	<input
 			ref="entity" type="text" autocomplete="off"
-			v-model.trim="innerValue" @change="checkInput"
+			v-model="innerValue" @change="checkInput"
 			:class="['input', isError ? 'is-shake is-danger' : null, isParentSmall ? 'is-small' : null]"
 	>
 </template>
