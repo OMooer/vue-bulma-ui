@@ -36,7 +36,7 @@ function toggleSub(item: VBMenu.Item) {
 
 <template>
 	<ul :style="`--level: ${props.level}`">
-		<li :class="item.folded ? undefined : [activeClass, 'is-active']" v-for="item in menuList">
+		<li :class="item.folded ? undefined : {[activeClass]: true, 'is-active': true}" v-for="item in menuList">
 			<Link
 					class="menu-link" :exactClass
 					:to="item.external === true ? item.url : {name: item.name}"
