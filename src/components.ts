@@ -56,6 +56,8 @@ export {
 } from './packages/form';
 // 画廊
 export { default as VbGallery } from './packages/gallery';
+// 引导
+export { default as VbGuide } from './packages/guide';
 // 自增数字框
 export { default as VbIncrement } from './packages/increment';
 // 输入框

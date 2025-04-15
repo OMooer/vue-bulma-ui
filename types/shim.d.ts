@@ -201,3 +201,24 @@ declare namespace Tracker {
 		}
 	}
 }
+
+declare namespace VBGuide {
+	type GuideStyle = {
+		top?: string;
+		left?: string;
+		bottom?: string;
+		right?: string;
+		offsetX?: string;
+		offsetY?: string;
+		maskX?: [string, string];
+		maskY?: [string, string];
+	};
+	type GuideItem = {
+		title?: string;
+		content: string;
+		target: string | HTMLElement;
+		buttonText?: string;
+		before?: (target?: HTMLElement) => Promise<void | GuideStyle>;
+		after?: (action: string, target?: HTMLElement) => Promise<void>;
+	} & GuideStyle;
+}

@@ -28,6 +28,13 @@ export default {
 		submitText: 'Submit'
 	},
 
+	guide: {
+		next  : 'Next',
+		prev  : 'Previous',
+		finish: 'Finish',
+		exit  : 'Skip'
+	},
+
 	popup: {
 		doNotShow: 'Don\'t show again'
 	},

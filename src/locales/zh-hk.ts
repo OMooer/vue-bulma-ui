@@ -28,6 +28,13 @@ export default {
 		submitText: '提交'
 	},
 
+	guide: {
+		next  : '下一步',
+		prev  : '上一步',
+		finish: '完成',
+		exit  : '跳過'
+	},
+
 	popup: {
 		doNotShow: '不再顯示'
 	},

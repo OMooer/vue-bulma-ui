@@ -28,6 +28,7 @@ declare module 'vue' {
 		VbForm: typeof import("vue3-bulma-ui/components")["VbForm"];
 		VbFormItem: typeof import("vue3-bulma-ui/components")["VbFormItem"];
 		VbGallery: typeof import("vue3-bulma-ui/components")["VbGallery"];
+		VbGuide: typeof import("vue3-bulma-ui/components")["VbGuide"];
 		VbIncrement: typeof import("vue3-bulma-ui/components")["VbIncrement"];
 		VbInput: typeof import("vue3-bulma-ui/components")["VbInput"];
 		VbInteractiveTracker: typeof import("vue3-bulma-ui/components")["VbInteractiveTracker"];
