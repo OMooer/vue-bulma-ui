@@ -71,3 +71,69 @@ export function deepMerge(target: Normal.AnyObj, source: Normal.AnyObj, ignoreNu
 		}
 	}
 }
+
+/**
+ * 将指定子元素滚动到中间
+ * @param child 要显示的子元素
+ * @param parent 要滚动的父元素
+ * @param behavior 滚动行为
+ */
+export function scroll2Middle(child: HTMLElement, parent: HTMLElement, behavior: ScrollBehavior = 'smooth') {
+	if (!child || !parent) {
+		return;
+	}
+	const top = child.offsetTop - parent.offsetHeight / 2;
+	parent.scrollTo({top: Math.max(top, 0), behavior});
+}
+
+/**
+ * 数组里在指定位置上从右往左查找 fn 函数返回为 true 的该元素索引
+ * @param arr 要查找的数组
+ * @param fn 查找函数，返回是否匹配的布尔值
+ * @param position 指定的查找位置
+ */
+export function lastFindIndex(arr: any[], fn: (item: any, index: number, ...args: any[]) => boolean, position?: number) {
+	if (typeof position === 'undefined') {
+		return arr.findLastIndex(fn);
+	}
+	return skipFindIndex(arr, fn, 0, position, true);
+}
+
+/**
+ * 数组里在指定位置上从左往右查找 fn 函数返回为 true 的该元素索引
+ * @param arr 要查找的数组
+ * @param fn 查找函数，返回是否匹配的布尔值
+ * @param position 指定的查找位置
+ */
+export function findIndex(arr: any[], fn: (item: any, index: number, ...args: any[]) => boolean, position?: number) {
+	if (typeof position === 'undefined') {
+		return arr.findIndex(fn);
+	}
+	return skipFindIndex(arr, fn, position, arr.length, false);
+}
+
+/**
+ * 在指定的数组范围里按照正向或反向查找 fn 函数返回为 true 的索引
+ * @param arr 原始查找数组
+ * @param fn 查找函数，返回是否匹配的布尔值
+ * @param start 起始位置
+ * @param end 结束位置
+ * @param reverse 是否从后往前查找
+ */
+function skipFindIndex(arr: any[], fn: (item: any, index: number, ...args: any[]) => boolean, start: number, end: number, reverse: boolean) {
+	const newArr = arr.slice(start, end);
+	if (start < 0) {
+		start = arr.length - start;
+	}
+	let index = -1;
+	if (reverse) {
+		index = newArr.findLastIndex(fn);
+	}
+	else {
+		index = newArr.findIndex(fn);
+	}
+	if (index > -1) {
+		index += start;
+	}
+	return index;
+}

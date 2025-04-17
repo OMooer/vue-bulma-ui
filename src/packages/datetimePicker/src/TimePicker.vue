@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue';
-import { isOverBoxSize, OUT_OF_RANGE } from '@/utils';
+import { isOverBoxSize, OUT_OF_RANGE, scroll2Middle } from '@/utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
@@ -139,8 +139,7 @@ function scrollOptions(target: any) {
 		const active = item.querySelector('.is-active');
 		if (active) {
 			setTimeout(() => {
-				const top = active.offsetTop - item.offsetHeight / 2;
-				item.scroll({top: Math.max(top, 0), behavior: 'smooth'});
+				scroll2Middle(active, item);
 			});
 		}
 	});
