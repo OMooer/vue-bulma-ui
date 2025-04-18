@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useKeydown } from '@/actions/keydown';
 import { useUILocale } from '@/actions/locale';
 import { computed, inject, onUpdated, ref, watch } from 'vue';
-import { isOverBoxSize, vFocus } from '@/utils';
+import { isOverBoxSize, scroll2Middle, vFocus } from '@/utils';
 import Empty from '../../empty';
 
 const isParentSmall = inject('isSmall', false);
@@ -18,12 +19,15 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['update:modelValue', 'error']);
 const {$vbt} = useUILocale();
+const {keyIndex, handler} = useKeydown();
 const isError = ref(false);
 const isOpen = ref(false);
 const isUp = ref(false);
 const entity = ref();
 const frontRef = ref();
+const searchRef = ref();
 const keyword = ref('');
+let closeMethod = '';
 
 const findValue = computed(() => {
 	const find = props.list?.find((item: any) => item.value === props.modelValue);
@@ -65,14 +69,48 @@ watch(isOpen, (is) => {
 		// 计算位置决定展开方向
 		const target = entity.value?.querySelector('.dropdown-menu');
 		requestAnimationFrame(() => {
-			isUp.value = isOverBoxSize(target, 0)('bottom');
+			if (target) {
+				isUp.value = isOverBoxSize(target, 0)('bottom');
+			}
+			if (props.filter) {
+				searchRef.value && searchRef.value.focus();
+			}
 		});
+		closeMethod = '';
+		resetKeyIndex();
 		document.addEventListener('click', event, {capture: true});
 	}
 	else {
 		isUp.value = false;
 		keyword.value = '';
+		keyIndex.value = -1;
+		// 如果不是焦点离开的此处将焦点定到按钮上
+		if (closeMethod !== 'tab') {
+			frontFocus();
+		}
 		document.removeEventListener('click', event, {capture: true});
+	}
+});
+
+// 筛选变化时默认预选中第一个
+watch(filterList, (list) => {
+	if (list.length && keyword.value) {
+		keyIndex.value = 0;
+	}
+	else {
+		keyIndex.value = -1;
+	}
+}, {immediate: true});
+
+watch(keyIndex, (index) => {
+	if (index >= 0) {
+		requestAnimationFrame(() => {
+			const cont = entity.value?.querySelector('.dropdown-scroll-view') as HTMLElement;
+			const findIt = cont?.querySelector('.dropdown-item.is-focused') as HTMLElement;
+			if (findIt) {
+				scroll2Middle(findIt, cont);
+			}
+		});
 	}
 });
 
@@ -90,9 +128,49 @@ function frontFocus() {
 	frontRef.value && frontRef.value.focus();
 }
 
+function resetKeyIndex() {
+	keyIndex.value = props.modelValue ? filterList.value.findIndex((item: any) => item.value === props.modelValue) : -1;
+}
+
+function keyAction(e: any) {
+	const isInput = e.target.tagName === 'INPUT';
+	const action = handler(e, filterList.value);
+	// 如果不是输入框的输入就阻止默认行为
+	if (!isInput && action !== 'Tab') {
+		e.preventDefault();
+	}
+	const justIt = () => {
+		toggleDropdown();
+		if (keyIndex.value >= 0) {
+			selectValue(filterList.value[keyIndex.value].value);
+		}
+	}
+	switch (action) {
+		case 'Escape':
+			isOpen.value = false;
+			break;
+		case 'Space':
+			if (!isInput) {
+				justIt();
+			}
+			break;
+		case 'Enter':
+			justIt();
+			e.preventDefault();
+			break;
+	}
+}
+
+function blurEntity(e: any) {
+	if (e.relatedTarget && !entity.value?.contains(e.relatedTarget)) {
+		closeMethod = 'tab';
+		isOpen.value = false;
+	}
+}
+
 function setError(is: boolean, msg?: string) {
 	isError.value = is;
-	is && entity.value.focus();
+	is && entity.value?.focus();
 	emit('error', is, msg);
 }
 
@@ -102,7 +180,7 @@ defineExpose({
 </script>
 
 <template>
-	<div ref="entity" :class="classList" :data-required="required">
+	<div ref="entity" :class="classList" :data-required="required" @blur.capture="blurEntity" @keydown="keyAction">
 		<select
 				class="entity-shadow" tabindex="-1" aria-hidden="true" required
 				@focus="frontFocus" v-if="modelValue == undefined && required"></select>
@@ -129,16 +207,16 @@ defineExpose({
 					<div class="dropdown-item filter">
 						<input
 								type="search" class="input" :placeholder="filterText || $vbt('select.filterText')"
-								v-focus v-model="keyword">
+								ref="searchRef" v-model="keyword">
 					</div>
 					<hr class="dropdown-divider filter-line"/>
 				</template>
-				<div class="dropdown-scroll-view">
+				<div class="dropdown-scroll-view" @mouseover="resetKeyIndex">
 					<a
 							class="dropdown-item"
 							@click="selectValue(item.value)"
-							:class="{'is-active': item.value === modelValue, 'is-disabled': item.disabled}"
-							:key="item.value.toString()" v-for="item in filterList">
+							:class="{'is-active': item.value === modelValue, 'is-disabled': item.disabled, 'is-focused': keyIndex === index}"
+							:key="item.value.toString()" v-for="(item, index) in filterList">
 						<i :class="item.icon" v-if="item.icon"></i>
 						<span>{{ item.title }}</span>
 					</a>
@@ -178,9 +256,6 @@ defineExpose({
 
 	&.is-active {
 		.dropdown-trigger > .button {
-			border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
-			box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
-
 			.icon {
 				transform: rotate(-180deg);
 			}
@@ -231,7 +306,12 @@ defineExpose({
 	}
 
 	.dropdown-trigger {
-		.button {
+		> .button:focus {
+			border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+			box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
+		}
+
+		.button:not(:focus,:focus-visible) {
 			box-shadow: none;
 		}
 
@@ -265,6 +345,10 @@ defineExpose({
 				i.flags {
 					flex-shrink: 0;
 				}
+			}
+
+			.dropdown-item.is-focused:not(.is-active) {
+				--bulma-dropdown-item-background-l-delta: var(--bulma-dropdown-item-hover-background-l-delta);
 			}
 
 			.dropdown-item.is-disabled {

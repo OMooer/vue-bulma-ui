@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { useKeydown } from '@/actions/keydown';
 import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
-import { isOverBoxSize, isTruthy, vFocus } from '@/utils';
+import { isOverBoxSize, isTruthy, scroll2Middle, vFocus } from '@/utils';
 
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<{
 }>(), {collapse: 0});
 const emit = defineEmits(['update:modelValue', 'error']);
 const {$vbt} = useUILocale();
+const {keyIndex, handler} = useKeydown();
 const isReallySmall = computed(() => isParentSmall || props.isSmall);
 const isError = ref(false);
 // 内置值，在未提供 modelValue 时也保证 UI 的可用性
@@ -46,10 +48,12 @@ const currentValue = computed({
 // 面板开关状态
 const isOpen = ref(false);
 const isUp = ref(false);
+const entity = ref();
 // 输入框真身
 const tagEntity = ref();
 // 搜索词
 const keyword = ref('');
+let closeMethod = '';
 const isRequired = computed(() => {
 	return props.required && !currentValue.value.length;
 });
@@ -153,26 +157,109 @@ const event = (ev: Event) => {
 
 watch(isOpen, (is) => {
 	if (is) {
-		tagEntity.value.focus();
 		// 计算位置决定展开方向
 		const target = tagEntity.value?.closest('.vb-tags').querySelector('.dropdown-menu');
 		requestAnimationFrame(() => {
-			isUp.value = isOverBoxSize(target, 0)('bottom');
+			if (target) {
+				isUp.value = isOverBoxSize(target, 0)('bottom');
+			}
+			frontFocus();
 		});
+		closeMethod = '';
 		document.addEventListener('click', event, {capture: true});
 	}
 	else {
 		isUp.value = false;
 		keyword.value = '';
+		keyIndex.value = -1;
+		if (closeMethod !== 'tab') {
+			frontFocus();
+		}
 		document.removeEventListener('click', event, {capture: true});
 	}
 });
+
+watch(keyIndex, (index) => {
+	if (index >= 0) {
+		requestAnimationFrame(() => {
+			const cont = entity.value?.querySelector('.dropdown-content') as HTMLElement;
+			const findIt = cont?.querySelector('.dropdown-item.is-focused') as HTMLElement;
+			if (findIt) {
+				scroll2Middle(findIt, cont);
+			}
+		});
+	}
+});
+
+function frontFocus() {
+	tagEntity.value && tagEntity.value.focus();
+}
 
 function toggleShow(ev: Event) {
 	if ((ev.target as HTMLElement) === tagEntity.value && isOpen.value || props.disabled) {
 		return;
 	}
 	isOpen.value = !isOpen.value;
+}
+
+function resetKeyIndex() {
+	keyIndex.value = -1;
+}
+
+function keyAction(e: any) {
+	const isInput = e.target.tagName === 'INPUT';
+	const action = handler(e, filterList.value);
+	// 如果不是输入框的输入就阻止默认行为
+	if (!isInput && action !== 'Tab') {
+		e.preventDefault();
+	}
+	const justIt = () => {
+		if (keyIndex.value >= 0) {
+			selectValue(filterList.value[keyIndex.value]);
+		}
+	}
+	switch (action) {
+		case 'Backspace':
+			if (keyword.value.length === 0) {
+				if (currentValue.value.length) {
+					const last = currentValue.value.slice(-1);
+					removeSelected(last[0]);
+				}
+			}
+			break;
+		case 'Escape':
+			isOpen.value = false;
+			break;
+		case 'Space':
+			if (!isOpen.value) {
+				isOpen.value = true;
+				e.preventDefault();
+			}
+			if (!isInput) {
+				justIt();
+			}
+			break;
+		case 'Enter':
+			//  如果值已经选中则直接关闭
+			if (filterList.value[keyIndex.value]?.selected) {
+				isOpen.value = false;
+			}
+			else if (!isOpen.value) {
+				isOpen.value = true;
+			}
+			else {
+				justIt();
+			}
+			e.preventDefault();
+			break;
+	}
+}
+
+function blurEntity(e: any) {
+	if (e.relatedTarget && !entity.value?.contains(e.relatedTarget)) {
+		closeMethod = 'tab';
+		isOpen.value = false;
+	}
 }
 
 function setError(is: boolean, msg?: string) {
@@ -187,6 +274,7 @@ defineExpose({
 
 <template>
 	<div
+			ref="entity"
 			class="vb-tags control"
 			:class="{
 				'is-active': isOpen,
@@ -195,7 +283,7 @@ defineExpose({
 				'is-shake': isError,
 				'is-danger': isError
 			}"
-			:data-required="required" @click="toggleShow">
+			:data-required="required" @click="toggleShow" @blur.capture="blurEntity" @keydown="keyAction">
 		<span class="icon is-small">
 			<FasIcon icon="angle-down" aria-hidden="true"/>
 		</span>
@@ -223,19 +311,18 @@ defineExpose({
 				<input
 						type="text" autocomplete="off" class="input"
 						ref="tagEntity"
-						:class="{'is-small': isReallySmall, 'is-expanded': isTruthy(collapse)}"
+						:class="{'is-small': isReallySmall, 'is-expanded': isTruthy(collapse), 'is-alpha': selectedTags.length && !isOpen}"
 						:placeholder="placeholder || $vbt('tags.placeholder')"
 						:required="isRequired"
 						:disabled="disabled"
-						v-focus="isOpen"
-						v-model="keyword" v-show="!selectedTags.length || isOpen">
+						v-model="keyword">
 			</div>
-			<div class="dropdown-menu is-fullwidth" @click.stop>
-				<ul class="dropdown-content">
-					<li v-for="item in filterList">
+			<div class="dropdown-menu is-fullwidth" @click.stop @mouseover="resetKeyIndex">
+				<ul class="dropdown-content" tabindex="0">
+					<li v-for="(item, index) in filterList">
 						<a
 								class="tag-item dropdown-item"
-								:class="{'is-active': item.selected, 'is-disabled': item.disabled}"
+								:class="{'is-active': item.selected, 'is-disabled': item.disabled, 'is-focused': keyIndex === index}"
 								@click="selectValue(item)">
 							<span>
 								<i :class="item.icon" v-if="item.icon"></i>
@@ -386,6 +473,10 @@ defineExpose({
 					width: auto;
 				}
 
+				&.is-alpha {
+					opacity: 0;
+				}
+
 				&:focus {
 					box-shadow: none;
 				}
@@ -415,6 +506,10 @@ defineExpose({
 
 			&.is-active {
 				padding-right: 1rem;
+			}
+
+			&.is-focused:not(.is-active) {
+				--bulma-dropdown-item-background-l-delta: var(--bulma-dropdown-item-hover-background-l-delta);
 			}
 
 			> .icon {
