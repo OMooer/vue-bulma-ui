@@ -44,3 +44,15 @@ defineExpose({
 			:class="['input', isError ? 'is-shake is-danger' : null, isParentSmall ? 'is-small' : null]"
 	>
 </template>
+
+<style lang="scss" scoped>
+.input[type="number"] {
+	-moz-appearance: textfield;
+
+	&::-webkit-inner-spin-button,
+	&::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}
+</style>

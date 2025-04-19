@@ -111,12 +111,15 @@ function removeAuto() {
 <style scoped lang="scss">
 .vb-increment {
 	input {
+		-moz-appearance: textfield;
 		text-align: center;
 		width: 5em;
 
 		&::-webkit-clear-button,
 		&::-webkit-inner-spin-button,
+		&::-webkit-outer-spin-button,
 		&::-webkit-calendar-picker-indicator {
+			appearance: none;
 			display: none;
 		}
 	}

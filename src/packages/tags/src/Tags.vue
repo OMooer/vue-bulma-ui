@@ -474,6 +474,7 @@ defineExpose({
 				}
 
 				&.is-alpha {
+					position: absolute;
 					opacity: 0;
 				}
 
