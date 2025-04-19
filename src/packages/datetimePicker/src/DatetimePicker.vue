@@ -12,6 +12,8 @@ function dateFormat(d: Date, f: string = 'YYYY-MM-DD hh:mm:ss') {
 	return `${ year }-${ month.toString().padStart(2, '0') }-${ day.toString().padStart(2, '0') }`;
 }
 
+let instance: Calendar | undefined;
+
 export default {
 	name        : 'DatetimePicker',
 	inheritAttrs: true,
@@ -127,8 +129,6 @@ export default {
 			emit('error', is, msg);
 		}
 
-		let instance: Calendar | undefined;
-
 		onMounted(() => {
 			entity.value.addEventListener('click', (e: any) => {
 				if (props.readonly) {
@@ -178,7 +178,6 @@ export default {
 			innerRange,
 			innerDate,
 			innerTime,
-			instance
 		};
 	},
 	render() {
@@ -201,6 +200,27 @@ export default {
 			updated    : directiveFn
 		}
 
+		function blurEntity(e: any) {
+			if (e.relatedTarget && !e.relatedTarget?.closest('.date-panel')) {
+				closePanel();
+			}
+		}
+
+		function closePanel() {
+			instance && instance?.dismiss();
+			instance = undefined;
+		}
+
+		function keyAction(e: any) {
+			if (e.code === 'Space') {
+				that.entity?.dispatchEvent(new Event('click'));
+				e.preventDefault();
+			}
+			else if (e.code === 'Escape') {
+				closePanel();
+			}
+		}
+
 		return h('div', {
 					class: {
 						'vb-datetime': true,
@@ -209,7 +229,9 @@ export default {
 						'is-danger'  : that.isError,
 						'is-right'   : that.isRight,
 						'is-small'   : that.isParentSmall
-					}
+					},
+
+					onBlurCapture: blurEntity
 				},
 				[
 					h('div', {
@@ -264,6 +286,7 @@ export default {
 												'readonly'   : isTruthy(props.readonly),
 												'required'   : isTruthy(props.required),
 												onClick      : (e: Event) => e.preventDefault(),
+												onKeydown    : keyAction,
 												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
 												onBlur       : (e: Event) => directiveFn(e.target)
 											}), [[insertPlaceDirect]]),
@@ -277,6 +300,7 @@ export default {
 												'readonly'   : isTruthy(props.readonly),
 												'required'   : isTruthy(props.required),
 												onClick      : (e: Event) => e.preventDefault(),
+												onKeydown    : keyAction,
 												onFocus      : (e: Event) => directiveFn(e.target, {modifiers: {force: true}}),
 												onBlur       : (e: Event) => directiveFn(e.target)
 											}), [[insertPlaceDirect]])
@@ -310,6 +334,7 @@ export default {
 											onClick(e: Event) {
 												e.preventDefault();
 											},
+											onKeydown: keyAction,
 											onTouchstart(e: any) {
 												if (e.target.getAttribute('open') === 'open') {
 													e.preventDefault();
@@ -326,10 +351,6 @@ export default {
 												if (!e.target.checkValidity() && e.target.value) {
 													that.setError(true, e.target.validationMessage);
 												}
-												if (e.relatedTarget && !e.relatedTarget?.closest('.date-panel')) {
-													that.instance?.dismiss();
-												}
-												that.instance = undefined;
 											}
 										})),
 

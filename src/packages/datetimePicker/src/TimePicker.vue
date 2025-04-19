@@ -356,7 +356,7 @@ defineExpose({
 		</div>
 		<div class="dropdown-menu is-fullwidth" role="menu" v-if="!readonly">
 			<div class="dropdown-content">
-				<div class="dropdown-scroll-view">
+				<div class="dropdown-scroll-view" tabindex="-1">
 					<a
 							class="dropdown-item"
 							:class="{
@@ -366,7 +366,7 @@ defineExpose({
 							@click="selectValue('hour', i)"
 							v-for="i in hours">{{ i }}</a>
 				</div>
-				<div class="dropdown-scroll-view">
+				<div class="dropdown-scroll-view" tabindex="-1">
 					<a
 							class="dropdown-item"
 							:class="{
@@ -376,7 +376,7 @@ defineExpose({
 							@click="selectValue('minute', i)"
 							v-for="i in minutes">{{ i }}</a>
 				</div>
-				<div class="dropdown-scroll-view" v-if="showSecond">
+				<div class="dropdown-scroll-view" tabindex="-1" v-if="showSecond">
 					<a
 							class="dropdown-item"
 							:class="{
@@ -433,7 +433,6 @@ defineExpose({
 				--bulma-focus-l: var(--bulma-danger-l);
 
 				border-color: va.$danger;
-
 				color: hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-text-strong-l));
 
 				input {
@@ -480,6 +479,7 @@ defineExpose({
 			}
 
 			input {
+				-moz-appearance: textfield;
 				flex-grow: 1;
 				font-size: var(--bulma-control-size);
 				height: 100%;
