@@ -50,8 +50,10 @@ export default {
 	},
 
 	table: {
-		emptyText  : '无数据',
-		unknownSlot: '未设置插槽内容'
+		emptyText    : '无数据',
+		unknownSlot  : '未设置插槽内容',
+		columnDisplay: '表格列显示',
+		selectAll    : '全选'
 	},
 
 	tags: {

@@ -1,9 +1,10 @@
 declare namespace TVO {
-	type Value = string | number | boolean;
+	type Value = string | number | boolean | symbol;
 	type Item = {
 		title: string;
 		value: Value;
 		icon?: string;
+		head?: boolean;
 		selected?: boolean;
 		disabled?: boolean;
 	};

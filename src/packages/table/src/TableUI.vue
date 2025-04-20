@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
-import { computed, ref, watch } from 'vue';
+import Dropdown from '@/packages/dropdown';
+import { SYMBOL_SELECT_ALL } from '@/utils';
+import { computed, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
 import SortUI from '../../sort';
 
@@ -9,6 +11,7 @@ const props = defineProps<{
 	tableConfig: VBTable.Config;
 	tableData: Normal.AnyObj[];
 	emptyText?: string;
+	custom?: boolean;
 }>();
 const {$vbt} = useUILocale();
 // 是否显示可勾选
@@ -36,9 +39,47 @@ watch(() => selectedIndex.value, () => {
 watch(() => props.tableData, () => {
 	selectedIndex.value = [];
 });
+// 显示的表头值
+const showHeadList = ref<string[]>([]);
+watchEffect(() => {
+	if (props.tableConfig?.columns) {
+		showHeadList.value = props.tableConfig?.columns.map((item: any) => {
+			return item.field;
+		});
+	}
+});
+// 表头列表
+const tableHeads = computed(() => {
+	const heads: TVO.DropdownItem[] = props.tableConfig?.columns.map((item) => {
+		return {
+			title   : item.label,
+			value   : item.field,
+			selected: showHeadList.value.includes(item.field),
+		}
+	});
+	heads?.unshift(
+			{
+				title: $vbt('table.columnDisplay'),
+				value: '',
+				head : true
+			},
+			{
+				title   : $vbt('table.selectAll'),
+				value   : SYMBOL_SELECT_ALL,
+				selected: showHeadList.value.length === props.tableConfig.columns.length
+			},
+			null
+	);
+
+	return heads;
+});
+// 显示的表列数据
+const renderColumns = computed(() => {
+	return props.tableConfig?.columns.filter(item => showHeadList.value.includes(item.field)) ?? [];
+});
 // 计算列数
 const columnCount = computed(() => {
-	return props.tableConfig?.columns.length + (showCheck.value ? 1 : 0);
+	return renderColumns.value.length + (showCheck.value ? 1 : 0);
 });
 // 排序
 const sorts = ref<Normal.AnyObj>({});
@@ -59,10 +100,38 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 			}, {});
 	emit('sort', sortCond);
 }
+
+function changeSelect(value: any, selected: boolean) {
+	if (!selected) {
+		if (value === SYMBOL_SELECT_ALL) {
+			showHeadList.value.splice(0);
+			return;
+		}
+		const index = showHeadList.value.indexOf(value);
+		if (index > -1) {
+			showHeadList.value.splice(index, 1);
+		}
+	}
+	else {
+		if (value === SYMBOL_SELECT_ALL) {
+			showHeadList.value = props.tableConfig?.columns.map((item: any) => {
+				return item.field;
+			});
+			return;
+		}
+		if (showHeadList.value.indexOf(value) === -1) {
+			showHeadList.value.push(value);
+		}
+	}
+}
 </script>
 
 <template>
 	<div class="vb-table">
+		<Dropdown
+				class="head-dropdown is-small"
+				showSelect :list="tableHeads" parentElement="body"
+				@select="changeSelect" v-if="custom"/>
 		<table class="table is-bordered is-hoverable is-striped">
 			<thead>
 			<tr>
@@ -75,7 +144,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				<th
 						:class="[item.slot?`col-${item.slot}`:`col-${idx}`, {'is-sticky' : item.sticky}]"
 						:style="item.style ?? null"
-						v-for="(item, idx) in tableConfig?.columns">
+						v-for="(item, idx) in renderColumns">
 					{{ item.label }}
 					<!-- 如果有排序 -->
 					<SortUI :state="sorts[item.field]" @sort="sortTable(item.field, $event, true)" v-if="item.sort"/>
@@ -93,7 +162,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 				<td
 						:class="[item.slot?`col-${item.slot}`:`col-${idx}`, {'is-sticky' : item.sticky}]"
 						:style="item.style ?? null"
-						v-for="(item, idx) in tableConfig?.columns">
+						v-for="(item, idx) in renderColumns">
 					<!-- 如果有插槽则显示插槽的内容，否则显示纯数据值 -->
 					<template v-if="item.slot">
 						<slot :name="item.slot" :row="data" :val="data[item.field]">{{ $vbt('table.unknownSlot') }}</slot>
@@ -120,6 +189,12 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 	border: solid va.$split-color;
 	border-width: 0 1px;
 	min-width: 100%;
+
+	.head-dropdown {
+		position: absolute;
+		z-index: 20;
+		margin-top: -1em;
+	}
 
 	.table {
 		table-layout: fixed;

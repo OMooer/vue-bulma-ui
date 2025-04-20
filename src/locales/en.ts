@@ -50,8 +50,10 @@ export default {
 	},
 
 	table: {
-		emptyText  : 'No data',
-		unknownSlot: 'Unknown slot'
+		emptyText    : 'No data',
+		unknownSlot  : 'Unknown slot',
+		columnDisplay: 'Table column display',
+		selectAll    : 'Select all'
 	},
 
 	tags: {

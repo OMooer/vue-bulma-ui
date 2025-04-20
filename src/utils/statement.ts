@@ -8,3 +8,5 @@ export const EVENT_TO_LEFT = 'toLeft';
 export const EVENT_TO_RIGHT = 'toRight';
 export const EVENT_TO_TOP = 'toTop';
 export const EVENT_TO_BOTTOM = 'toBottom';
+
+export const SYMBOL_SELECT_ALL = Symbol('selectAll');

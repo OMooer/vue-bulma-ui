@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { computed, defineComponent, h, ref, useAttrs, watch } from 'vue';
 import { isElementPartiallyHidden, isOverBoxSize } from '@/utils';
 
@@ -7,11 +8,12 @@ defineOptions({
 });
 const props = withDefaults(defineProps<{
 	list: TVO.DropdownItem[];
+	showSelect?: boolean;
 	hasArrow?: boolean;
 	isHoverable?: boolean;
 	parentElement?: string;
 }>(), {hasArrow: true});
-const emit = defineEmits(['active']);
+const emit = defineEmits(['active', 'select']);
 const attrs = useAttrs();
 const isOpen = ref(false);
 const isUp = ref(false);
@@ -103,11 +105,25 @@ const menuCont = defineComponent(() => {
 								class: {
 									'dropdown-item': true,
 									'is-disabled'  : item.disabled,
+									'is-head'      : item.head,
 								},
 								onClick() {
-									selectValue(item.value)
+									selectValue(item.value, !item.selected)
 								}
-							}, item.icon ? h('i', {class: item.icon}) : h('span', item.title));
+							}, [
+								props.showSelect && !item.head ? h('input', {
+									type   : 'checkbox',
+									value  : item.value,
+									checked: item.selected,
+									onChange(e: any) {
+										selectValue(item.value, e.target.checked);
+									}
+								}) : null,
+								item.icon
+										? h('span', {class: 'icon'}, h(FontAwesomeIcon, {icon: item.icon.split(' ')}))
+										: null,
+								h('span', item.title)
+							]);
 						})
 				)
 		);
@@ -118,9 +134,14 @@ function toggleDropdown() {
 	isOpen.value = !isOpen.value;
 }
 
-function selectValue(value: any) {
-	emit('active', value);
-	isOpen.value = false;
+function selectValue(value: any, checked?: boolean) {
+	if (!props.showSelect) {
+		emit('active', value);
+		isOpen.value = false;
+	}
+	else {
+		emit('select', value, checked);
+	}
 }
 
 function hoverHandler() {
@@ -136,6 +157,9 @@ function leaveHandler() {
 }
 
 function menuClicked(e: any) {
+	if (props.showSelect) {
+		return;
+	}
 	// 为了让菜单自动关闭， 因为鼠标一直 hover 菜单， 导致下拉菜单点击选择后没自动关闭
 	if (e.target.closest('a.dropdown-item')) {
 		menuCanHoverIt.value = false;
@@ -228,11 +252,22 @@ function menuClicked(e: any) {
 				i.flags {
 					flex-shrink: 0;
 				}
-			}
 
-			.dropdown-item.is-disabled {
-				opacity: .5;
-				pointer-events: none;
+				&.is-disabled {
+					opacity: .5;
+					pointer-events: none;
+				}
+
+				&.is-head {
+					font-weight: bold;
+					font-size: 0.75em;
+					pointer-events: none;
+					user-select: none;
+				}
+
+				&:has(input) {
+					gap: 0.5rem;
+				}
 			}
 		}
 	}

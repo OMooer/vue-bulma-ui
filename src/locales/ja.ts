@@ -50,8 +50,10 @@ export default {
 	},
 
 	table: {
-		emptyText  : 'データなし',
-		unknownSlot: 'スロット内容未設定'
+		emptyText    : 'データなし',
+		unknownSlot  : 'スロット内容未設定',
+		columnDisplay: 'テーブル列表示',
+		selectAll    : 'すべて選択'
 	},
 
 	tags: {
@@ -79,7 +81,7 @@ export default {
 	},
 
 	pasteUploader: {
-		press     : 'ここで押す',
+		press     : 'ここを押す',
 		pasteImage: '画像を貼り付けてアップロード',
 		dblClick  : 'またはダブルクリックでファイルを選択'
 	}
