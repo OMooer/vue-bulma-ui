@@ -7,7 +7,7 @@ import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 export default defineComponent({
 	name : 'Tree',
 	props: {
-		selectable : [String, Boolean],
+		selectable : [Boolean, String],
 		selected   : {
 			type: Array,
 			default() {
@@ -29,10 +29,19 @@ export default defineComponent({
 			type   : String,
 			default: 'current-active'
 		},
+		allowIcon  : Boolean,
 		expandText : String,
-		foldText   : String
+		foldText   : String,
+		expandIcon : {
+			type   : String,
+			default: 'far square-minus'
+		},
+		foldIcon   : {
+			type   : String,
+			default: 'far square-plus'
+		}
 	},
-	emits: ['select', 'click'],
+	emits: ['select', 'click', 'dblclick'],
 	setup(props, {emit}) {
 		const {$vbt} = useUILocale();
 		const selectValues = ref<string[]>([]);
@@ -87,10 +96,10 @@ export default defineComponent({
 			return findRes;
 		}
 
-		function nodeClick(item: any) {
+		function nodeClick(en: string, item: any) {
 			const {checked, flags, folded, children, ...safeNode} = item;
 			activeNode.value = item;
-			emit('click', safeNode);
+			emit(en as keyof typeof emit, safeNode);
 		}
 
 		function updateSelect(val: string, isAdd: boolean) {
@@ -174,24 +183,28 @@ export default defineComponent({
 					return h('li', {'data-flag': item.flags}, [
 						hasChildren
 								? h('a', {
-									class: 'opera-icon',
+									class: ['opera-icon icon', props.allowIcon ? 'allow-show' : undefined],
 									title: item.folded ? (props.expandText || $vbt('tree.expand')) : (props.foldText || $vbt('tree.fold')),
 									onClick(event: any) {
 										item.folded = !item.folded;
 										event.preventDefault();
 										event.stopPropagation();
 									}
-								}, h(FontIcon, {icon: ['far', item.folded ? 'square-plus' : 'square-minus']})) : null,
+								}, h(FontIcon, {icon: (item.folded ? props.foldIcon : props.expandIcon).split(' ')})) : null,
 						h('label', {
 									onClick(event: any) {
-										nodeClick(item);
+										nodeClick('click', item);
 										event.stopPropagation();
 									},
 									onDblclick(event: any) {
-										item.folded = !item.folded;
+										if (item.children?.length) {
+											item.folded = !item.folded;
+										}
+										nodeClick('dblclick', item);
+										event.preventDefault();
+										event.stopPropagation();
 										// @ts-ignore
 										window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
-										event.stopPropagation();
 									}
 								},
 								[
@@ -259,15 +272,18 @@ export default defineComponent({
 		.opera-icon {
 			display: none;
 			position: absolute;
-			top: .25em;
 			line-height: 1;
 			background-color: var(--bulma-body-background-color);
 			color: var(--bulma-text);
-			transform: translateX(-200%);
+			transform: translateX(-150%);
+
+			&.allow-show {
+				display: inline-flex;
+			}
 		}
 
 		&:hover > .opera-icon {
-			display: inline-block;
+			display: inline-flex;
 		}
 	}
 

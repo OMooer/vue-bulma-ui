@@ -6,7 +6,7 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean});
 	<span class="vb-tips icon" :data-tips="tips" v-if="!$slots?.default">
 		<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
 	</span>
-	<div class="vb-tips inline" v-else-if="inline">
+	<div class="vb-tips icon-text" v-else-if="inline">
 		<span class="icon">
 			<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
 		</span>
@@ -82,18 +82,12 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean});
 
 .vb-tips.dropdown {
 	.dropdown-menu {
-		transform: translateX(-4rem);
+		transform: translateX(-30%);
 
 		.dropdown-item {
 			overflow: hidden;
 			max-width: 25rem;
 		}
 	}
-}
-
-.vb-tips.inline {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
 }
 </style>
