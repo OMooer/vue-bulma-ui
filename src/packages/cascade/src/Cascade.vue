@@ -262,7 +262,10 @@ function keyAction(e: any) {
 	const action = handler(e, levelList, !isOpen.value);
 
 	switch (action) {
+		case undefined:
 		case 'Tab':
+		case 'ArrowUp':
+		case 'ArrowDown':
 			e.preventDefault();
 			break;
 		case 'Escape':
@@ -345,7 +348,7 @@ defineExpose({
 					</button>
 				</div>
 				<div class="dropdown-menu" role="menu">
-					<div class="dropdown-content"  @mouseover="resetKeyIndex">
+					<div class="dropdown-content" @mouseover="resetKeyIndex">
 						<div class="cascade-level" v-for="(item, level) in cascadeList">
 							<template v-for="(node, index) in item.list">
 								<a

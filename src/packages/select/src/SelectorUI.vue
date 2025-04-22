@@ -142,6 +142,7 @@ function keyAction(e: any) {
 		e.preventDefault();
 	}
 	switch (action) {
+		case undefined:
 		case 'ArrowUp':
 		case 'ArrowDown':
 			e.preventDefault();

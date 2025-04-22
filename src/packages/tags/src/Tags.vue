@@ -215,6 +215,13 @@ function keyAction(e: any) {
 		}
 	}
 	switch (action) {
+		case undefined:
+		case 'ArrowUp':
+		case 'ArrowDown':
+			if (!isInput) {
+				e.preventDefault();
+			}
+			break;
 		case 'Backspace':
 			if (!isInput) {
 				e.preventDefault();
