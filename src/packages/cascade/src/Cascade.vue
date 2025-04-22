@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { useKeydown } from '@/actions/keydown';
 import { computed, inject, provide, ref, watch } from 'vue';
 import { useUILocale } from '@/actions/locale';
-import { isOverBoxSize } from '@/utils';
+import { ERROR_NO_SUBLIST, isOverBoxSize, scroll2Middle } from '@/utils';
 import Empty from '../../empty';
 import SelectorUI from '../../select';
 
 const {$vbt} = useUILocale();
+const {keyIndex, handler} = useKeydown();
 const isParentSmall = inject('isSmall', false);
 const props = withDefaults(defineProps<{
 	modelValue?: any[];
@@ -31,6 +33,7 @@ const isUp = ref(false);
 const entity = ref();
 const frontRef = ref();
 const current = ref();
+const currentLevel = ref(0);
 const confirmValue = ref();
 const cascadeList = ref<{ list: TVO.CascadeItem[]; required?: boolean, value: any }[]>([]);
 const cacheStore = ref<{ [propName: string]: TVO.CascadeItem[] }>({});
@@ -52,9 +55,9 @@ watch(() => props.modelValue, () => {
 const cascadeValue = computed(() => {
 	return cascadeList.value.map((item: any) => item.value);
 });
-const findValue = ref();
-const internalValue = computed(() => {
-	return findSelectedValue(props?.modelValue || []) || findValue.value;
+const comboSelectedData = ref();
+const comboShowValue = computed(() => {
+	return comboSelectedData.value ?? findSelectedValue(props?.modelValue || []);
 });
 
 const captureEvent = (ev: Event) => {
@@ -74,7 +77,21 @@ watch(isOpen, (is) => {
 	}
 	else {
 		isUp.value = false;
+		keyIndex.value = -1;
+		frontFocus();
 		document.removeEventListener('click', captureEvent, {capture: true});
+	}
+});
+
+watch(keyIndex, (index) => {
+	if (index >= 0) {
+		requestAnimationFrame(() => {
+			const cont = entity.value?.querySelectorAll('.cascade-level')[currentLevel.value] as HTMLElement;
+			const findIt = cont?.querySelector('.dropdown-item.is-focused') as HTMLElement;
+			if (findIt) {
+				scroll2Middle(findIt, cont);
+			}
+		});
 	}
 });
 
@@ -105,6 +122,7 @@ async function updatePresetValue() {
 			const value = modelValue[i];
 			if (value) {
 				current.value = value;
+				currentLevel.value = i;
 				await updateNodeData(i, value);
 			}
 		}
@@ -153,29 +171,29 @@ function updateNodeData(level: number, data: any) {
 	const findNode = currentList.find((item: any) => item.value === data);
 	// 获取下级数据，如果有的话
 	isLoading.value = true;
-	let loadedData;
+	let loadDataFn;
 	if (props.lazy) {
-		loadedData = props.lazyLoad as () => Promise<TVO.CascadeItem[]>;
+		loadDataFn = props.lazyLoad as () => Promise<TVO.CascadeItem[]>;
 	}
 	else {
-		loadedData = () => new Promise<TVO.CascadeItem[]>((resolve, reject) => {
+		loadDataFn = () => new Promise<TVO.CascadeItem[]>((resolve, reject) => {
 			if (findNode && findNode?.children) {
 				resolve(findNode.children);
 			}
 			else {
-				reject('has not children');
+				reject(ERROR_NO_SUBLIST);
 			}
 		});
 	}
 	// 如果允许缓存则从缓存中获取
 	if (props.cache) {
-		loadedData = loadCacheData(loadedData, level, data);
+		loadDataFn = getCacheDataFunc(loadDataFn, level, data);
 	}
 
 	cascadeList.value.splice(level + 1);
-	return loadedData({data, level, hasChild: !!findNode?.children}).then(
+	return loadDataFn({data, level, hasChild: !!findNode?.children}).then(
 			(subList: TVO.CascadeItem[]) => {
-				isLoading.value = false;
+				currentLevel.value = level + 1;
 				cascadeList.value.push({
 					list    : subList,
 					required: getCascadeRequire(level + 1),
@@ -186,7 +204,7 @@ function updateNodeData(level: number, data: any) {
 					cacheStore.value[`cache_${ level }_${ data }`] = subList;
 				}
 			}
-	).catch(() => {
+	).catch(() => {}).finally(() => {
 		isLoading.value = false;
 	});
 }
@@ -194,11 +212,12 @@ function updateNodeData(level: number, data: any) {
 // 选择级联层级的值
 async function selectLevel(index: number, value: any) {
 	current.value = value;
+	keyIndex.value = 0;
 	await updateNodeData(index, value);
 	if (!cascadeList.value[index + 1]) {
 		isOpen.value = false;
 		confirmValue.value = true;
-		findValue.value = findSelectedValue(cascadeValue.value);
+		comboSelectedData.value = findSelectedValue(cascadeValue.value);
 		emit('update:modelValue', cascadeValue.value);
 	}
 	else if (props.mode !== 'combo') {
@@ -207,7 +226,7 @@ async function selectLevel(index: number, value: any) {
 }
 
 // 获取缓存中的数据
-function loadCacheData(fbFn: Function, level: number, data: string | number) {
+function getCacheDataFunc(fbFn: Function, level: number, data: string | number) {
 	// cache_level_data: []
 	// 从缓存中读取数据，如果没有数据则从原方法中获取
 	if (cacheStore.value[`cache_${ level }_${ data }`] && cacheStore.value[`cache_${ level }_${ data }`].length) {
@@ -222,6 +241,60 @@ function loadCacheData(fbFn: Function, level: number, data: string | number) {
 
 function frontFocus() {
 	frontRef.value && frontRef.value.focus();
+}
+
+function resetKeyIndex() {
+	keyIndex.value = -1;
+}
+
+function keyAction(e: any) {
+	// 未打开的情况下按 Tab 就不进行任何操作保证默认行为的执行
+	if (!isOpen.value && e.code === 'Tab') {
+		return;
+	}
+	// 如果是箭头按键和 Tab 的输入就先获取当前值为索引
+	if (e.code.startsWith('Arrow') || e.code === 'Tab') {
+		if (isOpen.value && keyIndex.value === -1) {
+			keyIndex.value = cascadeList.value[currentLevel.value].list.findIndex((item: any) => item.value === current.value);
+		}
+	}
+	const levelList = cascadeList.value[currentLevel.value]?.list;
+	const action = handler(e, levelList, !isOpen.value);
+
+	switch (action) {
+		case 'Tab':
+			e.preventDefault();
+			break;
+		case 'Escape':
+			isOpen.value = false;
+			break;
+		case 'ArrowLeft':
+			e.preventDefault();
+			if (currentLevel.value > 0) {
+				currentLevel.value--;
+				// 找到现值在列表中的索引
+				const levelData = cascadeList.value[currentLevel.value];
+				keyIndex.value = levelData.list.findIndex((item: any) => item.value === levelData.value);
+				cascadeList.value[currentLevel.value].value = '';
+				cascadeList.value.splice(currentLevel.value + 1);
+			}
+			break;
+		case 'ArrowRight':
+			e.preventDefault();
+			if (levelList[keyIndex.value]?.children) {
+				selectLevel(currentLevel.value, levelList[keyIndex.value].value);
+			}
+			break;
+		case 'Toggle':
+			e.preventDefault();
+			toggleDropdown();
+			break;
+		case 'Space':
+		case 'Enter':
+			e.preventDefault();
+			selectLevel(currentLevel.value, levelList[keyIndex.value].value);
+			break;
+	}
 }
 
 function setError(is: boolean, msg?: string) {
@@ -250,7 +323,7 @@ defineExpose({
 <template>
 	<div ref="entity" class="vb-cascade" :class="{'is-disabled': disabled}">
 		<template v-if="mode === 'combo'">
-			<div class="dropdown cascade-dropdown is-block" :class="classList">
+			<div class="dropdown cascade-dropdown is-block" :class="classList" @keydown="keyAction">
 				<select
 						class="entity-shadow" tabindex="-1" aria-hidden="true" required
 						@focus="frontFocus" v-if="modelValue == undefined && required"></select>
@@ -258,10 +331,10 @@ defineExpose({
 					<button
 							ref="frontRef" type="button" class="button is-fullwidth is-justify-content-space-between"
 							aria-haspopup="true" aria-controls="dropdown-menu" @click="toggleDropdown" :disabled="disabled">
-						<span class="is-flex is-align-items-center" style="overflow: hidden;" v-if="internalValue">
-							<i :class="internalValue.icon" v-if="internalValue.icon"></i>
+						<span class="is-flex is-align-items-center" style="overflow: hidden;" v-if="comboShowValue">
+							<i :class="comboShowValue.icon" v-if="comboShowValue.icon"></i>
 							<FasIcon :icon="holderIcon" v-else-if="holderIcon"/>
-							{{ internalValue.title }}
+							{{ comboShowValue.title }}
 						</span>
 						<span class="has-text-grey-light" v-else>
 							<FasIcon :icon="holderIcon" v-if="holderIcon"/> {{ placeholder || $vbt('cascade.placeholder') }}
@@ -272,13 +345,13 @@ defineExpose({
 					</button>
 				</div>
 				<div class="dropdown-menu" role="menu">
-					<div class="dropdown-content">
-						<div class="cascade-level" v-for="(item, index) in cascadeList">
-							<template v-for="node in item.list">
+					<div class="dropdown-content"  @mouseover="resetKeyIndex">
+						<div class="cascade-level" v-for="(item, level) in cascadeList">
+							<template v-for="(node, index) in item.list">
 								<a
 										class="dropdown-item"
-										:class="{'is-disabled': node.disabled, 'is-active': cascadeValue.includes(node.value)}"
-										@click="selectLevel(index, node.value)">
+										:class="{'is-disabled': node.disabled, 'is-active': cascadeValue.includes(node.value), 'is-focused': keyIndex === index && currentLevel === level}"
+										@click="selectLevel(level, node.value)">
 									<span>{{ node.title }}</span>
 									<i class="icon is-small" v-if="node.children">
 										<FasIcon icon="spinner" spin-pulse v-if="current === node.value && isLoading"/>
@@ -330,9 +403,6 @@ defineExpose({
 
 		&.is-active {
 			.dropdown-trigger .button {
-				border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
-				box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
-
 				.icon {
 					transform: rotate(-180deg);
 				}
@@ -365,9 +435,16 @@ defineExpose({
 	}
 
 	.dropdown-trigger {
-		.button {
-			box-shadow: none;
+		> .button:focus {
+			border-color: hsl(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l));
+			box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
+		}
 
+		.button:not(:focus,:focus-visible) {
+			box-shadow: none;
+		}
+
+		.button {
 			&[disabled] {
 				background-color: var(--bulma-background);
 				border-color: var(--bulma-background);
@@ -429,6 +506,10 @@ defineExpose({
 							font-size: .75rem;
 							height: 100%;
 						}
+					}
+
+					&.is-focused:not(.is-active) {
+						--bulma-dropdown-item-background-l-delta: var(--bulma-dropdown-item-hover-background-l-delta);
 					}
 				}
 			}

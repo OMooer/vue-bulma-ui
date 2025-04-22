@@ -134,20 +134,26 @@ function resetKeyIndex() {
 
 function keyAction(e: any) {
 	const isInput = e.target.tagName === 'INPUT';
-	const action = handler(e, filterList.value);
-	// 如果不是输入框的输入就阻止默认行为
-	if (!isInput && action !== 'Tab') {
-		e.preventDefault();
-	}
+	const action = handler(e, filterList.value, !isOpen.value);
 	const justIt = () => {
-		toggleDropdown();
 		if (keyIndex.value >= 0) {
 			selectValue(filterList.value[keyIndex.value].value);
 		}
+		e.preventDefault();
 	}
 	switch (action) {
+		case 'ArrowUp':
+		case 'ArrowDown':
+			e.preventDefault();
+			break;
 		case 'Escape':
 			isOpen.value = false;
+			break;
+		case 'Toggle':
+			if (!isInput) {
+				toggleDropdown();
+				e.preventDefault();
+			}
 			break;
 		case 'Space':
 			if (!isInput) {
@@ -156,7 +162,6 @@ function keyAction(e: any) {
 			break;
 		case 'Enter':
 			justIt();
-			e.preventDefault();
 			break;
 	}
 }

@@ -208,11 +208,7 @@ function resetKeyIndex() {
 
 function keyAction(e: any) {
 	const isInput = e.target.tagName === 'INPUT';
-	const action = handler(e, filterList.value);
-	// 如果不是输入框的输入就阻止默认行为
-	if (!isInput && action !== 'Tab') {
-		e.preventDefault();
-	}
+	const action = handler(e, filterList.value, !isOpen.value);
 	const justIt = () => {
 		if (keyIndex.value >= 0) {
 			selectValue(filterList.value[keyIndex.value]);
@@ -220,6 +216,9 @@ function keyAction(e: any) {
 	}
 	switch (action) {
 		case 'Backspace':
+			if (!isInput) {
+				e.preventDefault();
+			}
 			if (keyword.value.length === 0) {
 				if (currentValue.value.length) {
 					const last = currentValue.value.slice(-1);
@@ -230,13 +229,16 @@ function keyAction(e: any) {
 		case 'Escape':
 			isOpen.value = false;
 			break;
-		case 'Space':
-			if (!isOpen.value) {
-				isOpen.value = true;
+		case 'Toggle':
+			if (!isInput || !isOpen.value) {
+				toggleShow(e);
 				e.preventDefault();
 			}
+			break;
+		case 'Space':
 			if (!isInput) {
 				justIt();
+				e.preventDefault();
 			}
 			break;
 		case 'Enter':
