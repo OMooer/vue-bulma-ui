@@ -4,7 +4,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 const {list = [], start = true} = defineProps<{
 	list: VBGuide.GuideItem[];
-	start: boolean;
+	start?: boolean;
 }>();
 const emit = defineEmits(['exit']);
 
@@ -67,6 +67,9 @@ const styleVar = computed(() => {
 });
 
 watch(watchIndex, async (now, old) => {
+	if (!start) {
+		return;
+	}
 	let beforeUpdated = false;
 	// 之前离开后执行
 	list[old]?.after?.(old < now ? 'next' : 'prev', getTarget(old));
@@ -94,10 +97,13 @@ watch(watchIndex, async (now, old) => {
 	}
 });
 
-const unwatch = watch(() => start, (isStarted) => {
+watch(() => start, (isStarted) => {
 	if (isStarted) {
 		startGuide();
-		unwatch();
+	}
+	else {
+		current.value = -1;
+		watchIndex.value = -1;
 	}
 });
 
