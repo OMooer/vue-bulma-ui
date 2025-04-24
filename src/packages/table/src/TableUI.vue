@@ -170,7 +170,7 @@ function changeSelect(value: any, selected: boolean) {
 					<template v-else>{{ data[item.field] }}</template>
 				</td>
 			</tr>
-			<tr v-if="!tableData?.length">
+			<tr v-if="!tableData?.length || !columnCount">
 				<td :colspan="columnCount">
 					<Empty :text="emptyText || $vbt('table.emptyText')"/>
 				</td>

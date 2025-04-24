@@ -2,8 +2,9 @@
 import { useUILocale } from '@/actions/locale';
 import { computed, onMounted, ref, watch } from 'vue';
 
-const {list = []} = defineProps<{
-	list: VBGuide.GuideItem[]
+const {list = [], start = true} = defineProps<{
+	list: VBGuide.GuideItem[];
+	start: boolean;
 }>();
 const emit = defineEmits(['exit']);
 
@@ -93,6 +94,13 @@ watch(watchIndex, async (now, old) => {
 	}
 });
 
+const unwatch = watch(() => start, (isStarted) => {
+	if (isStarted) {
+		startGuide();
+		unwatch();
+	}
+});
+
 function getTarget(index: number) {
 	let tar = list[index]?.target;
 	if (typeof tar === 'string') {
@@ -122,43 +130,49 @@ function exit(e: string = 'exit') {
 	emit('exit', e);
 }
 
-onMounted(() => {
-	show.value = true;
-	requestAnimationFrame(() => {
-		next();
-	});
-});
+function startGuide() {
+	if (start) {
+		show.value = true;
+		requestAnimationFrame(() => {
+			next();
+		});
+	}
+}
+
+onMounted(startGuide);
 </script>
 
 <template>
-	<div class="vb-guide" :style="styleVar" @wheel.prevent.stop v-if="show">
-		<div class="notification is-link" v-if="currentItem">
-			<div class="block is-size-7">
-				<h2 class="title is-6 mb-2" v-if="currentItem?.title">
-					{{ currentItem?.title }}
-				</h2>
-				<template v-if="$slots[`step${current}`] || ($slots[`stepEnd`] && isLast)">
-					<slot :name="`stepEnd`" :content="currentItem?.content" v-if="$slots[`stepEnd`] && isLast"/>
-					<slot :name="`step${current}`" :content="currentItem?.content" v-else/>
-				</template>
-				<p v-else>{{ currentItem?.content }}</p>
-			</div>
-			<div class="is-flex is-align-items-center">
-				<div class="is-size-7 p-2" v-if="!isLast">{{ current + 1 }}/{{ list.length }}</div>
-				<div class="buttons is-right is-flex-grow-1">
-					<button class="button is-small is-link" @click="prev" :disabled="current === 0" v-if="!isLast">
-						{{ $vbt('guide.prev') }}
-					</button>
-					<button class="button is-small is-link is-inverted" @click="exit('skip')" v-if="!isLast">
-						{{ $vbt('guide.exit') }}
-					</button>
-					<button class="button is-small" :class="isLast ? 'is-success is-fullwidth': 'is-info'" @click="next">
-						{{ currentItem?.buttonText || (isLast ? $vbt('guide.finish') : $vbt('guide.next')) }}
-					</button>
+	<Teleport to="body" v-if="show">
+		<div class="vb-guide" :style="styleVar" @wheel.prevent.stop>
+			<div class="notification is-link" v-if="currentItem">
+				<div class="block is-size-7">
+					<h2 class="title is-6 mb-2" v-if="currentItem?.title">
+						{{ currentItem?.title }}
+					</h2>
+					<template v-if="$slots[`step${current}`] || ($slots[`stepEnd`] && isLast)">
+						<slot :name="`stepEnd`" :content="currentItem?.content" v-if="$slots[`stepEnd`] && isLast"/>
+						<slot :name="`step${current}`" :content="currentItem?.content" v-else/>
+					</template>
+					<p v-else>{{ currentItem?.content }}</p>
+				</div>
+				<div class="is-flex is-align-items-center">
+					<div class="is-size-7 p-2" v-if="!isLast">{{ current + 1 }}/{{ list.length }}</div>
+					<div class="buttons is-right is-flex-grow-1">
+						<button class="button is-small is-link" @click="prev" :disabled="current === 0" v-if="!isLast">
+							{{ $vbt('guide.prev') }}
+						</button>
+						<button class="button is-small is-link is-inverted" @click="exit('skip')" v-if="!isLast">
+							{{ $vbt('guide.exit') }}
+						</button>
+						<button class="button is-small" :class="isLast ? 'is-success is-fullwidth': 'is-info'" @click="next">
+							{{ currentItem?.buttonText || (isLast ? $vbt('guide.finish') : $vbt('guide.next')) }}
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</Teleport>
 </template>
 
 <style scoped lang="scss">
