@@ -77,6 +77,7 @@ watch(isOpen, (is) => {
 	}
 	else {
 		isUp.value = false;
+		comboSelectedData.value = undefined;
 		keyIndex.value = -1;
 		frontFocus();
 		document.removeEventListener('click', captureEvent, {capture: true});
