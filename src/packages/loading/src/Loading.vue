@@ -117,8 +117,8 @@ provide('status', status);
 
 @property --text-ani {
 	syntax: '<string>';
-	inherits: false;
-	initial-value: '';
+	inherits: true;
+	initial-value: 'loading';
 }
 
 @keyframes loading-text {
