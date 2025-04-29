@@ -6,6 +6,7 @@ declare module 'vue' {
 		VbAvatar: typeof import("vue3-bulma-ui/components")["VbAvatar"];
 		VbBack: typeof import("vue3-bulma-ui/components")["VbBack"];
 		VbTLBack: typeof import("vue3-bulma-ui/components")["VbTLBack"];
+		VbBackToTop: typeof import("vue3-bulma-ui/components")["VbBackToTop"];
 		VbCascade: typeof import("vue3-bulma-ui/components")["VbCascade"];
 		VbCharts: typeof import("vue3-bulma-ui/components")["VbCharts"];
 		VbChartsBar: typeof import("vue3-bulma-ui/components")["VbChartsBar"];

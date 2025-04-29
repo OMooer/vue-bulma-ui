@@ -10,6 +10,7 @@
 		"dist"
 	],
 	"compilerOptions": {
+		"noEmit": true,
 		"strict": true,
 		"declaration": true,
 		"resolveJsonModule": true,

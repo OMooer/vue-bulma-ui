@@ -24,7 +24,14 @@ import {
 	faGlobe,
 	faChevronRight,
 	faExpand,
-	faCompress, faDownload, faMagnifyingGlass, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faCircleInfo, faCirclePlus
+	faCompress,
+	faDownload,
+	faMagnifyingGlass,
+	faMagnifyingGlassMinus,
+	faMagnifyingGlassPlus,
+	faCircleInfo,
+	faCirclePlus,
+	faArrowUp
 } from '@fortawesome/free-solid-svg-icons';
 import {
 	faSquareMinus,
@@ -53,6 +60,7 @@ export default {
 		const iconSet = [
 			...(opt?.icon ?? []),
 			faAngleDown, faAngleLeft, faAngleRight, faAngleUp,
+			faArrowUp,
 			faCheck,
 			faChevronLeft, faChevronRight,
 			faCircleExclamation,

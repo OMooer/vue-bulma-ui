@@ -7,6 +7,8 @@ export {
 	default as VbBack,
 	TLBack as VbTLBack
 } from './packages/back'
+// 返回顶部按钮
+export { default as VbBackToTop } from './packages/backToTop';
 // 级联选择器
 export { default as VbCascade } from './packages/cascade';
 // 图表

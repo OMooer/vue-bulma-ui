@@ -3,6 +3,9 @@
 
 node_modules
 dist
+test
 
 .npmignore
 feature.md
+index.html
+vite.config.ts
