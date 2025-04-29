@@ -61,7 +61,7 @@ onBeforeUnmount(() => {
 
 watch(scrollTop, () => {
 	if (targetElement) {
-		scrollOver.value = scrollTop.value > targetElement.clientHeight * .75;
+		scrollOver.value = scrollTop.value > targetElement.scrollHeight * .25;
 	}
 }, {immediate: true});
 
