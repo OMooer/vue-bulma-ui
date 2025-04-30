@@ -485,6 +485,7 @@ defineExpose({
 				&.is-alpha {
 					position: absolute;
 					opacity: 0;
+					z-index: -1;
 				}
 
 				&:focus {
