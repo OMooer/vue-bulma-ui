@@ -35,6 +35,10 @@ export default {
 		exit  : 'Skip'
 	},
 
+	gallery: {
+		error: 'Image failed to load'
+	},
+
 	popup: {
 		doNotShow: 'Don\'t show again'
 	},

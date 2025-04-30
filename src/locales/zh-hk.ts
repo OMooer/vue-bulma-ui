@@ -35,6 +35,10 @@ export default {
 		exit  : '跳過'
 	},
 
+	gallery: {
+		error: '圖片無法加載'
+	},
+
 	popup: {
 		doNotShow: '不再顯示'
 	},

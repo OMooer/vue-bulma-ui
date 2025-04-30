@@ -94,7 +94,7 @@ function scrollToTop() {
 	//right: anchor(right);
 	//bottom: anchor(bottom);
 	right: var(--bt-offset, 1rem);
-	z-index: 9996;
+	z-index: 99;
 
 	&.is-static {
 		opacity: .3;

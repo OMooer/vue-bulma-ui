@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { ExifOperator } from '@imnull/exif';
 import { webRequestImageBlob } from '@imnull/imgkit-web';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, useTemplateRef, watch, watchEffect } from 'vue';
@@ -39,6 +40,7 @@ const slots = defineSlots();
 const gallery = useTemplateRef<HTMLElement>('galleryRef');
 const sidebar = useTemplateRef<HTMLElement>('sideRef');
 const mainer = useTemplateRef<HTMLElement>('mainRef');
+const {$vbt} = useUILocale();
 const photos = ref<Normal.PhotoObj[]>([]);
 watchEffect(() => {
 	photos.value = list.map((item: any) => {
@@ -72,6 +74,7 @@ let mainRect: any;
 let moveDirection: { x: string; y: string } = {x: '', y: ''};
 const isFullscreen = ref(!!document.fullscreenElement);
 const photoIsReady = ref(false);
+const photoIsFailed = ref(false);
 const photoScaleRatio = ref(0);
 const scale = ref(1);
 const minScaleRatio = 0;
@@ -185,6 +188,7 @@ function switchShow(index: number) {
 		return;
 	}
 	photoIsReady.value = false;
+	photoIsFailed.value = false;
 	showExifInfo.value = false;
 	currentIndex.value = index;
 	zoomReset();
@@ -270,6 +274,7 @@ function deletePhoto(index: number) {
 			() => {
 				emit('delete', index);
 				photoIsReady.value = false;
+				photoIsFailed.value = false;
 				photos.value?.splice(index, 1);
 				if (!photos.value?.length) {
 					emit('close');
@@ -431,16 +436,20 @@ onBeforeUnmount(() => {
 						@update:scale="updateScale"
 						@update:x="movePhoto('x', $event)"
 						@update:y="movePhoto('y', $event)">
-					<Loading :timeout="1000*60*10" v-if="!photoIsReady">
+					<Loading :timeout="1000*60*10" v-if="!photoIsReady && !photoIsFailed">
 						<AnimateDot class="rainbow"/>
 					</Loading>
+					<div class="vb-gallery__error" v-if="photoIsFailed">
+						<img draggable="false" src="@/assets/bad_photo.png" alt="error"/>
+						<p>{{ $vbt('gallery.error') }}</p>
+					</div>
 					<img
 							draggable="false" :src="currentPhoto?.origin" :alt="currentPhoto?.name" @load="ready" @click.stop
-							v-show="photoIsReady"/>
+							@error="photoIsFailed = true; photoIsReady = true;" v-show="photoIsReady" v-else/>
 				</InteractiveTracker>
 
 				<!-- 缩放工具 -->
-				<div class="vb-gallery__zoom" @click.stop v-if="showZoom">
+				<div class="vb-gallery__zoom" @click.stop v-if="showZoom && !photoIsFailed">
 					<a :class="{'is-disabled': photoScaleRatio <= minScaleRatio}" @click="zoomOut">
 						<FasIcon icon="magnifying-glass-minus" size="xl"/>
 					</a>
@@ -495,7 +504,7 @@ onBeforeUnmount(() => {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 40;
+	z-index: 100;
 	background: hsla(var(--bulma-black-h), var(--bulma-black-s), var(--bulma-black-l), .95);
 	display: grid;
 	grid-template-columns: auto 1fr;
@@ -599,6 +608,16 @@ onBeforeUnmount(() => {
 			&:hover + .vb-gallery__tools {
 				transform: translateY(0);
 			}
+		}
+	}
+
+	&__error {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		> img:not(.img) {
+			background: none;
 		}
 	}
 

@@ -35,6 +35,10 @@ export default {
 		exit  : 'スキップ'
 	},
 
+	gallery: {
+		error: '画像の読み込みに失敗しました'
+	},
+
 	popup: {
 		doNotShow: '再表示しない'
 	},
