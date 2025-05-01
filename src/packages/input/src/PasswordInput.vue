@@ -80,7 +80,7 @@ defineExpose({
 
 <style lang="scss">
 .vb-password.vb-password {
-	+ .icon {
+	+ .icon.icon {
 		pointer-events: auto;
 		cursor: pointer;
 
@@ -95,12 +95,17 @@ defineExpose({
 		&.show {
 			color: var(--bulma-text-strong);
 		}
-
 	}
 
 	&[disabled] + .icon {
 		pointer-events: none;
 		color: var(--bulma-input-icon-color) !important;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.vb-password + .icon {
+		--bulma-input-icon-color: hsla(221deg, 14%, 89%, .5);
 	}
 }
 </style>
