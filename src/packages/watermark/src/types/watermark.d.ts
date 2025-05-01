@@ -1,12 +1,12 @@
 type Base = {
-	padding?:number;
+	padding?: number;
 	size?: number;
 	color?: string;
 	bgColor?: string;
 };
 
 export type TextMark = Base & {
-	text: string;
+	text: string | string[];
 	image?: never;
 };
 

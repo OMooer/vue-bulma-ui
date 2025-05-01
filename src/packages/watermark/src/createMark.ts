@@ -1,6 +1,6 @@
 import type { TextMark } from './types/watermark';
 
-function textToBase64(text: string, options = {}) {
+function textToBase64(texts: string[], options = {}) {
 	const canvas = document.createElement('canvas');
 	const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
@@ -27,45 +27,73 @@ function textToBase64(text: string, options = {}) {
 	context.font = `${ mergedOptions.fontSize }px ${ mergedOptions.fontFamily }`;
 
 	// 测量文字宽度和高度
-	const textMetrics = context.measureText(text);
-	const textWidth = textMetrics.width;
-	const textHeight = mergedOptions.fontSize; // 简单使用字体大小作为高度
+	const sizes = texts.map(item => {
+		const {width, height} = getSize(context, item, mergedOptions);
+		return [width, height];
+	});
+	let textWidth = sizes[0][0];
+	let textHeight = sizes[0][1];
+	if (sizes.length > 1) {
+		const maxWidth = Math.max(...sizes.map(item => item[0]));
+		const maxHeight = Math.max(...sizes.map(item => item[1]));
+		textWidth = maxWidth;
+		textHeight = maxHeight;
+	}
 
-	const rotationRadian = mergedOptions.rotate * Math.PI / 180;
+	setStage(canvas, context, {...mergedOptions, textWidth, textHeight});
+
+	texts.forEach((item, index) => {
+		context.fillText(item, 0, index * textHeight - Math.floor(sizes.length / 2) * textHeight);
+	});
+
+	return canvas.toDataURL('image/png');
+}
+
+function setStage(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, options: any) {
+
+	const rotationRadian = options.rotate * Math.PI / 180;
 	const cosRotation = Math.cos(rotationRadian);
 	const sinRotation = Math.sin(rotationRadian);
 
 	// 计算旋转后文字的边界框
-	const rotatedWidth = Math.abs(textWidth * cosRotation) + Math.abs(textHeight * sinRotation);
-	const rotatedHeight = Math.abs(textWidth * sinRotation) + Math.abs(textHeight * cosRotation);
+	const rotatedWidth = Math.abs(options.textWidth * cosRotation) + Math.abs(options.textHeight * sinRotation);
+	const rotatedHeight = Math.abs(options.textWidth * sinRotation) + Math.abs(options.textHeight * cosRotation);
 
 	// 计算画布大小，加上边距，使用旋转后的尺寸
-	const canvasWidth = rotatedWidth + 2 * mergedOptions.padding;
-	const canvasHeight = rotatedHeight + 2 * mergedOptions.padding;
+	const canvasWidth = rotatedWidth + 2 * options.padding;
+	const canvasHeight = rotatedHeight + 2 * options.padding;
 
 	canvas.width = canvasWidth;
 	canvas.height = canvasHeight;
 
 	// 设置背景色
-	context.fillStyle = mergedOptions.bgColor;
-	context.fillRect(0, 0, canvasWidth, canvasHeight);
+	ctx.fillStyle = options.bgColor;
+	ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
 	// 重新设置文字样式
-	context.font = `${ mergedOptions.fontSize }px ${ mergedOptions.fontFamily }`;
-	context.fillStyle = mergedOptions.color;
-	context.textAlign = 'center';
-	context.textBaseline = 'middle';
+	ctx.font = `${ options.fontSize }px ${ options.fontFamily }`;
+	ctx.fillStyle = options.color;
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
 
 	// 设置文字旋转
-	context.translate(canvasWidth / 2, canvasHeight / 2); // 移动原点到画布中心
-	context.rotate(rotationRadian); // 旋转
-	context.fillText(text, 0, 0);
+	ctx.translate(canvasWidth / 2, canvasHeight / 2); // 移动原点到画布中心
+	ctx.rotate(rotationRadian); // 旋转
+}
 
-	return canvas.toDataURL('image/png');
+function getSize(ctx: CanvasRenderingContext2D, text: string, options: any) {
+	const textMetrics = ctx.measureText(text);
+	const width = textMetrics.width;
+	const height = options.fontSize; // 简单使用字体大小作为高度
+	return {
+		width,
+		height
+	}
 }
 
 export const useWatermark = (props: TextMark) => {
-	return textToBase64(props.text, {
+	const texts = props.text instanceof Array ? props.text : [props.text];
+	return textToBase64(texts, {
 		rotate  : -45,
 		padding : props.padding,
 		fontSize: props.size,
