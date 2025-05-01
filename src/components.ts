@@ -9,6 +9,8 @@ export {
 } from './packages/back'
 // 返回顶部按钮
 export { default as VbBackToTop } from './packages/backToTop';
+// 徽标
+export { default as VbBadge } from './packages/badge';
 // 级联选择器
 export { default as VbCascade } from './packages/cascade';
 // 图表
