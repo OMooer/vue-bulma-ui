@@ -68,7 +68,7 @@ declare namespace OP {
 }
 
 declare namespace Normal {
-	type AnyObj = { [key: string]: any };
+	type AnyObj<T = any> = { [key: string]: T };
 	type PhotoObj = { name?: string; small?: string; origin?: string; };
 	type DeepPartial<T> = {
 		[P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
@@ -222,4 +222,13 @@ declare namespace VBGuide {
 		before?: (target?: HTMLElement) => Promise<void | GuideStyle>;
 		after?: (action: string, target?: HTMLElement) => Promise<void>;
 	} & GuideStyle;
+}
+
+declare namespace VBBreadcrumb {
+	type Item = {
+		url: string;
+		text: string | Normal.AnyObj<string>;
+		icon?: string;
+		children?: Item[];
+	}
 }

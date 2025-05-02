@@ -11,6 +11,8 @@ export {
 export { default as VbBackToTop } from './packages/backToTop';
 // 徽标
 export { default as VbBadge } from './packages/badge';
+// 面包屑
+export { default as VbBreadcrumb } from './packages/breadcrumb';
 // 级联选择器
 export { default as VbCascade } from './packages/cascade';
 // 图表

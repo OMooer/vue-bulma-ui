@@ -7,7 +7,8 @@ declare module 'vue' {
 		VbBack: typeof import("vue3-bulma-ui/components")["VbBack"];
 		VbTLBack: typeof import("vue3-bulma-ui/components")["VbTLBack"];
 		VbBackToTop: typeof import("vue3-bulma-ui/components")["VbBackToTop"];
-		VbBadge:  typeof import("vue3-bulma-ui/components")["VbBadge"];
+		VbBadge: typeof import("vue3-bulma-ui/components")["VbBadge"];
+		VbBreadcrumb: typeof import("vue3-bulma-ui/components")["VbBreadcrumb"];
 		VbCascade: typeof import("vue3-bulma-ui/components")["VbCascade"];
 		VbCharts: typeof import("vue3-bulma-ui/components")["VbCharts"];
 		VbChartsBar: typeof import("vue3-bulma-ui/components")["VbChartsBar"];
