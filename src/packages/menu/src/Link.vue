@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
-import { RouterLink, useLink, useRoute } from 'vue-router';
+import { computed, inject, ref, watchEffect } from 'vue';
+import { routerKey, RouterLink, useLink, useRoute } from 'vue-router';
 
 defineOptions({
 	inheritAttrs: false
@@ -18,6 +18,8 @@ const props = defineProps({
 		default: false
 	},
 });
+const router = inject(routerKey);
+const routerIsReady = computed(() => router?.isReady());
 const linkTo = computed(() => {
 	return typeof props.to === 'string' ? props.to : (props.to?.name ?? props.to?.path ?? '');
 });
@@ -46,7 +48,7 @@ const isPathMatched = ref(false);
 const isRouteActive = computed(() => isActive.value || isPathMatched.value);
 watchEffect(() => {
 	// 组件不是以子组件存在于父级路由下面，但是路由地址存在从属关系的将在此匹配（排除根路径，否则所有的都会被匹配）
-	isPathMatched.value = currentRoute.fullPath.startsWith(route.value.fullPath + '/') && route.value.fullPath !== '/';
+	isPathMatched.value = currentRoute?.fullPath.startsWith(route.value.fullPath + '/') && route.value.fullPath !== '/';
 });
 // 更新路由命中状态
 watchEffect(() => {
@@ -84,11 +86,18 @@ function setClass(isExactActive: boolean) {
 			target="_blank" rel="nofollow noreferrer noopener">
 		<slot/>
 	</a>
-	<router-link v-else v-bind="nonAttrProps" custom :to="route.fullPath" v-slot="{isExactActive, href, navigate}">
-		<a v-bind="$attrs" :href="href" :class="setClass(isExactActive)" @click.prevent="()=>{navigate();$emit('state', true);}">
+	<router-link
+			v-else-if="routerIsReady" v-bind="nonAttrProps" custom :to="route.fullPath"
+			v-slot="{isExactActive, href, navigate}">
+		<a
+				v-bind="$attrs" :href="href" :class="setClass(isExactActive)"
+				@click.prevent="()=>{navigate();$emit('state', true);}">
 			<slot/>
 		</a>
 	</router-link>
+	<a v-else v-bind="$attrs" :href="linkTo" :class="setClass(false)">
+		<slot/>
+	</a>
 </template>
 
 <style scoped lang="scss">

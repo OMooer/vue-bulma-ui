@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 import { computed, defineComponent, h, ref, useAttrs, watch } from 'vue';
 import { isElementPartiallyHidden, isOverBoxSize } from '@/utils';
 
@@ -120,7 +120,7 @@ const menuCont = defineComponent(() => {
 									}
 								}) : null,
 								item.icon
-										? h('span', {class: 'icon'}, h(FontAwesomeIcon, {icon: item.icon.split(' ')}))
+										? h('span', {class: 'icon'}, h(FontIcon, {icon: item.icon.split(' ')}))
 										: null,
 								h('span', item.title)
 							]);

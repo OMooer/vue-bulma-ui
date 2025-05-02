@@ -87,7 +87,10 @@ export function takeSeparate(text: string, opts?: { long?: number; sep?: string;
  * @param data 一个数据对象，例如：{"en": "English", "zh-cn": "中文"}
  * @param locale=zh-cn 语言标识
  */
-export function getI18nData(data: { [propName: string]: string }, locale: string = 'zh-cn') {
+export function getI18nData(data: { [propName: string]: string } | string, locale: string = 'zh-cn') {
+	if (typeof data === 'string') {
+		return data;
+	}
 	return data[locale] || data['zh-cn'] || data[Object.keys(data)[0]];
 }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 import InputUI from './InputUI.vue';
 import { computed, defineComponent, h, inject, ref, useAttrs, watch } from 'vue';
 
@@ -48,7 +48,7 @@ const inputVNode = defineComponent(() => {
 		h('span', {
 			class  : ['icon', 'is-small', 'is-right', {'show': showPassword.value}],
 			onClick: toggleShow
-		}, h(FontAwesomeIcon, {icon: ['fas', showPassword.value ? 'eye' : 'eye-slash']}))
+		}, h(FontIcon, {icon: ['fas', showPassword.value ? 'eye' : 'eye-slash']}))
 	]
 });
 
