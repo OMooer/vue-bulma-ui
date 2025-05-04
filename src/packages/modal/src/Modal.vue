@@ -1,33 +1,32 @@
 <script setup lang="ts">
-import { provide, ref } from 'vue';
+import { provide, ref, watchEffect } from 'vue';
 import { isTruthy } from '@/utils';
 import InteractiveTracker from '../../InteractiveTracker';
 
+defineOptions({inheritAttrs: false});
 const emit = defineEmits(['close']);
-defineOptions({
-	inheritAttrs: false
-});
-defineProps({
-	title    : String,
-	maskClose: {
-		type   : [Boolean, String],
-		default: false
-	},
-	hasClose : {
-		type   : [Boolean, String],
-		default: true
-	},
-	hasCancel: {
-		type   : Boolean,
-		default: true
-	},
-	style    : null
-});
-const isShow = ref(true);
-const isMainShow = ref(true);
+const {title, maskClose, hasClose = true, hasCancel = true} = defineProps<{
+	title?: string;
+	maskClose?: boolean;
+	hasClose?: boolean;
+	hasCancel?: boolean;
+	style?: any;
+}>();
+const isShow = defineModel('show', {default: true});
+const isMainShow = ref(isShow.value);
 const isMoving = ref(false);
 const modalX = ref(0);
 const modalY = ref(0);
+
+watchEffect(() => {
+	if (isShow.value) {
+		isMainShow.value = true;
+	}
+});
+
+function open() {
+	isShow.value = true;
+}
 
 function dismiss() {
 	isShow.value = false;
@@ -46,12 +45,13 @@ function mClose(isMaskClose: boolean | string) {
 
 provide('modalDismiss', dismiss);
 defineExpose({
+	open,
 	dismiss
 });
 </script>
 
 <template>
-	<Teleport to="body">
+	<Teleport to="body" v-if="isMainShow">
 		<div
 				class="vb-modal modal" :class="[$attrs.class, isMainShow ? 'is-active' : null]"
 				:style="`--modal-x: ${modalX}px; --modal-y: ${modalY}px`">

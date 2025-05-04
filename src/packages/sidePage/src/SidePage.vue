@@ -1,10 +1,19 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 
-defineEmits(['close']);
+const emit = defineEmits(['close']);
 const props = defineProps({
 	direction: {type: String, default: 'right'},
 	hasClose : {type: Boolean, default: true},
+});
+
+const isShow = defineModel('show', {default: true});
+const isMainShow = ref(false);
+
+watchEffect(() => {
+	if (isShow.value) {
+		isMainShow.value = true;
+	}
 });
 
 const contClassName = computed(() => {
@@ -32,23 +41,23 @@ const animateName = computed(() => {
 	}
 });
 
-const ready = ref(false);
-onBeforeMount(() => {
-	ready.value = true;
-});
-
 function dismiss(e: any) {
 	if (!e || !e.target.closest('.sp-scroll-view')) {
-		ready.value = false;
+		isShow.value = false;
 	}
+}
+
+function afterDismissAnimate() {
+	emit('close');
+	isMainShow.value = false;
 }
 </script>
 
 <template>
 	<Teleport to="body">
-		<div class="side-page" @click="dismiss">
-			<Transition :name="animateName" @after-leave="$emit('close')" appear>
-				<div class="sp-container" :class="contClassName" v-show="ready">
+		<div class="side-page" @click="dismiss" v-if="isMainShow">
+			<Transition :name="animateName" @after-leave="afterDismissAnimate" appear>
+				<div class="sp-container" :class="contClassName" v-show="isShow">
 					<!-- 关闭按钮 -->
 					<a class="delete is-medium" aria-label="Close" @click="dismiss" v-if="hasClose"></a>
 					<div class="sp-scroll-view">

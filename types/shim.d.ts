@@ -54,17 +54,17 @@ declare namespace OP {
 		id?: symbol;
 		type?: 'alert' | 'confirm';
 		title?: string;
-		msg: string;
+		content: string;
 		width?: string;
 	} & DialogText;
 
-	type FastDialogOpt = Omit<DialogOption, 'id' | 'type' | 'msg'>;
+	type FastDialogOpt = Omit<DialogOption, 'id' | 'type' | 'content'>;
 
 	type Toast = { (msg: string | MsgObj): void };
 	type Notification = { (msg: string | MsgObj): void };
 	type Dialog = { (opt: DialogOption): Promise<unknown> };
-	type Alert = { (msg: string, options?: FastDialogOpt): Promise<unknown> };
-	type Confirm = { (msg: string, options?: FastDialogOpt): Promise<unknown> };
+	type Alert = { (content: string, options?: FastDialogOpt): Promise<unknown> };
+	type Confirm = { (content: string, options?: FastDialogOpt): Promise<unknown> };
 }
 
 declare namespace Normal {

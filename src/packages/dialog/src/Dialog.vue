@@ -43,7 +43,7 @@ function chooseHandler(o: boolean) {
 	<figure class="vb-dialog-popup" v-bind="$attrs" @click.capture="openNow">
 		<slot/>
 	</figure>
-	<Modal ref="modalRef" hasClose="false" @close="opened=false" style="width: auto;min-width: 20rem;" v-if="openDialog">
+	<Modal ref="modalRef" :hasClose="false" @close="opened=false" style="width: auto;min-width: 20rem;" v-if="openDialog">
 		<h2 class="title is-6 has-text-centered mb-3" v-if="title">{{ title }}</h2>
 		<slot name="content">
 			<p class="has-text-centered is-size-6">{{ content }}</p>

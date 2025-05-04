@@ -1,4 +1,5 @@
-import { createApp, defineComponent, getCurrentInstance, h, ref } from 'vue';
+import { DIALOG_APP_ID } from '@/utils';
+import { createApp, defineComponent, h, ref } from 'vue';
 import { useUILocale } from './locale';
 import Modal from '../packages/modal';
 
@@ -32,7 +33,7 @@ const dialogVNode = defineComponent(
 					{
 						default: () => [
 							props.title ? h('h2', {class: 'title is-6 has-text-centered mb-3'}, props.title) : null,
-							h('p', {class: 'has-text-centered is-size-6'}, props.msg)
+							h('p', {class: 'has-text-centered is-size-6'}, props.content)
 						],
 						footer : () => slots?.footer ? slots.footer() : null
 					}
@@ -40,9 +41,9 @@ const dialogVNode = defineComponent(
 		},
 		{
 			props: {
-				title: String,
-				msg  : String,
-				width: {
+				title  : String,
+				content: String,
+				width  : {
 					type   : String,
 					default: 'auto'
 				}
@@ -58,10 +59,10 @@ export function useDialog(optionLanguage?: OP.DialogText) {
 
 	// 创建 dialog 页面根容器
 	function getDialogRoot() {
-		let dialogEl = document.querySelector('#dialogs');
+		let dialogEl = document.querySelector(`#${ DIALOG_APP_ID }`);
 		if (!dialogEl) {
 			dialogEl = document.createElement('div');
-			dialogEl.id = 'dialogs';
+			dialogEl.id = DIALOG_APP_ID;
 			document.body.appendChild(dialogEl);
 		}
 		return dialogEl;
@@ -116,7 +117,7 @@ export function useDialog(optionLanguage?: OP.DialogText) {
 				render: () => h(dialogVNode as any, {
 							ref      : dialogEntity,
 							title    : options.title,
-							msg      : options.msg,
+							content  : options.content,
 							width    : options.width,
 							onDismiss: dismissDialog
 						},
@@ -126,13 +127,13 @@ export function useDialog(optionLanguage?: OP.DialogText) {
 			dialog.mount(dialogEl as Element);
 		});
 	};
-	const $alert = (msg: string, opt?: OP.FastDialogOpt) => {
+	const $alert = (content: string, opt?: OP.FastDialogOpt) => {
 		const {title, width, doneText} = opt || {};
-		return $dialog({type: 'alert', title, msg, width, doneText});
+		return $dialog({type: 'alert', title, content, width, doneText});
 	};
-	const $confirm = (msg: string, opt?: OP.FastDialogOpt) => {
+	const $confirm = (content: string, opt?: OP.FastDialogOpt) => {
 		const {title, width, doneText, cancelText} = opt || {};
-		return $dialog({type: 'confirm', title, msg, width, doneText, cancelText});
+		return $dialog({type: 'confirm', title, content, width, doneText, cancelText});
 	};
 
 
