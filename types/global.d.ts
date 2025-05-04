@@ -52,6 +52,11 @@ declare module 'vue' {
 		VbSelect: typeof import("vue3-bulma-ui/components")["VbSelect"];
 		VbSelectNative: typeof import("vue3-bulma-ui/components")["VbSelectNative"];
 		VbSidePage: typeof import("vue3-bulma-ui/components")["VbSidePage"];
+		VbSkeleton: typeof import("vue3-bulma-ui/components")["VbSkeleton"];
+		VbSkeletonAvatar: typeof import("vue3-bulma-ui/components")["VbSkeletonAvatar"];
+		VbSkeletonButton: typeof import("vue3-bulma-ui/components")["VbSkeletonButton"];
+		VbSkeletonImage: typeof import("vue3-bulma-ui/components")["VbSkeletonImage"];
+		VbSkeletonText: typeof import("vue3-bulma-ui/components")["VbSkeletonText"];
 		VbSort: typeof import("vue3-bulma-ui/components")["VbSort"];
 		VbSteps: typeof import("vue3-bulma-ui/components")["VbSteps"];
 		VbSwiper: typeof import("vue3-bulma-ui/components")["VbSwiper"];

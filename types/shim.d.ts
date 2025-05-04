@@ -232,3 +232,38 @@ declare namespace VBBreadcrumb {
 		children?: Item[];
 	}
 }
+
+declare namespace VBSkeleton {
+	type Base = {
+		span?: number;
+		active?: never;
+	}
+
+	type TextSkeleton = {
+		type: 'text';
+		line?: number;
+		style?: never;
+		width?: never;
+		height?: never;
+	}
+
+	type AvatarAndButtonSkeleton = {
+		type: 'avatar' | 'button';
+		line?: never;
+		style?: 'round' | 'none';
+		width?: never;
+		height?: never;
+	}
+
+	type ImageSkeleton = {
+		type: 'image';
+		line?: never;
+		style?: never;
+		width?: string;
+		height?: string;
+	}
+
+	type Item = Base & (TextSkeleton | AvatarAndButtonSkeleton | ImageSkeleton);
+
+	type GraphicsGrid = Item[][];
+}

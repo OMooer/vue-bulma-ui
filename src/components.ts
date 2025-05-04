@@ -110,6 +110,14 @@ export {
 } from './packages/select';
 // 侧边页容器
 export { default as VbSidePage } from './packages/sidePage';
+// 骨架屏
+export {
+	default as VbSkeleton,
+	SktAvatar as VbSkeletonAvatar,
+	SktButton as VbSkeletonButton,
+	SktImage as VbSkeletonImage,
+	SktTexts as VbSkeletonText
+} from './packages/skeleton';
 // 排序状态按钮
 export { default as VbSort } from './packages/sort';
 // 步骤条
