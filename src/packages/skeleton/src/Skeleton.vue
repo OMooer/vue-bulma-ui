@@ -10,7 +10,7 @@ import {
 	defineComponent,
 	h,
 	provide, toRef,
-	useSlots,
+	type VNodeChild,
 	watchEffect
 } from 'vue';
 
@@ -22,7 +22,7 @@ const {loading, active, graph} = defineProps<{
 	};
 }>();
 
-const slots = useSlots();
+const slots = defineSlots<{ default: () => VNodeChild | undefined; }>();
 let asyncDefaultVNode: Component;
 watchEffect((onCleanup) => {
 	if (loading) {

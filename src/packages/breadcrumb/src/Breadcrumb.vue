@@ -3,7 +3,7 @@ import { useUILocale } from '@/actions/locale';
 import { Link } from '@/packages/menu';
 import { getI18nData } from '@/utils';
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
-import { computed, defineComponent, h, ref, type Ref, useSlots } from 'vue';
+import { computed, defineComponent, h, ref, type Ref, type VNodeChild } from 'vue';
 
 type BaseProp = {
 	locale?: string;
@@ -18,11 +18,9 @@ type Props = BaseProp & ({
 	list?: never;
 });
 
-defineOptions({
-	inheritAttrs: false
-});
+defineOptions({inheritAttrs: false});
 const {separator = '/', list, router, submenu, locale} = defineProps<Props>();
-const slots = useSlots();
+const slots = defineSlots<{ separator?: () => VNodeChild | undefined; }>();
 const {locale: $locale} = useUILocale();
 const showSubMenu = ref(true);
 
@@ -91,7 +89,7 @@ const breadcrumbs = defineComponent(() => {
 			const nextChild = breadcrumbList.value[Math.min(index + 1, breadcrumbList.value.length - 1)];
 			// 如果自定义了分隔，则在此添加相应的节点
 			if (slots.separator && index > 0) {
-				result.push(h('li', slots.separator?.()));
+				result.push(h('li', [slots.separator?.()]));
 			}
 			const menuVNode = h(Link, {to: item.url}, {
 				default: () => [
