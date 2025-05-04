@@ -34,7 +34,7 @@ function hideSubMenu() {
 function getChildren(r: any) {
 	return r?.children.map((item: any) => {
 		return {
-			url : r.path + '/' + item.path,
+			url : (r.path === '/' ? r.path : (r.path + '/')) + item.path,
 			text: item.meta?.title ?? item.name ?? item.path,
 			icon: item.meta?.icon
 		}
@@ -58,7 +58,7 @@ const breadcrumbList = computed(() => {
 		}
 		const currentRoute = router.resolve(url);
 		const r = currentRoute.matched.at(-1);
-		const children = getChildren(r);
+		const children = submenu ? getChildren(r) : [];
 		const ie: any = {
 			url : r.path,
 			text: r.meta?.title ?? r.name ?? r.path,
