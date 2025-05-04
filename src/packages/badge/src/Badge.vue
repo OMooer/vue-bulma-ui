@@ -3,11 +3,13 @@ import AnimateNum from '@/packages/animateNumber';
 import type { Props } from './types/badge';
 import { computed } from 'vue';
 
-defineOptions({
-	inheritAttrs: false
-});
-const {
-	      type = 'none', state, preset, size, color, active, less, text, max = 0, number = 1
+defineOptions({inheritAttrs: false});
+const {type    = 'none',
+	      state, preset, color,
+	      size,
+	      effect, active, less,
+	      text,
+	      max    = 0, number = 1
       } = defineProps<Props>();
 const classCss = computed(() => {
 	const stateStyle = {

@@ -18,6 +18,7 @@ type StyleGroup =
 
 type ContentGroup =
 		| { text: string; number?: never; max?: never; }
-		| { number: number; text?: never; max?: number; };
+		| { number: number; text?: never; max?: number; }
+		| { text?: never; number?: never; max?: never };
 
 export type Props = BaseProps & StyleGroup & ContentGroup;
