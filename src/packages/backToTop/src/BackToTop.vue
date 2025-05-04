@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { computed, CSSProperties, onBeforeUnmount, onMounted, ref, useId, useTemplateRef, watch } from 'vue';
+import { computed, CSSProperties, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
-const {target, offset, force, behavior = 'smooth'} = defineProps<{
+const {target, offset, force, behavior = 'smooth', inside, crossover = 25} = defineProps<{
 	target?: string | HTMLElement;
 	offset?: string;
 	force?: boolean;
 	behavior?: ScrollBehavior;
+	inside?: boolean;
+	crossover?: number;
 }>();
 
 let targetElement: HTMLElement | null;
-const buttonRef = useTemplateRef<HTMLElement>('button');
 const scrollOver = ref(false);
 const scrollTop = ref(0);
 const showButton = computed(() => force || scrollOver.value);
-const isAtBody = computed(() => {
-	return buttonRef.value?.offsetParent === document.body;
-});
 const styleCss = computed(() => {
 	const varOffset = () => {
 		if (typeof offset === 'undefined') {
@@ -27,8 +25,8 @@ const styleCss = computed(() => {
 	}
 	return {
 		'--bt-offset': offset,
-		'position'   : isAtBody.value ? 'fixed' : 'absolute',
-		'bottom'     : isAtBody.value ? 'var(--bt-offset, 1rem)' : `calc(${ -1 * scrollTop.value }px + ${ varOffset() })`
+		'position'   : inside ? 'absolute' : 'fixed',
+		'bottom'     : inside ? `calc(${ -1 * scrollTop.value }px + ${ varOffset() })` : 'var(--bt-offset, 1rem)'
 	}
 });
 
@@ -61,7 +59,7 @@ onBeforeUnmount(() => {
 
 watch(scrollTop, () => {
 	if (targetElement) {
-		scrollOver.value = scrollTop.value > targetElement.scrollHeight * .25;
+		scrollOver.value = scrollTop.value > targetElement.scrollHeight * (crossover / 100);
 	}
 }, {immediate: true});
 
@@ -74,16 +72,17 @@ function scrollToTop() {
 </script>
 
 <template>
-	<Transition name="animate-fade">
-		<a
-				class="button is-rounded" :class="scrollOver ? 'is-light' : 'is-static'"
-				ref="button"
-				:style="styleCss as CSSProperties"
-				@click="scrollToTop"
-				v-show="showButton">
-			<span class="icon"><FasIcon icon="arrow-up" size="lg"/></span>
-		</a>
-	</Transition>
+	<Teleport to="body" :disabled="inside">
+		<Transition name="animate-fade">
+			<a
+					class="button is-rounded" :class="scrollOver ? 'is-light' : 'is-static'"
+					:style="styleCss as CSSProperties"
+					@click="scrollToTop"
+					v-show="showButton">
+				<span class="icon"><FasIcon icon="arrow-up" size="lg"/></span>
+			</a>
+		</Transition>
+	</Teleport>
 </template>
 
 <style scoped lang="scss">
