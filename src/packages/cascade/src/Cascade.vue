@@ -2,7 +2,7 @@
 import { useKeydown } from '@/actions/keydown';
 import { computed, inject, provide, ref, watch } from 'vue';
 import { useUILocale } from '@/actions/locale';
-import { ERROR_NO_SUBLIST, isOverBoxSize, scroll2Middle } from '@/utils';
+import { ERROR_NO_SUBLIST, iconNormalize, isOverBoxSize, scroll2Middle } from '@/utils';
 import Empty from '../../empty';
 import SelectorUI from '../../select';
 
@@ -144,7 +144,7 @@ function findSelectedValue(modelValue: any[]) {
 			const title = result.title ? result.title : [];
 			title.push(find.title);
 			Object.assign(result, {
-				icon: find.icon,
+				icon: iconNormalize(find.icon),
 				title
 			});
 		}

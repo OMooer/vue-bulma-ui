@@ -107,3 +107,18 @@ export function scaleGenerator(n: number) {
 	const increment = base * (n > 0 ? Math.pow(2, Math.abs(n) - 1) : n);
 	return Math.max(0.05, initScale + increment);
 }
+
+/**
+ * 图标字符格式化
+ * @param icon FontAwesomeIcon 的图标字符
+ */
+export function iconNormalize(icon: string | string[] | undefined) {
+	if (!icon) {
+		return undefined;
+	}
+	if (Array.isArray(icon)) {
+		return icon;
+	}
+	const arr = icon.split(' ');
+	return arr.length > 1 ? arr : icon;
+}

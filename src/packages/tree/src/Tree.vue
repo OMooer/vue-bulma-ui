@@ -1,7 +1,7 @@
 <script lang="ts">
 import { useUILocale } from '@/actions/locale';
 import { computed, defineComponent, h, ref, type VNode, watchEffect } from 'vue';
-import { isTruthy } from '@/utils';
+import { iconNormalize, isTruthy } from '@/utils';
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 
 export default defineComponent({
@@ -190,7 +190,7 @@ export default defineComponent({
 										event.preventDefault();
 										event.stopPropagation();
 									}
-								}, h(FontIcon, {icon: (item.folded ? props.foldIcon : props.expandIcon).split(' ')})) : null,
+								}, h(FontIcon, {icon: iconNormalize(item.folded ? props.foldIcon : props.expandIcon)})) : null,
 						h('label', {
 									onClick(event: any) {
 										nodeClick('click', item);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
 import { Link } from '@/packages/menu';
-import { getI18nData } from '@/utils';
+import { getI18nData, iconNormalize } from '@/utils';
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 import { computed, defineComponent, h, ref, type Ref, type VNodeChild } from 'vue';
 
@@ -36,7 +36,7 @@ function getChildren(r: any) {
 		return {
 			url : (r.path === '/' ? r.path : (r.path + '/')) + item.path,
 			text: item.meta?.title ?? item.name ?? item.path,
-			icon: item.meta?.icon
+			icon: iconNormalize(item.meta?.icon)
 		}
 	});
 }
@@ -62,7 +62,7 @@ const breadcrumbList = computed(() => {
 		const ie: any = {
 			url : r.path,
 			text: r.meta?.title ?? r.name ?? r.path,
-			icon: r.meta?.icon
+			icon: iconNormalize(r.meta?.icon)
 		};
 		if (children.length) {
 			ie.children = children;
@@ -93,7 +93,7 @@ const breadcrumbs = defineComponent(() => {
 			}
 			const menuVNode = h(Link, {to: item.url}, {
 				default: () => [
-					item.icon ? h('span', {class: 'icon is-small'}, h(FontIcon, {icon: item.icon.split(' ')})) : null,
+					item.icon ? h('span', {class: 'icon is-small'}, h(FontIcon, {icon: iconNormalize(item.icon)})) : null,
 					h('span', getI18nData(item.text, currentLocale.value))
 				]
 			});
