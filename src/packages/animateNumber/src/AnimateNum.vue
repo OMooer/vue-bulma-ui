@@ -16,7 +16,7 @@ watch(isAnimate, (ani) => {
 	if (ani) {
 		setTimeout(() => {
 			isAnimate.value = false;
-		}, 610);
+		}, charList.value.length * 100 + 400);
 	}
 }, {immediate: true});
 watch(charList, (newList, oldList, onCleanup) => {
@@ -94,7 +94,7 @@ watch(charList, (newList, oldList, onCleanup) => {
 		min-width: 1ch;
 
 		&.is-animation {
-			--time-duration: .6s;
+			--time-duration: .4s;
 			--time-delay: calc(var(--ani-delay) * .1s);
 			--end-delay: calc(var(--time-delay) + var(--time-duration));
 			animation: charShow 0s ease-in-out var(--end-delay) both;
