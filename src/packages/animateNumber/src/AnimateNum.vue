@@ -12,26 +12,29 @@ const charList = computed(() => {
 });
 const isAnimate = ref(true);
 const oldPoints = ref<string[]>([]);
-watch(isAnimate, (ani) => {
-	if (ani) {
-		setTimeout(() => {
-			isAnimate.value = false;
-		}, charList.value.length * 100 + 400);
+let timer: any;
+watch(charList, (newList, oldList, onCleanup) => {
+	onCleanup(() => {
+		isAnimate.value = false;
+		timer && clearTimeout(timer);
+	});
+	isAnimate.value = true;
+	timer = setTimeout(() => {
+		isAnimate.value = false;
+	}, newList.length * 100 + 400);
+	if (oldList) {
+		oldPoints.value = oldList;
+		// 如果数组长度不一致，在前面补齐数组长度
+		if (newList.length > oldList.length) {
+			const pad = Array(newList.length - oldList.length).fill('0');
+			oldPoints.value = [...pad, ...oldList];
+		}
+		// 如果数组长度一致，删除多余元素
+		else if (newList.length < oldList.length) {
+			oldPoints.value = oldList.slice(-newList.length);
+		}
 	}
 }, {immediate: true});
-watch(charList, (newList, oldList, onCleanup) => {
-	isAnimate.value = true;
-	oldPoints.value = oldList;
-	// 如果数组长度不一致，在前面补齐数组长度
-	if (newList.length > oldList.length) {
-		const pad = Array(newList.length - oldList.length).fill('0');
-		oldPoints.value = [...pad, ...oldList];
-	}
-	// 如果数组长度一致，删除多余元素
-	else if (newList.length < oldList.length) {
-		oldPoints.value = oldList.slice(-newList.length);
-	}
-});
 </script>
 
 <template>
