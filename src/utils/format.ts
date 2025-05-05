@@ -114,7 +114,7 @@ export function scaleGenerator(n: number) {
  */
 export function iconNormalize(icon: string | string[] | undefined) {
 	if (!icon) {
-		return undefined;
+		return '';
 	}
 	if (Array.isArray(icon)) {
 		return icon;
