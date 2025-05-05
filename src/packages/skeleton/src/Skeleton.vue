@@ -14,23 +14,21 @@ import {
 	watchEffect
 } from 'vue';
 
-const {loading, active, graph} = defineProps<{
-	loading: boolean;
+const {loading = true, active, graph} = defineProps<{
+	loading?: boolean;
 	active?: boolean;
 	graph?: {
-		grid?: VBSkeleton.GraphicsGrid;
+		grid?: VBSkeleton.Grid;
 	};
 }>();
 
 const slots = defineSlots<{ default: () => VNodeChild | undefined; }>();
 let asyncDefaultVNode: Component;
-watchEffect((onCleanup) => {
-	if (loading) {
-		const {resolve, promise} = Promise.withResolvers<Component>();
-		asyncDefaultVNode = defineAsyncComponent(() => promise);
-		onCleanup(() => {
-			resolve(() => slots.default?.());
-		});
+watchEffect(() => {
+	const {resolve, promise} = Promise.withResolvers<Component>();
+	asyncDefaultVNode = defineAsyncComponent(() => promise);
+	if (!loading) {
+		resolve(() => slots.default?.());
 	}
 });
 
@@ -40,7 +38,12 @@ const layoutGrid = computed(() => {
 	if (!graph || !graph.grid) {
 		return [[{type: 'text'}]];
 	}
-	return graph.grid;
+	let grid = graph.grid;
+	// 如果数组不是二维的则转换为二维数组
+	if (!Array.isArray(graph.grid[0])) {
+		grid = [graph.grid] as VBSkeleton.GraphicsGrid;
+	}
+	return grid as VBSkeleton.GraphicsGrid;
 });
 
 // 获取最大列数的行数

@@ -242,7 +242,8 @@ declare namespace VBSkeleton {
 	type TextSkeleton = {
 		type: 'text';
 		line?: number;
-		style?: never;
+		shape?: never;
+		size?: never;
 		width?: never;
 		height?: never;
 	}
@@ -250,7 +251,8 @@ declare namespace VBSkeleton {
 	type AvatarAndButtonSkeleton = {
 		type: 'avatar' | 'button';
 		line?: never;
-		style?: 'round' | 'none';
+		shape?: 'round' | 'none';
+		size?: 'none' | 'large';
 		width?: never;
 		height?: never;
 	}
@@ -258,12 +260,15 @@ declare namespace VBSkeleton {
 	type ImageSkeleton = {
 		type: 'image';
 		line?: never;
-		style?: never;
+		shape?: never;
+		size?: never;
 		width?: string;
 		height?: string;
 	}
 
 	type Item = Base & (TextSkeleton | AvatarAndButtonSkeleton | ImageSkeleton);
+
+	type Grid = Item[][] | Item[];
 
 	type GraphicsGrid = Item[][];
 }
