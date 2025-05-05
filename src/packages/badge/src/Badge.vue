@@ -120,6 +120,7 @@ const content = computed(() => {
 		position: absolute;
 		top: 0;
 		right: 0;
+		padding: 0.5em;
 		border-radius: 0.1875em 0.1875em 0 0.1875em;
 		box-shadow: 0 0.125em 0.1875em -0.0625em var(--af-border-shadow, var(--pre-shadow));
 		transform: translate(10px, 0.4em);
