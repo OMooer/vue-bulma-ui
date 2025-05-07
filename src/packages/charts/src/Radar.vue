@@ -65,7 +65,7 @@ function drawChart() {
 	nextTick(() => {
 		// @ts-ignore
 		eChartsInstance.value = echarts?.init(radarRef.value, theme.value);
-		eChartsInstance.value.setOption(chartOption);
+		eChartsInstance.value?.setOption(chartOption);
 		updateData();
 	});
 }

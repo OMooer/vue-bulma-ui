@@ -100,7 +100,7 @@ function drawChart() {
 	nextTick(() => {
 		// @ts-ignore
 		eChartsInstance.value = echarts?.init(pieRef.value, theme.value);
-		eChartsInstance.value.setOption(chartOption);
+		eChartsInstance.value?.setOption(chartOption);
 		updateData();
 	});
 }
