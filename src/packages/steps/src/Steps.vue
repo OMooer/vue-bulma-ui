@@ -229,7 +229,7 @@ defineExpose({
 		$borderColor: var(--bulma-border);
 
 		li {
-			overflow: hidden;
+			//overflow: hidden;
 			position: relative;
 			padding-block: 0;
 			padding-inline-start: calc(1.2 * var(--square-side));
@@ -263,6 +263,7 @@ defineExpose({
 				left: 0;
 				border: solid var(--bulma-info-15-invert);
 				border-width: 1px 1px 0 0;
+				border-radius: 0 0 0 9999px;
 				box-shadow: 2px -2px 2px 0 rgba(90, 90, 90, 0.1);
 				transform: translateX(-50%) rotate(45deg);
 				pointer-events: none;
@@ -377,7 +378,6 @@ defineExpose({
 
 					&::before {
 						margin: 0 0 .5em;
-						writing-mode: initial;
 					}
 				}
 
@@ -397,8 +397,17 @@ defineExpose({
 					width: var(--square-side);
 					height: var(--square-side);
 					border-width: 0 1px 1px 0;
+					border-radius: 9999px 0 0;
 					box-shadow: 2px 2px 2px 0 rgba(90, 90, 90, .1);
 					transform: translate(-50%, -50%) rotate(45deg);
+				}
+
+				&.is-active {
+					~ li a, a {
+						&::before {
+							writing-mode: initial;
+						}
+					}
 				}
 			}
 		}

@@ -469,7 +469,7 @@ onBeforeUnmount(() => {
 								<FasIcon icon="trash-can" size="xl"/>
 							</a>
 						</div>
-						<div class="tool-item">
+						<div class="tool-item is-fullscreen-btn">
 							<a :class="{'is-toggle': isFullscreen}" aria-label="toggle fullscreen" @click="fullscreen">
 								<FasIcon :icon="isFullscreen ? 'compress' : 'expand'" size="xl"/>
 							</a>
@@ -730,6 +730,12 @@ onBeforeUnmount(() => {
 
 		&__zoom {
 			display: none;
+		}
+
+		&__tools {
+			.is-fullscreen-btn {
+				display: none;
+			}
 		}
 	}
 }

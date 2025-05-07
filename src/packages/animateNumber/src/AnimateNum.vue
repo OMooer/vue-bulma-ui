@@ -59,26 +59,10 @@ watch(charList, (newList, oldList, onCleanup) => {
 <style scoped lang="scss">
 @keyframes scrollNum {
 	0% {
-		transform: translateY(calc(var(--ani-init) * 1.3em));
+		transform: translateY(calc(var(--ani-init) * 1em));
 	}
 	100% {
-		transform: translateY(calc(var(--ani-point) * 1.3em));
-	}
-}
-
-@keyframes fadeOut {
-	to {
-		display: none;
-		opacity: 0;
-	}
-}
-
-@keyframes charShow {
-	from {
-		text-indent: -10em;
-	}
-	to {
-		text-indent: 0;
+		transform: translateY(calc(var(--ani-point) * 1em));
 	}
 }
 
@@ -88,7 +72,7 @@ watch(charList, (newList, oldList, onCleanup) => {
 	> span {
 		display: inline-block;
 		overflow: hidden;
-		line-height: 1.3;
+		line-height: 1 !important;
 		text-align: center;
 	}
 
@@ -100,7 +84,7 @@ watch(charList, (newList, oldList, onCleanup) => {
 			--time-duration: .4s;
 			--time-delay: calc(var(--ani-delay) * .1s);
 			--end-delay: calc(var(--time-delay) + var(--time-duration));
-			animation: charShow 0s ease-in-out var(--end-delay) both;
+			text-indent: -10em;
 
 			&::after {
 				content: '0123456789';

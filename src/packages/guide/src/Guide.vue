@@ -203,6 +203,7 @@ onMounted(startGuide);
 		left: var(--g-left, 50%);
 		right: var(--g-right);
 		max-width: 60%;
+		min-width: 16rem;
 		box-shadow: var(--bulma-shadow);
 		transform: translate(var(--g-offset-x, 0), var(--g-offset-y, 0));
 	}
