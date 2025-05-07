@@ -38,13 +38,24 @@ import {
 	faSquarePlus
 } from '@fortawesome/free-regular-svg-icons';
 import { type App, isRef, type Ref, toValue, watchEffect } from 'vue';
+import { SYMBOL_ECHARTS_KEY, SYMBOL_EDITOR_KEY } from './utils';
 import { useUILocale } from './actions/locale';
 import { useDialog } from './actions/dialog';
 import { vFocus, vScrollbar, vLazy } from './utils';
 import * as components from './components';
 
+type Plugin = {
+	echarts?: object;
+	editor?: object;
+};
+type Options = {
+	locale?: string | Ref<string>;
+	icon?: IconDefinition[];
+	plugins?: Plugin;
+	dialog?: OP.DialogText;
+};
 export default {
-	install(Vue: App, opt?: { locale?: string | Ref<string>; icon?: IconDefinition[]; dialog?: OP.DialogText }) {
+	install(Vue: App, opt?: Options) {
 		// 设置内置语言包
 		const {switchLanguage} = useUILocale({extensions: {dialog: opt?.dialog}});
 		if (isRef(opt?.locale)) {
@@ -93,6 +104,14 @@ export default {
 		Vue.config.globalProperties.$dialog = $dialog;
 		Vue.config.globalProperties.$alert = $alert;
 		Vue.config.globalProperties.$confirm = $confirm;
+		// 导入插件
+		const keySymbol: { [key in keyof Plugin]: symbol } = {
+			echarts: SYMBOL_ECHARTS_KEY,
+			editor: SYMBOL_EDITOR_KEY,
+		};
+		Object.keys(opt?.plugins ?? {}).forEach((key) => {
+			Vue.provide(keySymbol[key as keyof typeof keySymbol], opt?.plugins?.[key as keyof typeof opt.plugins]);
+		});
 	}
 }
 

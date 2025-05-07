@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
-import * as eCharts from 'echarts';
+import { ECHARTS_NOT_INSTALLED, SYMBOL_ECHARTS_KEY } from '@/utils';
 import type { ChartData } from './types/charts';
-import { computed, onMounted, provide, ref, shallowRef, watchEffect } from 'vue';
+import { computed, inject, onMounted, provide, ref, shallowRef, watchEffect } from 'vue';
 import { chartColors } from './colors';
 import DatetimePicker from '../../datetimePicker';
 import Loading from '../../loading';
@@ -30,6 +30,7 @@ const props = withDefaults(defineProps<{
 	excludes?: string[];
 	hideLegend?: boolean;
 }>(), {width: '100%', height: 360, barOverLine: () => [], excludes: () => []});
+const eCharts = inject(SYMBOL_ECHARTS_KEY, null);
 const {$vbt} = useUILocale();
 const toolbar = computed(() => {
 	return props.dateFilter || slots.toolbar;
@@ -159,15 +160,19 @@ const messages = computed(() => {
 
 // 加载
 onMounted(() => {
-	echartsReady.value = true;
-	if (!props.data.length) {
-		refresh();
+	if (eCharts) {
+		echartsReady.value = true;
+		if (!props.data.length) {
+			refresh();
+		}
+	}
+	else {
+		console.error(ECHARTS_NOT_INSTALLED);
 	}
 });
 
 // 刷新数据
 function refresh() {
-	// console.log('fetch', props.type);
 	const toolbarForm = {};
 	const [start = '', end = ''] = dateRange.value;
 	emit('fetch', Object.assign({}, toolbarForm, {start, end}));
