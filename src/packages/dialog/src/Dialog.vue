@@ -29,11 +29,20 @@ function openNow(ev: Event) {
 	if (ev.target === ev.currentTarget) {
 		return;
 	}
+	if (!props.show) {
+		doneHandler();
+		return;
+	}
 	opened.value = true;
 }
 
+function doneHandler(){
+	opened.value = false;
+	emit('done');
+}
+
 function chooseHandler(o: boolean) {
-	o && emit('done');
+	o && doneHandler();
 	emit('close', o);
 	modalRef.value.dismiss();
 }
@@ -50,8 +59,12 @@ function chooseHandler(o: boolean) {
 		</slot>
 		<template #footer>
 			<footer class="card-footer">
-				<a class="card-footer-item has-text-weight-bold" @click="chooseHandler(true)">{{ doneText || $vbt('dialog.doneText') }}</a>
-				<a class="card-footer-item" @click="chooseHandler(false)" v-if="type === 'confirm'">{{ cancelText || $vbt('dialog.cancelText') }}</a>
+				<a
+						class="card-footer-item has-text-weight-bold"
+						@click="chooseHandler(true)">{{ doneText || $vbt('dialog.doneText') }}</a>
+				<a
+						class="card-footer-item" @click="chooseHandler(false)"
+						v-if="type === 'confirm'">{{ cancelText || $vbt('dialog.cancelText') }}</a>
 			</footer>
 		</template>
 	</Modal>
