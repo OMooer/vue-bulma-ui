@@ -2,19 +2,14 @@
 import { provide, ref, watch } from 'vue';
 
 const emit = defineEmits(['dismiss']);
-const props = defineProps({
-	top     : Boolean,
-	start   : {
-		type   : Boolean,
-		default: true
-	},
-	finished: Boolean,
-	progress: Number,
-	timeout : {
-		type   : Number,
-		default: 10000
-	}
-});
+const props = withDefaults(defineProps<{
+	top?: boolean;
+	start?: boolean;
+	finished?: boolean;
+	progress?: number;
+	timeout?: number;
+	timeoutState?: 'keep' | 'none';
+}>(), {start: true, timeout: 10000, timeoutState: 'none'});
 const percent = ref(0);
 const status = ref('load');
 const isEnd = ref(false);
@@ -94,7 +89,9 @@ function dismiss() {
 		timer = null;
 	}
 	setTimeout(() => {
-		isLoading.value = false;
+		if (props.timeoutState !== 'keep') {
+			isLoading.value = false;
+		}
 		emit('dismiss', status.value);
 	}, 300);
 }
