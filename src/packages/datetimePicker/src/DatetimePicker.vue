@@ -221,6 +221,8 @@ export default {
 			}
 		}
 
+		const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
 		return h('div', {
 					class: {
 						'vb-datetime': true,
@@ -277,13 +279,13 @@ export default {
 											}
 										}, [
 											withDirectives(h('input', {
-												'type'       : that.formatType,
-												'data-type'  : that.formatType,// ? 'datetime-local' : 'date',
+												'type'       : isTouchDevice ? 'text' : that.formatType,
+												'data-type'  : isTouchDevice ? 'text' : that.formatType,// ? 'datetime-local' : 'date',
 												'data-role'  : 'start',
 												'step'       : props.step,
 												'value'      : that.innerRange[0],
 												'placeholder': JSON.parse(that.langPack)?.rangeStart,
-												'readonly'   : isTruthy(props.readonly),
+												'readonly'   : isTouchDevice ? true : isTruthy(props.readonly),
 												'required'   : isTruthy(props.required),
 												onClick      : (e: Event) => e.preventDefault(),
 												onKeydown    : keyAction,
@@ -291,13 +293,13 @@ export default {
 												onBlur       : (e: Event) => directiveFn(e.target)
 											}), [[insertPlaceDirect]]),
 											withDirectives(h('input', {
-												'type'       : that.formatType,
-												'data-type'  : that.formatType,// ? 'datetime-local' : 'date',
+												'type'       : isTouchDevice ? 'text' : that.formatType,
+												'data-type'  : isTouchDevice ? 'text' : that.formatType,// ? 'datetime-local' : 'date',
 												'data-role'  : 'end',
 												'step'       : props.step,
 												'value'      : that.innerRange[1],
 												'placeholder': JSON.parse(that.langPack)?.rangeEnd,
-												'readonly'   : isTruthy(props.readonly),
+												'readonly'   : isTouchDevice ? true : isTruthy(props.readonly),
 												'required'   : isTruthy(props.required),
 												onClick      : (e: Event) => e.preventDefault(),
 												onKeydown    : keyAction,
@@ -312,13 +314,13 @@ export default {
 												'input'    : true,
 												'is-danger': that.isError
 											},
-											'type' : 'date',//formatType.value,
+											'type' : isTouchDevice ? 'text' : 'date',//formatType.value,
 											'min'  : that.formatMin,
 											'max'  : that.formatMax,
 											// 'step'           : props.step,
 											'disabled'       : isTruthy(props.disabled),
 											'required'       : isTruthy(props.required),
-											'readonly'       : isTruthy(props.readonly),
+											'readonly'       : isTouchDevice ? true : isTruthy(props.readonly),
 											'value'          : that.innerDate,
 											'role'           : 'calendar',
 											'data-editable'  : props.readonly ? null : 'true',
@@ -385,6 +387,8 @@ export default {
 	input[type="text"],
 	input[type="datetime-local"],
 	input[type="date"] {
+		appearance: none;
+
 		&::-webkit-clear-button,
 		&::-webkit-inner-spin-button,
 		&::-webkit-calendar-picker-indicator {
