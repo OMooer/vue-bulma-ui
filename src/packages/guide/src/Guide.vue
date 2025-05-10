@@ -56,6 +56,12 @@ const styleVar = computed(() => {
 		top ??= targetRect.value.bottom as string;
 		left ??= targetRect.value.left as string;
 
+		// 如果没有位置信息和偏移信息则自动将偏移设置为居中
+		if (!top && !bottom && !left && !right && !offsetX && !offsetY) {
+			offsetX = '-50%';
+			offsetY = '-50%';
+		}
+
 		top && (style['--g-top'] = top);
 		bottom && (style['--g-bottom'] = bottom);
 		left && (style['--g-left'] = left);
