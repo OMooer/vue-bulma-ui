@@ -213,7 +213,7 @@ provide('parentChartTitle', props.title);
 				:style="chartSize" :is="childChart"
 				v-if="echartsReady">
 			<slot>
-				<Loading style="position: relative"/>
+				<Loading timeout-state="keep" style="position: relative"/>
 			</slot>
 		</Component>
 	</div>
