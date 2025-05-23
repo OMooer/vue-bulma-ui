@@ -7,6 +7,7 @@ const props = defineProps({
 	group     : Boolean,
 	floatTips : Boolean,
 	floatLabel: Boolean,
+	inline    : Boolean,
 	isSmall   : Boolean
 });
 const slots = useSlots();
@@ -58,11 +59,17 @@ provide('formElement', true);
 </script>
 
 <template>
-	<div class="field" :class="{'is-float-tips': floatTips, 'is-float-form': floatLabel}">
-		<label class="label form-el-label" :class="{'is-small': isSmall}" v-if="label">{{ label }}</label>
+	<div class="field" :class="{'is-float-tips': floatTips, 'is-float-form': floatLabel, 'is-horizontal': inline}">
+		<template v-if="label">
+			<div class="field-label" :class="isSmall ? 'is-small' : 'is-normal'" v-if="inline">
+				<label class="label form-el-label" :class="{'is-small': isSmall}" v-if="label">{{ label }}</label>
+			</div>
+			<label class="label form-el-label" :class="{'is-small': isSmall}" v-else>{{ label }}</label>
+		</template>
 		<div
 				:data-tips="wrapTips" class="field"
 				:class="{
+					'field-body': inline,
 					'is-grouped': group,
 					'has-addons': !group && ($slots?.addonLeft || $slots?.addonRight)
 				}">
