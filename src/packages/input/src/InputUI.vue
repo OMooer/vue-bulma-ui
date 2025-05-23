@@ -3,7 +3,7 @@ import { inject, ref, InputHTMLAttributes, watch } from 'vue';
 
 type InputProps = /* @vue-ignore */Omit<InputHTMLAttributes, 'onError'> & {};
 defineProps<InputProps>();
-const isParentSmall = inject('isSmall', false);
+const isParentSmall = inject('isSmall', ref(false));
 const innerValue = defineModel({default: ''});
 const emit = defineEmits(['error']);
 const isError = ref(false);

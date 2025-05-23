@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, ref, useSlots, watchEffect } from 'vue';
+import { computed, provide, ref, toRef, useSlots, watchEffect } from 'vue';
 
 const props = defineProps({
 	label     : String,
@@ -53,7 +53,7 @@ function setError(is: boolean, msg?: string) {
 	helpMsg.value = msg || props?.tips || '';
 }
 
-provide('isSmall', props.isSmall);
+provide('isSmall', toRef(props, 'isSmall'));
 provide('formElement', true);
 </script>
 

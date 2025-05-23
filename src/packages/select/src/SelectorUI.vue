@@ -5,7 +5,7 @@ import { computed, inject, onUpdated, ref, watch } from 'vue';
 import { isOverBoxSize, scroll2Middle, vFocus } from '@/utils';
 import Empty from '../../empty';
 
-const isParentSmall = inject('isSmall', false);
+const isParentSmall = inject('isSmall', ref(false));
 const props = defineProps<{
 	modelValue?: any;
 	list: TVO.List;
@@ -50,7 +50,7 @@ const classList = computed(() => {
 		'is-up'      : isUp.value,
 		'is-shake'   : isError.value,
 		'is-danger'  : isError.value,
-		'is-small'   : isParentSmall
+		'is-small'   : isParentSmall.value
 	}
 });
 

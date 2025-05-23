@@ -2,10 +2,8 @@
 import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref, watchEffect } from 'vue';
 
-defineOptions({
-	inheritAttrs: false
-});
-const isParentSmall = inject('isSmall', false);
+defineOptions({inheritAttrs: false});
+const isParentSmall = inject('isSmall', ref(false));
 const props = withDefaults(defineProps<{
 	modelValue?: any;
 	list: TVO.List;
@@ -21,7 +19,7 @@ const emit = defineEmits(['update:modelValue', 'error']);
 const {$vbt} = useUILocale();
 const isError = ref(false);
 const entity = ref();
-const isReallySmall = computed(() => isParentSmall || props.isSmall);
+const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 const isNotNull = computed(() => props.required || !props.allowNull);
 const selectedValue = ref('');
 

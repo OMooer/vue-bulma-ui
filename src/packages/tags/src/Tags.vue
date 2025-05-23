@@ -5,7 +5,7 @@ import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
 import { isOverBoxSize, isTruthy, scroll2Middle, vFocus } from '@/utils';
 
-const isParentSmall = inject('isSmall', false);
+const isParentSmall = inject('isSmall', ref(false));
 const props = withDefaults(defineProps<{
 	modelValue?: any;
 	list: TVO.List;
@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits(['update:modelValue', 'error']);
 const {$vbt} = useUILocale();
 const {keyIndex, handler} = useKeydown();
-const isReallySmall = computed(() => isParentSmall || props.isSmall);
+const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 const isError = ref(false);
 // 内置值，在未提供 modelValue 时也保证 UI 的可用性
 const innerValue = ref<TVO.Value[]>([]);

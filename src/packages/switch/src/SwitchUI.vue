@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue';
+import { computed, inject, ref } from 'vue';
 
-defineOptions({
-	inheritAttrs: false
-});
-const isParentSmall = inject('isSmall', false);
+defineOptions({inheritAttrs: false});
+const isParentSmall = inject('isSmall', ref(false));
 const props = defineProps({
 	disabled: Boolean,
 	isSmall : Boolean
 });
 const switchValue = defineModel();
-const isReallySmall = computed(() => isParentSmall || props.isSmall);
+const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 </script>
 
 <template>

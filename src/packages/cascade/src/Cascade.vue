@@ -8,7 +8,7 @@ import SelectorUI from '../../select';
 
 const {$vbt} = useUILocale();
 const {keyIndex, handler} = useKeydown();
-const isParentSmall = inject('isSmall', false);
+const isParentSmall = inject('isSmall', ref(false));
 const props = withDefaults(defineProps<{
 	modelValue?: any[];
 	mode?: 'detach' | 'combo';
@@ -37,7 +37,7 @@ const currentLevel = ref(0);
 const confirmValue = ref();
 const cascadeList = ref<{ list: TVO.CascadeItem[]; required?: boolean, value: any }[]>([]);
 const cacheStore = ref<{ [propName: string]: TVO.CascadeItem[] }>({});
-const isReallySmall = computed(() => isParentSmall || props.isSmall);
+const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 watch(() => props.list, (newList) => {
 	cascadeList.value = [
 		{
@@ -317,7 +317,7 @@ const classList = computed(() => {
 	}
 });
 
-provide('isSmall', isReallySmall.value);
+provide('isSmall', isReallySmall);
 
 defineExpose({
 	setError

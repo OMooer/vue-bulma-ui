@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref, watch } from 'vue';
 
-const isParentSmall = inject('isSmall', false);
+const isParentSmall = inject('isSmall', ref(false));
 const emit = defineEmits(['error']);
 const props = withDefaults(defineProps<{
 	type: 'checkbox' | 'radio';
@@ -16,7 +16,7 @@ const isError = ref(false);
 const className = computed(() => {
 	return [
 		props.type === 'radio' ? 'radios' : 'checkboxes',
-		isParentSmall ? 'is-small' : '',
+		isParentSmall.value ? 'is-small' : '',
 		isError.value ? 'is-danger is-shake' : ''
 	]
 });

@@ -2,7 +2,7 @@
 import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue';
 import { isOverBoxSize, OUT_OF_RANGE, scroll2Middle } from '@/utils';
 
-const isParentSmall = inject('isSmall', false);
+const isParentSmall = inject('isSmall', ref(false));
 const props = withDefaults(defineProps<{
 	min?: string;
 	max?: string;
@@ -83,7 +83,7 @@ const classList = computed(() => {
 		'is-up'         : isUp.value,
 		'is-shake'      : isError.value,
 		'is-danger'     : isError.value,
-		'is-small'      : isParentSmall
+		'is-small'      : isParentSmall.value
 	}
 });
 

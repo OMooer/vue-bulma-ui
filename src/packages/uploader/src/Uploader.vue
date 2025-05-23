@@ -10,7 +10,7 @@ type HookMethod = 'select';
 defineOptions({
 	inheritAttrs: false
 });
-const isParentSmall = inject('isSmall', false);
+const isParentSmall = inject('isSmall', ref(false));
 const props = defineProps({
 	id         : {
 		type   : String,
@@ -40,7 +40,7 @@ const props = defineProps({
 	},
 	modelValue : null,
 	placeholder: {
-		type   : String,
+		type: String,
 	},
 	required   : [Boolean, String],
 	disabled   : [Boolean, String],
@@ -59,7 +59,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:modelValue', 'start', 'error', 'status']);
 const {$vbt} = useUILocale();
-const isReallySmall = computed(() => isParentSmall || props.isSmall);
+const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 // Hook 信息
 const hooks = new Map();
 // 上传队列
@@ -312,8 +312,8 @@ function setError(is: boolean, msg?: string) {
 provide('setHooks', setHooks);
 provide('startUpload', startUpload);
 provide('disabled', toRef(() => isTruthy(props.disabled)));
-provide('width', props.width);
-provide('height', props.height);
+provide('width', toRef(props, 'width'));
+provide('height', toRef(props, 'height'));
 defineExpose({
 	setError
 });

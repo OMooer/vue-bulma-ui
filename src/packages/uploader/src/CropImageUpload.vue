@@ -12,8 +12,8 @@ const emit = defineEmits(['removed', 'error']);
 const {$vbt} = useUILocale();
 const startUpload = inject('startUpload') as Function;
 const setHooks = inject('setHooks') as Function;
-const width = inject('width', 200);
-const height = inject('height', 200);
+const width = inject('width', ref(200));
+const height = inject('height', ref(200));
 const disabled = inject('disabled', ref(false));
 const cropperStep = ref<'select' | 'crop' | 'confirm' | 'progress' | 'completed'>('select');
 const isSubmitted = ref(false);
@@ -85,10 +85,10 @@ if (setHooks) {
 function checkImageSafeRange() {
 	const img = previewEl.value as HTMLImageElement;
 	const imgSize = calcImageSize(img);
-	const viewWidth  = width * brightSize,
-	      viewHeight = height * brightSize;
-	const sideHorizontal = width * sideSize,
-	      sideVertical   = height * sideSize;
+	const viewWidth  = width.value * brightSize,
+	      viewHeight = height.value * brightSize;
+	const sideHorizontal = width.value * sideSize,
+	      sideVertical   = height.value * sideSize;
 	const changes: (() => void)[] = [];
 	// 如果放大超过了最大放大倍数则回缩至最大放大倍数
 	if (scale.value > maxScale.value) {
@@ -176,19 +176,19 @@ function calcImageSize(img: HTMLImageElement) {
 function createCropCanvas(img: HTMLImageElement) {
 	const canvas = document.createElement('canvas');
 	const ctx = canvas.getContext('2d');
-	canvas.width = width;
-	canvas.height = height;
+	canvas.width = width.value;
+	canvas.height = height.value;
 	const imgSize = calcImageSize(img);
-	let offsetLeft = width * sideSize - imgSize.offsetLeft,
-	    offsetTop  = height * sideSize - imgSize.offsetTop;
-	const cropWidth  = width * brightSize,
-	      cropHeight = height * brightSize;
+	let offsetLeft = width.value * sideSize - imgSize.offsetLeft,
+	    offsetTop  = height.value * sideSize - imgSize.offsetTop;
+	const cropWidth  = width.value * brightSize,
+	      cropHeight = height.value * brightSize;
 	ctx?.drawImage(img,
 			Math.ceil(offsetLeft * imgSize.widthRatio),
 			Math.ceil(offsetTop * imgSize.heightRatio),
 			Math.floor(cropWidth * imgSize.widthRatio),
 			Math.floor(cropHeight * imgSize.heightRatio),
-			0, 0, width, height);
+			0, 0, width.value, height.value);
 	return canvas;
 }
 

@@ -11,11 +11,11 @@ interface Props {
 }
 
 const {$vbt} = useUILocale();
-const isParentSmall = inject('isSmall', false);
+const isParentSmall = inject('isSmall', ref(false));
 const props = defineProps<Props>();
 const emit = defineEmits(['delete']);
 
-const isReallySmall = computed(() => isParentSmall || props.isSmall);
+const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 const sourceName = computed(() => {
 	if (typeof props.source === 'object') {
 		return props.source?.name || props.source?.url;

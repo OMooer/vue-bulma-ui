@@ -57,7 +57,7 @@ export default {
 	emits       : ['update:modelValue', 'error'],
 	setup(props, {emit, expose}) {
 		const {$vbt} = useUILocale();
-		const isParentSmall = inject('isSmall', false);
+		const isParentSmall = inject('isSmall', ref(false));
 		const isError = ref(false);
 		const isRight = ref(false);
 		const entity = ref();
