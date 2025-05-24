@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, ref, toRef, useSlots, watchEffect } from 'vue';
+import { computed, defineComponent, h, provide, ref, toRef, type VNode, type VNodeChild, watchEffect } from 'vue';
 
 const props = defineProps({
 	label     : String,
@@ -10,15 +10,22 @@ const props = defineProps({
 	inline    : Boolean,
 	isSmall   : Boolean
 });
-const slots = useSlots();
+const slots = defineSlots<{
+	default?: (scope: { setError?: any }) => VNodeChild;
+	addonLeft?: () => VNodeChild;
+	addonRight?: () => VNodeChild;
+	leftIcon?: () => VNodeChild;
+	rightIcon?: () => VNodeChild;
+	tips?: (scope: { text?: string, error?: boolean }) => VNodeChild;
+}>();
 const isError = ref(false);
 const helpMsg = ref();
 const wrapTips = computed(() => {
 	return props.floatTips ? props.tips?.replace(/\\n/g, '\n') : null;
 });
 const comIsPassword = computed(() => {
-	const defaultSlot = slots.default?.({setError});
-	if (defaultSlot && defaultSlot.length > 0) {
+	const defaultSlot = slots.default?.({setError}) as [VNode];
+	if (defaultSlot && defaultSlot?.length > 0) {
 		const child = defaultSlot[0];
 		if (typeof child?.type === 'object' && 'name' in child.type && child.type.name === 'VbPassword') {
 			return true;
@@ -54,42 +61,82 @@ function setError(is: boolean, msg?: string) {
 	helpMsg.value = msg || props?.tips || '';
 }
 
+const LabelCom = defineComponent(() => {
+	return () => {
+		return h('label', {
+			class: {
+				'form-el-label': true,
+				'label'        : true,
+				'is-small'     : props.isSmall,
+			}
+		}, props.label);
+	}
+});
+const ElementCom = defineComponent(() => {
+	return () => {
+		const control = h('div', {
+			class           : {
+				'control'        : true,
+				'is-expanded'    : true,
+				'has-icons-left' : slots?.leftIcon,
+				'has-icons-right': slots?.rightIcon || comIsPassword.value
+			},
+			onInvalidCapture: catchInvalid
+		}, [
+			slots.default?.({setError}),
+			slots.leftIcon?.(),
+			!comIsPassword.value ? slots.rightIcon?.() : null
+		]);
+
+		return h('div', {
+			class      : {
+				'field'     : true,
+				'is-grouped': props.group,
+				'has-addons': !props.group && (slots?.addonLeft || slots?.addonRight)
+			},
+			'data-tips': wrapTips.value
+		}, [
+			slots.addonLeft?.(),
+			control,
+			slots.addonRight?.()
+		]);
+	}
+});
+const HelpCom = defineComponent(() => {
+	return () => {
+		return slots.tips
+				? slots.tips?.({text: helpMsg.value, error: isError.value})
+				: h('p', {
+					class: {
+						'help'     : true,
+						'is-danger': isError.value
+					}
+				}, helpMsg.value)
+	}
+});
+
 provide('isSmall', toRef(props, 'isSmall'));
 provide('formElement', true);
 </script>
 
 <template>
-	<div class="field" :class="{'is-float-tips': floatTips, 'is-float-form': floatLabel, 'is-horizontal': inline}">
-		<template v-if="label">
-			<div class="field-label" :class="isSmall ? 'is-small' : 'is-normal'" v-if="inline">
-				<label class="label form-el-label" :class="{'is-small': isSmall}" v-if="label">{{ label }}</label>
-			</div>
-			<label class="label form-el-label" :class="{'is-small': isSmall}" v-else>{{ label }}</label>
-		</template>
-		<div
-				:data-tips="wrapTips" class="field"
-				:class="{
-					'field-body': inline,
-					'is-grouped': group,
-					'has-addons': !group && ($slots?.addonLeft || $slots?.addonRight)
-				}">
-			<slot name="addonLeft"/>
-			<div
-					class="control is-expanded"
-					:class="{'has-icons-left': $slots?.leftIcon, 'has-icons-right': $slots?.rightIcon || comIsPassword}"
-					@invalid.capture="catchInvalid">
-				<!-- 默认插槽 -->
-				<slot :setError="setError"/>
-				<slot name="leftIcon"/>
-				<slot name="rightIcon" v-if="!comIsPassword"/>
-			</div>
-			<slot name="addonRight"/>
+	<!-- 水平排列 -->
+	<div class="field is-horizontal" :class="{'is-float-tips': floatTips}" v-if="inline">
+		<div class="field-label" :class="isSmall ? 'is-small' : 'is-normal'">
+			<LabelCom v-if="label"/>
 		</div>
-		<slot name="tips" :text="helpMsg" :error="isError">
-			<div class="control" v-if="helpMsg && (isError || !floatTips)">
-				<p :class="['help', isError ? 'is-danger' : null]">{{ helpMsg }}</p>
+		<div class="field-body">
+			<div class="field is-expanded">
+				<ElementCom/>
+				<HelpCom v-if="helpMsg && (isError || !floatTips)"/>
 			</div>
-		</slot>
+		</div>
+	</div>
+	<!-- 垂直排列 -->
+	<div class="field" :class="{'is-float-tips': floatTips, 'is-float-form': floatLabel}" v-else>
+		<LabelCom v-if="label"/>
+		<ElementCom/>
+		<HelpCom v-if="helpMsg && (isError || !floatTips)"/>
 	</div>
 </template>
 
@@ -212,7 +259,7 @@ provide('formElement', true);
 		--floatTop: 3.25rem;
 	}
 
-	> .field:first-of-type {
+	.field:has(>.control) {
 		$bgColor: var(--bulma-body-background-color);
 
 		&::before, &::after {
