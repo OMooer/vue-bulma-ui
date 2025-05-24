@@ -36,6 +36,7 @@ watch(innerValue, () => {
 const inputVNode = defineComponent(() => {
 	return () => [
 		h(InputUI, {
+			ref: entity,
 			type : showPassword.value ? 'text' : 'password',
 			class: [attrs.class, 'vb-password'],
 			...bindProps.value,
@@ -59,7 +60,7 @@ function toggleShow() {
 
 function setError(is: boolean, msg?: string) {
 	isError.value = is;
-	is && entity.value.focus();
+	is && entity.value?.$el.focus();
 	emit('error', is, msg);
 }
 
