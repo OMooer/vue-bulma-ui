@@ -18,6 +18,7 @@ const props = defineProps<{
 	pattern?: string;
 	minlength?: string | number;
 	maxlength?: string | number;
+	autocomplete?: string;
 }>();
 const emit = defineEmits(['update:modelValue', 'showPlain', 'error']);
 const innerValue = defineModel({default: ''});

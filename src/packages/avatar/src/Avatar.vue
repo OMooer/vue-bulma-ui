@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
 	src : {
@@ -21,7 +21,11 @@ const normal = ref('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAA
 const loadedFailed = ref(false);
 const url = computed(() => {
 	return loadedFailed.value ? normal.value : (props.src || normal.value);
-})
+});
+
+watch(() => props.src, () => {
+	loadedFailed.value = false;
+});
 
 function noImage() {
 	loadedFailed.value = true;
