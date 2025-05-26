@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
-import { computed, inject, provide, ref, toRef } from 'vue';
+import { computed, inject, provide, type Ref, ref, toRef } from 'vue';
 import { abbrNumber, ERROR_ACCEPT, isTruthy, runPromiseSequence } from '@/utils';
 import { ext2mime } from '@/utils/mime';
 import PreviewSource from './PreviewSource.vue';
@@ -60,6 +60,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'start', 'error', 'status']);
 const {$vbt} = useUILocale();
 const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
+const modelInnerValue = computed(() => {
+	if (typeof props.modelValue === 'string' && props.modelValue) {
+		return [props.modelValue];
+	}
+	return props.modelValue;
+}) as Ref<any[]>;
 // Hook 信息
 const hooks = new Map();
 // 上传队列
@@ -122,11 +128,11 @@ const totalLimit = computed(() => {
 });
 // 存在已上传文件
 const hasValue = computed(() => {
-	return !!props.modelValue?.length;
+	return !!modelInnerValue.value?.length;
 });
 // 剩余可上传数量
 const remainQuota = computed(() => {
-	return totalLimit.value - (props.modelValue?.length || 0);
+	return totalLimit.value - (modelInnerValue.value?.length || 0);
 });
 // 是否必填属性，如果必填且有值则在原生 file input 上面不再进行设置
 const isRequired = computed(() => {
@@ -188,8 +194,14 @@ function filesInit(files: any) {
 // 选择完上传目标对象后开始处理
 function selectFilesOrDir(ev: any) {
 	const files = ev.target.files;
+	// 如果不是可多选的上传，则只能上传一个文件，重复上传将在这里删掉前面的文件
+	if (!isTruthy(props.multiple)) {
+		if (modelInnerValue.value?.length) {
+			remove(0);
+		}
+	}
 	// 检测数量是否超出限制
-	if (checkFilesLimit(files)) {
+	else if (checkFilesLimit(files)) {
 		return;
 	}
 	// 上传文件信息检测并初始化，返回要上传的 formData 数据
@@ -229,7 +241,10 @@ function setHooks(method: HookMethod, fn: <T>(a: T) => Promise<T>) {
 	}
 }
 
-function completedUpload(data: []) {
+function completedUpload(data: string | string[] | Normal.AnyObj[]) {
+	if (typeof data === 'string') {
+		data = [data];
+	}
 	// 从允许上传列表里匹配上传结果，更新展示
 	const result = satisfyList.value.map((item, index) => {
 		return {
@@ -237,10 +252,10 @@ function completedUpload(data: []) {
 			url : data[index]
 		}
 	});
-	if (isTruthy(props.multiple) && props.modelValue && props.modelValue.length) {
-		result.unshift(...props.modelValue);
+	if (isTruthy(props.multiple) && modelInnerValue.value && modelInnerValue.value.length) {
+		result.unshift(...modelInnerValue.value);
 	}
-	emit('update:modelValue', result);
+	emit('update:modelValue', formatResult(result));
 }
 
 function statusChanged(state: string, detail?: any) {
@@ -277,9 +292,26 @@ function statusChanged(state: string, detail?: any) {
 }
 
 function remove(index: number) {
-	const newValue = [...props.modelValue];
+	const newValue = [...modelInnerValue.value];
 	newValue.splice(index, 1);
-	emit('update:modelValue', newValue);
+	emit('update:modelValue', formatResult(newValue));
+}
+
+/* 适配上传结果到目标 */
+function formatResult(res: string | string[] | Normal.AnyObj[]) {
+	if (props.modelValue instanceof Array) {
+		return (res instanceof Array) ? res : [res];
+	}
+	// 如果是字符串结果则从数据中取出唯一字符值返回，或者找不到
+	return typeof res === 'string' ? res : ((r: any) => {
+		if (!r) {
+			return '';
+		}
+		if ('url' in r) {
+			return r.url;
+		}
+		return r;
+	})(res[0]);
 }
 
 /* 模拟进度条 */
@@ -345,7 +377,7 @@ defineExpose({
 					:removedUpload="remove"
 					:setError="setError"
 					:status="uploadState"
-					:result="modelValue"
+					:result="modelInnerValue"
 					:accept="acceptExtNames"
 					:max="abbrNumber(max, 'byte')"
 					:limit="totalLimit">
@@ -353,7 +385,7 @@ defineExpose({
 					<slot name="result" :removedUpload="remove">
 						<PreviewSource
 								:source="item" :isSmall canDelete @delete="remove(index)" :key="item"
-								v-for="(item, index) in modelValue"/>
+								v-for="(item, index) in modelInnerValue"/>
 					</slot>
 				</div>
 				<div :class="{'file': 1, 'is-danger is-shake': uploadError, 'is-small': isReallySmall}" v-if="remainQuota > 0">

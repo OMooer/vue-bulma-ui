@@ -5,7 +5,7 @@ import PreviewSource from './PreviewSource.vue';
 import { computed, inject, ref } from 'vue';
 
 const emit = defineEmits(['upload', 'removed', 'error']);
-const props = defineProps(['result', 'status']);
+const props = defineProps<{ result?: any[]; status?: string; }>();
 const {$vbt} = useUILocale();
 const disabled = inject('disabled', ref(false));
 const isDragover = ref(false);

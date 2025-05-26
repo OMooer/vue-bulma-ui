@@ -4,10 +4,7 @@ import { computed, inject, ref, useTemplateRef, watch } from 'vue';
 import InteractiveTracker from '../../InteractiveTracker';
 import PreviewSource from './PreviewSource.vue';
 
-const {result, status = 'init'} = defineProps<{
-	result?: any;
-	status?: string;
-}>();
+const {result, status = 'init'} = defineProps<{ result?: any[]; status?: string; }>();
 const emit = defineEmits(['removed', 'error']);
 const {$vbt} = useUILocale();
 const startUpload = inject('startUpload') as Function;
