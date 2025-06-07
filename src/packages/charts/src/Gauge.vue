@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, shallowRef, watch } from 'vue';
+import type { ChildProps } from './types/charts';
 
-const props = defineProps({
-	data  : {
-		type    : Object,
-		required: true
-	},
-	colors: Array,
-	dark  : Boolean
-});
+const props = defineProps<ChildProps>();
 const echarts = inject('echarts');
 const gaugeRef = ref();
-const eChartsInstance = ref<any>(null);
+const eChartsInstance = shallowRef<any>(null);
 const theme = computed(() => {
 	return props.dark ? 'dark' : 'macarons';
 });

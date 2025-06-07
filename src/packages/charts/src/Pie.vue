@@ -1,22 +1,12 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, shallowRef, watch } from 'vue';
+import type { ChildProps } from './types/charts';
 
-const props = defineProps({
-	topOffset: {
-		type   : Number,
-		default: 90
-	},
-	data     : {
-		type    : Object,
-		required: true
-	},
-	colors   : Array,
-	dark     : Boolean
-});
+const props = defineProps<ChildProps & { topOffset?: number }>();
 const parentChartTitle = inject('parentChartTitle', '');
 const echarts = inject('echarts');
 const pieRef = ref();
-const eChartsInstance = ref<any>(null);
+const eChartsInstance = shallowRef<any>(null);
 const theme = computed(() => {
 	return props.dark ? 'dark' : 'macarons';
 });
@@ -69,7 +59,7 @@ function drawChart() {
 			type     : 'scroll',
 			orient   : 'vertical',
 			right    : 0,
-			top      : props.topOffset,
+			top      : props.topOffset ?? 90,
 			itemWidth: 14,
 			data     : []
 		},

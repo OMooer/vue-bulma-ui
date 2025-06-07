@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
 import * as eCharts from 'echarts';
+import type { ChartData } from './types/charts';
 import { computed, onMounted, provide, ref, shallowRef, watchEffect } from 'vue';
 import { chartColors } from './colors';
 import DatetimePicker from '../../datetimePicker';
@@ -13,48 +14,21 @@ import Radar from './Radar.vue';
 
 const emit = defineEmits(['fetch']);
 const slots = defineSlots();
-const props = defineProps({
-	theme     : String,
-	title     : String,
-	type      : {
-		type    : String,
-		required: true
-	},
-	dateFilter: {
-		type: Boolean,
-		default() {
-			return false;
-		}
-	},
-	dateText  : Array,
-	width     : {
-		type   : [String, Number],
-		default: '100%'
-	},
-	height    : {
-		type   : [String, Number],
-		default: 360
-	},
-	stack     : String,
-	data      : {
-		type    : Array,
-		required: true
-	},
+const props = withDefaults(defineProps<{
+	theme?: string;
+	title?: string;
+	type: 'line' | 'pie' | 'bar' | 'radar' | 'gauge';
+	dateFilter?: boolean;
+	dateText?: string[];
+	width?: string | number;
+	height?: string | number;
+	stack?: string;
+	data: ChartData;
 	// 作用在柱形图中，将其中某项的展示方式转换为折线图
-	barOverLine: {
-		type: Array,
-		default() {
-			return [];
-		}
-	},
+	barOverLine?: string[];
 	// 排除指定的数据项，不参与图形展示
-	excludes: {
-		type: Array,
-		default() {
-			return [];
-		}
-	}
-});
+	excludes?: string[];
+}>(), {width: '100%', height: 360, barOverLine: () => [], excludes: () => []});
 const {$vbt} = useUILocale();
 const toolbar = computed(() => {
 	return props.dateFilter || slots.toolbar;
