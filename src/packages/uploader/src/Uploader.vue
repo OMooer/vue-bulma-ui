@@ -354,6 +354,7 @@ defineExpose({
 <template>
 	<div
 			class="vb-uploader" :class="{'is-disabled': isTruthy(disabled), 'is-danger': uploadError}"
+			:data-required="required"
 			:style="{width: width + 'px'}">
 		<div
 				:class="{
