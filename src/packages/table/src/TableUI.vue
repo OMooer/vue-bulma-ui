@@ -185,9 +185,9 @@ function changeSelect(value: any, selected: boolean) {
 
 .vb-table {
 	margin: 2em 0;
-	overflow-x: auto;
-	border: solid va.$split-color;
-	border-width: 0 1px;
+	overflow: auto;
+	border: solid var(--bulma-border) 1px;
+	border-radius: va.$radius;
 	min-width: 100%;
 
 	.head-dropdown {
@@ -200,10 +200,14 @@ function changeSelect(value: any, selected: boolean) {
 		table-layout: fixed;
 		width: auto;
 		min-width: 100%;
+		border-collapse: separate;
+		border-spacing: 0;
 
 		thead {
 			position: sticky;
 			top: 0;
+			z-index: 12;
+			background: var(--bulma-table-background-color);
 
 			tr th {
 				border-bottom-width: 2px;
@@ -219,6 +223,8 @@ function changeSelect(value: any, selected: boolean) {
 		}
 
 		th, td {
+			border-top-width: 0;
+			border-right-width: 0;
 			word-break: break-all;
 			vertical-align: middle;
 			white-space: nowrap;
@@ -227,8 +233,6 @@ function changeSelect(value: any, selected: boolean) {
 				position: sticky;
 				z-index: 10;
 				background-color: var(--bulma-table-background-color);
-				box-shadow: -1px 0 0 0 va.$split-color inset, 1px 0 0 0 va.$split-color inset;
-				border-right: 0;
 
 				&:has(.dropdown.is-active) {
 					z-index: 12;
@@ -238,12 +242,8 @@ function changeSelect(value: any, selected: boolean) {
 					border-left: 0;
 				}
 
-				&:first-child {
-					box-shadow: -1px 0 0 0 va.$split-color inset;
-				}
-
-				&:last-child {
-					box-shadow: 1px 0 0 0 va.$split-color inset;
+				&:not(:last-child) {
+					border-right-width: 1px;
 				}
 			}
 
@@ -261,6 +261,12 @@ function changeSelect(value: any, selected: boolean) {
 
 			&:last-of-type {
 				border-right: 0;
+			}
+		}
+
+		tr:last-of-type{
+			td {
+				border-bottom: 0;
 			}
 		}
 
