@@ -79,7 +79,7 @@ declare namespace VBTable {
 	type Column = {
 		field: string;
 		label: string;
-		sort?: boolean;
+		sort?: boolean | 'asc' | 'desc' | 'none';
 		sticky?: boolean;
 		style?: Normal.AnyObj | string;
 		slot?: string;

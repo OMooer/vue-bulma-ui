@@ -147,7 +147,9 @@ function changeSelect(value: any, selected: boolean) {
 						v-for="(item, idx) in renderColumns">
 					{{ item.label }}
 					<!-- 如果有排序 -->
-					<SortUI :state="sorts[item.field]" @sort="sortTable(item.field, $event, true)" v-if="item.sort"/>
+					<SortUI
+							:state="sorts[item.field] ?? (typeof item.sort === 'boolean' ? 'none' : item.sort)"
+							@sort="sortTable(item.field, $event, true)" v-if="item.sort"/>
 				</th>
 			</tr>
 			</thead>
@@ -264,7 +266,7 @@ function changeSelect(value: any, selected: boolean) {
 			}
 		}
 
-		tr:last-of-type{
+		tr:last-of-type {
 			td {
 				border-bottom: 0;
 			}
