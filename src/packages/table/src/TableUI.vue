@@ -154,7 +154,9 @@ function changeSelect(value: any, selected: boolean) {
 			</tr>
 			</thead>
 			<tbody>
-			<tr :class="{'is-checked': selectedIndex.includes(index)}" v-for="(data, index) in tableData">
+			<tr
+					:class="{'is-checked': selectedIndex.includes(index)}" :key="Object.values(data)?.[0] ?? index"
+					v-for="(data, index) in tableData">
 				<!-- 如果有勾选列 -->
 				<td class="col-check is-sticky" v-if="tableConfig?.showSelectColumn">
 					<label class="checkbox">
@@ -162,8 +164,9 @@ function changeSelect(value: any, selected: boolean) {
 					</label>
 				</td>
 				<td
-						:class="[item.slot?`col-${item.slot}`:`col-${idx}`, {'is-sticky' : item.sticky}]"
+						:class="[`col-${idx}`, {[`col-${item.slot}`]: item.slot, 'is-sticky' : item.sticky}]"
 						:style="item.style ?? null"
+						:key="item.field"
 						v-for="(item, idx) in renderColumns">
 					<!-- 如果有插槽则显示插槽的内容，否则显示纯数据值 -->
 					<template v-if="item.slot">
@@ -188,7 +191,7 @@ function changeSelect(value: any, selected: boolean) {
 .vb-table {
 	margin: 2em 0;
 	overflow: auto;
-	border: solid var(--bulma-border) 1px;
+	border: solid va.$split-color 2px;
 	border-radius: va.$radius;
 	min-width: 100%;
 
@@ -213,7 +216,6 @@ function changeSelect(value: any, selected: boolean) {
 
 			tr th {
 				border-bottom-width: 2px;
-				border-bottom-color: va.$split-color;
 				font-weight: bold;
 			}
 		}
