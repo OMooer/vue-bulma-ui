@@ -1,26 +1,25 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
-const props = defineProps({
-	src : {
-		type    : String,
-		required: true
-	},
-	name: {
-		type   : String,
-		default: 'Avatar'
-	},
-	size: {
-		type     : String,
-		validator: (value: string) => {
-			return ['sm', 'xl', '2xl'].includes(value);
-		}
-	}
-});
+const props = defineProps<{
+	src: string;
+	name?: string;
+	size?: 'sm' | 'xl' | '2xl';
+	r?: string | number;
+}>();
 const normal = ref('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=');
 const loadedFailed = ref(false);
 const url = computed(() => {
 	return loadedFailed.value ? normal.value : (props.src || normal.value);
+});
+const radius = computed(() => {
+	if (typeof props.r === 'undefined') {
+		return props.r;
+	}
+	if (typeof props.r === 'number') {
+		return props.r + 'px';
+	}
+	return isNaN(Number(props.r)) ? props.r : props.r + 'px';
 });
 
 watch(() => props.src, () => {
@@ -36,13 +35,14 @@ function noImage() {
 	<img
 			class="avatar"
 			:class="{'sm':size==='sm','xl':size==='xl','xxl':size==='2xl'}"
-			:alt="name" :src="url"
+			:alt="name ?? 'Avatar'" :src="url"
+			:style="typeof r !== 'undefined' ? `border-radius: ${radius};` : undefined"
 			@error="noImage">
 </template>
 
 <style scoped lang="scss">
 .avatar {
-	display: block;
+	display: inline-block;
 	background-color: #777;
 	border-radius: 50%;
 	font-size: .75rem;

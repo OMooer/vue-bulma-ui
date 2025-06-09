@@ -157,7 +157,10 @@ function reset() {
 				<slot name="buttons">
 					<template v-if="config?.buttons.length">
 						<div class="control" :class="{'is-expanded': btn.fulled}" v-for="btn in config.buttons">
-							<button :type="btn.type" :class="[btn.class, isSmall ? 'is-small' : '']" @click="btn?.handler">
+							<button
+									:type="btn.type || 'button'"
+									:class="[btn.class, btn.fulled ? 'is-fullwidth' : '', isSmall ? 'is-small' : '']"
+									@click="btn?.handler">
 								{{ btn.text }}
 							</button>
 						</div>
