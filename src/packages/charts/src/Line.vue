@@ -11,7 +11,7 @@ const theme = computed(() => {
 });
 const seriesData = computed(() => {
 	return props.data.series.map((item: any) => {
-		return {
+		const series = {
 			name : item.name,
 			type : 'line',
 			data : item.data,
@@ -19,6 +19,17 @@ const seriesData = computed(() => {
 				show: true
 			}
 		}
+		if (item.stack) {
+			Object.assign(series, {
+				stack    : item.stack,
+				areaStyle: {},
+				emphasis : {
+					focus: 'series'
+				}
+			});
+		}
+
+		return series;
 	});
 });
 const legendData = computed(() => props.data.legend.map((item: any) => {
@@ -88,8 +99,9 @@ function drawChart() {
 }
 
 function updateData() {
+	const legend = legendData.value?.length ? {data: legendData.value} : undefined;
 	eChartsInstance.value?.setOption({
-		legend: {data: legendData.value},
+		legend,
 		series: seriesData.value,
 		xAxis : [
 			{

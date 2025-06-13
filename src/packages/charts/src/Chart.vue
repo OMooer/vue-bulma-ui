@@ -28,6 +28,7 @@ const props = withDefaults(defineProps<{
 	barOverLine?: string[];
 	// 排除指定的数据项，不参与图形展示
 	excludes?: string[];
+	hideLegend?: boolean;
 }>(), {width: '100%', height: 360, barOverLine: () => [], excludes: () => []});
 const {$vbt} = useUILocale();
 const toolbar = computed(() => {
@@ -121,6 +122,9 @@ const chartLegend = computed(() => {
 	if (!props.data.length) {
 		return [];
 	}
+	if (props.hideLegend) {
+		return [];
+	}
 	return Object.keys((props.data[0] as any).data).filter((legend: string) => {
 		return !(props.excludes as string[]).some((ex: string) => ex.toLowerCase() === legend.toLowerCase());
 	});
@@ -175,7 +179,7 @@ provide('parentChartTitle', props.title);
 
 <template>
 	<div class="vb-chart">
-		<h3 class="title is-5 mt-5" v-if="title">{{ title }}</h3>
+		<h3 class="title is-5" v-if="title">{{ title }}</h3>
 		<div class="toolbar" v-if="toolbar">
 			<div class="tool-date" v-if="dateFilter">
 				<DatetimePicker class="is-small" :messages is-range v-model="dateRange"/>

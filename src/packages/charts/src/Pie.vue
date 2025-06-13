@@ -19,7 +19,6 @@ const seriesData = computed(() => {
 	});
 });
 const legendData = computed(() => props.data.legend);
-const position = ['28%', '55%'];
 // 主题更改的话，需要重新初始化
 watch(() => theme.value, () => {
 	if (eChartsInstance.value) {
@@ -44,7 +43,7 @@ function drawChart() {
 		color  : props.colors,
 		tooltip: {
 			trigger  : 'item',
-			formatter: "{a} <br/>{b}: {c} ({d}%)"
+			formatter: "{b}: {c} ({d}%)"
 		},
 		title  : {
 			left     : 0,
@@ -59,7 +58,7 @@ function drawChart() {
 			type     : 'scroll',
 			orient   : 'vertical',
 			right    : 0,
-			top      : props.topOffset ?? 90,
+			top      : props.topOffset || 'center',
 			itemWidth: 14,
 			data     : []
 		},
@@ -67,8 +66,7 @@ function drawChart() {
 			{
 				name             : parentChartTitle,
 				type             : 'pie',
-				center           : position,
-				radius           : ['25%', '50%'],
+				radius           : ['40%', '90%'],
 				avoidLabelOverlap: false,
 				label            : {
 					show: false
@@ -96,11 +94,20 @@ function drawChart() {
 }
 
 function updateData() {
+	let minLen = pieRef.value?.offsetHeight;
+	let maxLen = pieRef.value?.offsetWidth;
+	if (maxLen < minLen) {
+		maxLen = minLen;
+		minLen = pieRef.value?.offsetWidth;
+	}
+	const leftX = 90 / 2 * (minLen / maxLen) + 2;
+	const legend = legendData.value?.length ? {data: legendData.value} : undefined;
 	eChartsInstance.value?.setOption({
-		legend: {data: legendData.value},
+		legend,
 		series: [
 			{
-				data: seriesData.value
+				center: legend ? [`${ leftX }%`, 'center'] : 'center',
+				data  : seriesData.value
 			}
 		]
 	});

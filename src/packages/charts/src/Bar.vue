@@ -111,8 +111,9 @@ function drawChart() {
 }
 
 function updateData() {
+	const legend = legendData.value?.length ? {data: legendData.value} : undefined;
 	eChartsInstance.value?.setOption({
-		legend: {data: legendData.value},
+		legend,
 		series: seriesData.value,
 		xAxis : [
 			{
