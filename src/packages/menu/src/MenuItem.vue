@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { getI18nData } from '@/utils';
 import Link from './Link.vue';
 
+const emit = defineEmits(['toggle']);
 const props = withDefaults(defineProps<{
 	data: VBMenu.Item[];
 	locale?: string;
@@ -39,6 +40,7 @@ function toggleSub(currentItem: VBMenu.Item, isOpen: boolean) {
 	}
 	setTimeout(() => {
 		currentItem.folded = !isOpen;
+		emit('toggle', isOpen);
 	});
 }
 </script>
@@ -70,7 +72,9 @@ function toggleSub(currentItem: VBMenu.Item, isOpen: boolean) {
 				</span>
 			</Link>
 			<div class="next-menu" v-if="item.children?.length">
-				<MenuItem :level="level + 1" :locale :data="item.children" :exactClass :activeClass/>
+				<MenuItem
+						:level="level + 1" :locale :data="item.children" :exactClass :activeClass
+						@toggle="toggleSub(item, $event)"/>
 			</div>
 		</li>
 	</ul>

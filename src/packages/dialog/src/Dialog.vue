@@ -4,7 +4,7 @@ import { computed, ref } from 'vue';
 import Modal from '../../modal';
 
 const emit = defineEmits(['done', 'close']);
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	show?: boolean;
 	type?: 'alert' | 'confirm';
 	title?: string;
@@ -12,7 +12,7 @@ const props = defineProps<{
 	doneText?: string;
 	cancelText?: string;
 	primaryColor?: string;
-}>();
+}>(), {show: true, type: 'alert'});
 const {$vbt} = useUILocale();
 const opened = ref(false);
 const openDialog = computed(() => {
