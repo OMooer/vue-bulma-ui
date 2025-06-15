@@ -56,17 +56,19 @@ function deleteSource() {
 			<img :src="sourceUrl" :alt="sourceName" @click="showPreview">
 		</figure>
 		<!-- 文件形式 -->
-		<a class="file-label" :href="sourceUrl" download rel="external" v-else>
+		<a class="file-label" :href="sourceUrl" download rel="external" target="_blank" @click.stop v-else>
 			<span class="file-cta">
 				<span class="file-icon"><FasIcon icon="file-arrow-down"/></span>
 			</span>
 			<span class="file-name">{{ sourceName }}
-				<button
-						type="button" class="file-delete button is-ghost" :class="{'is-small' : isReallySmall}"
-						@click.stop.prevent="deleteSource" v-if="canDelete">
-					<FasIcon icon="trash-can"/>
-				</button>
 			</span>
+			<button
+					type="button" class="file-delete button is-ghost" :class="{'is-small' : isReallySmall}"
+					@click.stop.prevent="deleteSource" v-if="canDelete">
+					<span class="icon is-small">
+						<FasIcon icon="trash-can"/>
+					</span>
+			</button>
 		</a>
 	</div>
 	<!-- 预览 -->
@@ -106,10 +108,17 @@ function deleteSource() {
 				margin: 0;
 			}
 		}
+
+		&:hover:not(:has(.file-delete:hover)) {
+			.file-name {
+				color: var(--bulma-link);
+				text-decoration: underline;
+			}
+		}
 	}
 
 	.file-name {
-		padding-right: 1.5em;
+		padding-right: 2em;
 		flex-grow: 1;
 		border-top-left-radius: 0;
 		border-bottom-left-radius: 0;
@@ -121,9 +130,7 @@ function deleteSource() {
 		position: absolute;
 		right: 0;
 		top: 0;
-		padding-left: 0;
-		padding-right: 0;
-		width: 1.5em;
+		padding-left: 0.5em;
 		height: 100%;
 
 		&:hover {

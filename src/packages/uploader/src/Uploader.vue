@@ -437,7 +437,7 @@ defineExpose({
 		}
 	}
 
-	&:focus-within {
+	&:focus-within:not(:has(.upload-result)) {
 		.file {
 			box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
 			border-radius: var(--bulma-radius);
