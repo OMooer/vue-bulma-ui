@@ -62,7 +62,7 @@ export default defineComponent({
 					key,
 					folded: !activeKeys.value?.includes(key as string),
 					force : isTruthy(node.props?.force),
-					name  : node.props?.header,
+					name  : node.props?.title ?? node.props?.header,
 				};
 				panelConfig.value.push(item);
 

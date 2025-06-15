@@ -4,20 +4,15 @@ import { computed, ref } from 'vue';
 import Modal from '../../modal';
 
 const emit = defineEmits(['done', 'close']);
-const props = defineProps({
-	show      : {
-		type   : Boolean,
-		default: true
-	},
-	type      : {
-		type   : String,
-		default: 'alert'
-	},
-	title     : String,
-	content   : String,
-	doneText  : String,
-	cancelText: String
-});
+const props = defineProps<{
+	show?: boolean;
+	type?: 'alert' | 'confirm';
+	title?: string;
+	content?: string;
+	doneText?: string;
+	cancelText?: string;
+	primaryColor?: string;
+}>();
 const {$vbt} = useUILocale();
 const opened = ref(false);
 const openDialog = computed(() => {
@@ -36,7 +31,7 @@ function openNow(ev: Event) {
 	opened.value = true;
 }
 
-function doneHandler(){
+function doneHandler() {
 	opened.value = false;
 	emit('done');
 }
@@ -60,7 +55,7 @@ function chooseHandler(o: boolean) {
 		<template #footer>
 			<footer class="card-footer">
 				<a
-						class="card-footer-item has-text-weight-bold"
+						class="card-footer-item has-text-weight-bold" :class="[primaryColor]"
 						@click="chooseHandler(true)">{{ doneText || $vbt('dialog.doneText') }}</a>
 				<a
 						class="card-footer-item" @click="chooseHandler(false)"

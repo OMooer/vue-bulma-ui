@@ -29,19 +29,30 @@ function getMenuTitle(title: string | { [propName: string]: string }): string {
 	return title;
 }
 
-function toggleSub(item: VBMenu.Item) {
-	item.folded = !item.folded;
+function toggleSub(currentItem: VBMenu.Item, isOpen: boolean) {
+	if (isOpen) {
+		for (const item of menuList.value) {
+			if (item.children?.length) {
+				item.folded = true;
+			}
+		}
+	}
+	setTimeout(() => {
+		currentItem.folded = !isOpen;
+	});
 }
 </script>
 
 <template>
 	<ul :style="`--level: ${props.level}`">
-		<li :class="item.folded ? undefined : {[activeClass]: true, 'is-active': true}" v-for="item in menuList">
+		<li
+				:class="item.folded ? undefined : {[activeClass]: true, 'is-active': true}"
+				:key="(item as any).name ?? (item as any).url" v-for="item in menuList">
 			<Link
 					class="menu-link" :exactClass
 					:to="item.external === true ? item.url : {name: item.name}"
 					:title="getMenuTitle(item.title)"
-					@state="item.folded = !$event">
+					@state="toggleSub(item, $event)">
 				<span class="menu-title">
 					<span class="icon" v-if="item.icon">
 						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
@@ -52,7 +63,8 @@ function toggleSub(item: VBMenu.Item) {
 					</span>
 				</span>
 				<span
-						class="icon next-icon" :class="{'roll-down': !item?.folded}" @click.prevent.stop="toggleSub(item)"
+						class="icon next-icon" :class="{'roll-down': !item?.folded}"
+						@click.prevent.stop="item.folded = !item.folded"
 						v-if="item.children?.length">
 					<FasIcon icon="angle-right"/>
 				</span>

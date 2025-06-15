@@ -2,9 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue';
 
 defineEmits(['toggle']);
-const slots = defineSlots();
 const props = defineProps({
-	'header'      : String,
+	'title'       : String,
 	'panel'       : null,
 	'gap'         : {type: Number, default: 0},
 	'showArrow'   : {type: Boolean, default: true},
@@ -27,14 +26,14 @@ watch(() => props.panel?.folded, (isFold) => {
 		window.clearTimeout(timer);
 	}
 	showPanel.value = true;
-	// 折叠时直接设置 css 动画
-	if (isFold) {
-		showing.value = true;
-	}
-	// 延时处理 css 动画
-	window.setTimeout(() => {
-		showing.value = true;
-		panelHeight.value = panelRef.value.offsetHeight;
+	// 直接设置 css 动画
+	showing.value = true;
+	// 延迟处理 css 动画高度
+	requestAnimationFrame(() => {
+		// 展开时计算实际高度
+		if (!isFold) {
+			panelHeight.value = panelRef.value.offsetHeight;
+		}
 		isFolded.value = isFold;
 	});
 	// 等待动画执行完
@@ -53,9 +52,6 @@ const styles = computed(() => {
 const gaps = computed(() => {
 	return Math.max(0, props.gap);
 });
-const isShowExtra = computed(() => {
-	return !props.panel?.folded && slots?.primaryButton;
-});
 const isArrowStart = computed(() => {
 	return props.iconPosition === 'start';
 });
@@ -73,11 +69,17 @@ const isArrowStart = computed(() => {
 				<slot name="subtitle" :folded="panel?.folded"/>
 			</p>
 
-			<div class="buttons are-small" @click.stop v-if="isShowExtra">
-				<slot name="primaryButton" :folded="panel?.folded"/>
+			<div class="card-operations" v-if="$slots.primaryButton">
+				<Transition name="animate-slide-left">
+					<div class="buttons are-small" @click.stop v-show="!panel?.folded">
+						<slot name="primaryButton" :folded="panel?.folded"/>
+					</div>
+				</Transition>
 			</div>
 
-			<button type="button" class="card-header-icon" :class="{'is-start-pos': isArrowStart}" v-if="showArrow">
+			<button
+					type="button" class="card-header-icon" :class="{'is-start-pos': isArrowStart}" aria-hidden="true"
+					v-if="showArrow">
 				<span class="icon" :class="{'roll-down': !panel?.folded}"><FasIcon icon="angle-right"/></span>
 			</button>
 		</header>
@@ -93,6 +95,7 @@ const isArrowStart = computed(() => {
 
 <style scoped lang="scss">
 @use "@/scss/variables" as va;
+@use "@/scss/animates";
 
 .card {
 	--bulma-block-spacing: 0;
@@ -137,12 +140,16 @@ const isArrowStart = computed(() => {
 			}
 		}
 
-		.buttons {
-			margin-bottom: 0;
+		.card-operations {
+			overflow: hidden;
 			order: 2;
 
-			:deep(.button) {
+			.buttons {
 				margin-bottom: 0;
+
+				:deep(.button) {
+					margin-bottom: 0;
+				}
 			}
 		}
 	}
@@ -150,7 +157,7 @@ const isArrowStart = computed(() => {
 	.card-body {
 		margin: 0 .75rem;
 		border-top: solid 1px va.$split-color;
-		transition: height .3s ease-in, opacity .3s ease-in, border .3s ease-in;
+		transition: height .2s ease-in-out, opacity .2s ease-in-out;
 
 		.panel-content {
 			padding: .75rem .25rem;
@@ -186,7 +193,6 @@ const isArrowStart = computed(() => {
 
 	&.is-fold .card-body {
 		overflow: hidden;
-		border-top: solid 0 transparent;
 		height: 0 !important;
 		opacity: 0;
 	}
