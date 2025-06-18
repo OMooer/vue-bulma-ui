@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import { getI18nData } from '@/utils';
 import Link from './Link.vue';
 
-const emit = defineEmits(['toggle']);
 const props = withDefaults(defineProps<{
 	data: VBMenu.Item[];
 	locale?: string;
@@ -29,20 +28,6 @@ function getMenuTitle(title: string | { [propName: string]: string }): string {
 	}
 	return title;
 }
-
-function toggleSub(currentItem: VBMenu.Item, isOpen: boolean) {
-	if (isOpen) {
-		for (const item of menuList.value) {
-			if (item.children?.length) {
-				item.folded = true;
-			}
-		}
-	}
-	setTimeout(() => {
-		currentItem.folded = !isOpen;
-		emit('toggle', isOpen);
-	});
-}
 </script>
 
 <template>
@@ -54,7 +39,7 @@ function toggleSub(currentItem: VBMenu.Item, isOpen: boolean) {
 					class="menu-link" :exactClass
 					:to="item.external === true ? item.url : {name: item.name}"
 					:title="getMenuTitle(item.title)"
-					@state="toggleSub(item, $event)">
+					@state="item.folded = !$event">
 				<span class="menu-title">
 					<span class="icon" v-if="item.icon">
 						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
@@ -72,9 +57,7 @@ function toggleSub(currentItem: VBMenu.Item, isOpen: boolean) {
 				</span>
 			</Link>
 			<div class="next-menu" v-if="item.children?.length">
-				<MenuItem
-						:level="level + 1" :locale :data="item.children" :exactClass :activeClass
-						@toggle="toggleSub(item, $event)"/>
+				<MenuItem :level="level + 1" :locale :data="item.children" :exactClass :activeClass/>
 			</div>
 		</li>
 	</ul>
