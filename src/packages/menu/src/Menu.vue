@@ -36,11 +36,11 @@ defineProps({
 	// 链接悬浮颜色
 	--link-hover-color: var(--bulma-text-strong);
 	// 链接悬浮背景色
-	--link-hover-bg-color: var(--bulma-link-85);
+	--link-hover-bg-color: var(--bulma-background-hover);
 	// 链接激活颜色
 	--link-active-color: var(--bulma-white);
 	// 链接激活背景色
-	--link-active-bg-color: var(--bulma-link);
+	--link-active-bg-color: var(--bulma-link-70);
 	// 边框颜色
 	--border-color: var(--bulma-border);
 	// 链接圆角
@@ -48,7 +48,7 @@ defineProps({
 	// 图标颜色
 	--icon-color: var(--bulma-link);
 	// 子菜单背景色
-	--submenu-bg-color: var(--bulma-white-bis);
+	--submenu-bg-color: var(--bulma-scheme-main-bis);
 	// 子菜单外边距
 	--submenu-margin: var(--link-margin-inline);
 
