@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { getI18nData } from '@/utils';
 import Link from './Link.vue';
 
+const emit = defineEmits(['toggle']);
 const props = withDefaults(defineProps<{
 	data: VBMenu.Item[];
 	locale?: string;
@@ -28,6 +29,28 @@ function getMenuTitle(title: string | { [propName: string]: string }): string {
 	}
 	return title;
 }
+
+function toggleFold(currentMenu: VBMenu.Item, folded: boolean) {
+	currentMenu.folded = folded;
+	// 折叠其他菜单及子菜单
+	const foldOtherMenu = (list: VBMenu.Item[]) => {
+		for (const item of list) {
+			if (item !== currentMenu) {
+				item.folded = true;
+				// 子菜单都折叠
+				if (item?.children?.length) {
+					foldOtherMenu(item?.children ?? []);
+				}
+			}
+		}
+	}
+	if (!folded) {
+		// 折叠同一级的其他菜单
+		foldOtherMenu(menuList.value);
+		// 如果是展开的则往上处理父级菜单的展开
+		emit('toggle', true);
+	}
+}
 </script>
 
 <template>
@@ -39,7 +62,7 @@ function getMenuTitle(title: string | { [propName: string]: string }): string {
 					class="menu-link" :exactClass
 					:to="item.external === true ? item.url : {name: item.name}"
 					:title="getMenuTitle(item.title)"
-					@state="item.folded = !$event">
+					@state="toggleFold(item, !$event)">
 				<span class="menu-title">
 					<span class="icon" v-if="item.icon">
 						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
@@ -57,7 +80,9 @@ function getMenuTitle(title: string | { [propName: string]: string }): string {
 				</span>
 			</Link>
 			<div class="next-menu" v-if="item.children?.length">
-				<MenuItem :level="level + 1" :locale :data="item.children" :exactClass :activeClass/>
+				<MenuItem
+						:level="level + 1" :locale :data="item.children" :exactClass :activeClass
+						@toggle="toggleFold(item, !$event)"/>
 			</div>
 		</li>
 	</ul>
