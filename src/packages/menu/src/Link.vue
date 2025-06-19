@@ -71,6 +71,9 @@ const nonAttrProps = computed(() => {
 function setClass(isExactActive: boolean) {
 	const cls: string[] = [];
 	if (isExactActive) {
+		if (props.exactClass !== 'is-exact-link') {
+			cls.push('is-exact-link');
+		}
 		cls.push(props.exactClass);
 	}
 	if (props.noExternalIcon) {

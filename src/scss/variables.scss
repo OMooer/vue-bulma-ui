@@ -23,3 +23,17 @@ $placeholder-color: hsla(var(--bulma-text-h), var(--bulma-text-s), var(--bulma-t
 	--bulma-file-background-l-delta: 0%;
 	background-color: hsl(var(--bulma-file-h), var(--bulma-file-s), calc(var(--bulma-file-background-l) + var(--bulma-file-background-l-delta)));
 }
+
+@mixin currentMenu {
+	background-color: var(--link-active-bg-color);
+	color: var(--link-active-color);
+	font-weight: bold;
+
+	.menu-title > .icon {
+		color: var(--link-active-color);
+	}
+
+	.next-icon {
+		color: var(--link-active-color);
+	}
+}

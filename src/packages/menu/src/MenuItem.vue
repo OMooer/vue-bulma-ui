@@ -89,6 +89,8 @@ function toggleFold(currentMenu: VBMenu.Item, folded: boolean) {
 </template>
 
 <style scoped lang="scss">
+@use "@/scss/variables" as va;
+
 ul {
 	margin: 0;
 	padding: 0;
@@ -98,7 +100,18 @@ ul {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0 0.25em 0 var(--padding-left, 0.25em);
+		overflow: hidden;
+		margin: 0.125rem var(--link-margin-inline);
+		padding-block: 0;
+		padding-left: var(--link-padding-l);
+		padding-right: var(--link-padding-r);
+		color: var(--link-color);
+		border-radius: var(--radius);
+
+		&:hover {
+			background-color: var(--link-hover-bg-color);
+			color: var(--link-hover-color);
+		}
 
 		.menu-title {
 			display: flex;
@@ -108,7 +121,21 @@ ul {
 			.icon {
 				margin-right: .25em;
 				transition: none;
+				color: var(--icon-color);
 			}
+
+			.text {
+				white-space: nowrap;
+				transition: opacity .3s ease, visibility .3s ease;
+
+				&:only-child {
+					margin-left: var(--link-padding-l);
+				}
+			}
+		}
+
+		.next-icon {
+			color: var(--icon-color);
 		}
 	}
 
@@ -129,12 +156,13 @@ ul {
 			display: grid;
 			grid-template-rows: 0fr;
 			transition: grid-template-rows .3s ease;
+			font-size: .9375em;
 
 			> ul {
 				overflow: hidden;
 
 				> li > :deep(.menu-link) {
-					--padding-left: calc(1em * var(--level) + 0.5em);
+					--link-padding-l: calc(1em * var(--level) + 0.5em);;
 				}
 			}
 		}
@@ -142,6 +170,57 @@ ul {
 		&.is-active {
 			> .next-menu {
 				grid-template-rows: 1fr;
+			}
+		}
+	}
+
+	li {
+		> .menu-link {
+			&.is-exact-link {
+				@include va.currentMenu;
+			}
+		}
+
+		// 节点未激活（没有展开），下级有当前激活的节点
+		&:not(.is-active):has(.is-exact-link) > .menu-link:not(.is-exact-link) {
+			background-color: var(--link-hover-bg-color);
+		}
+
+		// 节点激活（已展开），但是当前激活节点是下级的节点而非自身
+		&.is-active:has(>.next-menu):not(:has(>.is-exact-link)):not(:has(>.next-menu>ul>li.is-active)),
+		&.is-active:has(>.next-menu>ul>li>.is-exact-link:only-child) {
+			> .menu-link {
+				background-color: var(--link-hover-bg-color);
+			}
+		}
+
+		// 节点展开但是并没有激活的子节点
+		&:not(:has(>.next-menu li.is-active>.next-menu)),
+			// 子菜单存在当前激活节点且是最终节点
+		&:has(>.next-menu>ul>li>.is-exact-link:only-child) {
+			// 如果自身是激活的那么子菜单设置背景颜色等样式
+			&.is-active > .next-menu {
+				position: relative;
+				margin-bottom: .75rem;
+
+				&::before {
+					content: "";
+					position: absolute;
+					pointer-events: none;
+					left: var(--submenu-margin);
+					right: var(--submenu-margin);
+					top: 0;
+					bottom: 0;
+					background-color: var(--submenu-bg-color);
+					box-shadow: 0 0 2px 0 var(--border-color) inset;
+					border-radius: var(--radius);
+					z-index: 1;
+				}
+
+				> ul {
+					position: relative;
+					z-index: 2;
+				}
 			}
 		}
 	}
