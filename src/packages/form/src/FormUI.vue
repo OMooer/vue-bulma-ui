@@ -73,7 +73,7 @@ function reset() {
 					v-if="'slot' in item"/>
 			<FormElement
 					class="column mb-0" :class="[item.colspan ? `is-${item.colspan}` : colClassName, {'py-1': isSmall}]"
-					:label="item.label" :isSmall
+					:key="item.name" :label="item.label" :isSmall
 					v-else>
 				<!-- 输入框 -->
 				<InputUI

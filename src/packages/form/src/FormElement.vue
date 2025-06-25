@@ -127,7 +127,7 @@ provide('formElement', true);
 		</div>
 		<div class="field-body">
 			<div class="field is-expanded">
-				<ElementCom/>
+				<ElementCom><slot :setError/></ElementCom>
 				<HelpCom v-if="helpMsg && (isError || !floatTips)"/>
 			</div>
 		</div>
@@ -135,7 +135,7 @@ provide('formElement', true);
 	<!-- 垂直排列 -->
 	<div class="field" :class="{'is-float-tips': floatTips, 'is-float-form': floatLabel}" v-else>
 		<LabelCom v-if="label"/>
-		<ElementCom/>
+		<ElementCom><slot :setError/></ElementCom>
 		<HelpCom v-if="helpMsg && (isError || !floatTips)"/>
 	</div>
 </template>
