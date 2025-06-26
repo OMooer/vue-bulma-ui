@@ -106,6 +106,7 @@ defineExpose({
 
 <style scoped lang="scss">
 @use "@/scss/variables" as va;
+@use "@/scss/animates";
 
 .vb-popup.box {
 	position: fixed;
