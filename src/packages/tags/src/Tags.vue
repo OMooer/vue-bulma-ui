@@ -3,11 +3,10 @@ import { useKeydown } from '@/actions/keydown';
 import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
-import { isOverBoxSize, isTruthy, scroll2Middle, vFocus } from '@/utils';
+import { isOverBoxSize, isTruthy, scroll2Middle, TAB_CLOSE_METHOD, vFocus } from '@/utils';
 
 const isParentSmall = inject('isSmall', ref(false));
 const props = withDefaults(defineProps<{
-	modelValue?: any;
 	list: TVO.List;
 	collapse?: number;
 	placeholder?: string;
@@ -17,34 +16,12 @@ const props = withDefaults(defineProps<{
 	disabled?: boolean;
 	emptyText?: string;
 }>(), {collapse: 0});
-const emit = defineEmits(['update:modelValue', 'error']);
+const emit = defineEmits(['error']);
 const {$vbt} = useUILocale();
 const {keyIndex, handler} = useKeydown();
 const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 const isError = ref(false);
-// 内置值，在未提供 modelValue 时也保证 UI 的可用性
-const innerValue = ref<TVO.Value[]>([]);
-// 当前值
-const currentValue = computed({
-	get() {
-		// 合并传值
-		if (props.modelValue) {
-			// 如果数据没有长度表示清空
-			if (!props.modelValue.length) {
-				return [];
-			}
-			else {
-				const mergeValue: TVO.Value[] = [];
-				mergeValue.push(...props.modelValue, ...innerValue.value);
-				return Array.from(new Set(mergeValue));
-			}
-		}
-		return innerValue.value;
-	},
-	set(arrayVal) {
-		innerValue.value = arrayVal;
-	}
-});
+const currentValue = defineModel<TVO.Value[]>({default: []});
 // 面板开关状态
 const isOpen = ref(false);
 const isUp = ref(false);
@@ -106,8 +83,7 @@ function getValueItem(value: TVO.Value): TVO.Item {
 function selectValue(item: TVO.Item) {
 	item.selected = !item.selected;
 	if (item.selected) {
-		currentValue.value.push(item.value);
-		emit('update:modelValue', currentValue.value);
+		currentValue.value = [...currentValue.value, item.value];
 	}
 	else {
 		removeSelected(item.value);
@@ -145,12 +121,13 @@ function removeSelected(value: TVO.Value) {
 			}
 		});
 		currentValue.value.splice(idx, 1);
-		emit('update:modelValue', currentValue.value);
+		currentValue.value = [...currentValue.value];
 	}
 }
 
 const event = (ev: Event) => {
 	if (!(ev.target as HTMLElement).closest('.vb-tags.is-active')) {
+		closeMethod = TAB_CLOSE_METHOD;
 		isOpen.value = false;
 	}
 };
@@ -172,7 +149,7 @@ watch(isOpen, (is) => {
 		isUp.value = false;
 		keyword.value = '';
 		keyIndex.value = -1;
-		if (closeMethod !== 'tab') {
+		if (closeMethod !== TAB_CLOSE_METHOD) {
 			frontFocus();
 		}
 		document.removeEventListener('click', event, {capture: true});
@@ -266,7 +243,7 @@ function keyAction(e: any) {
 
 function blurEntity(e: any) {
 	if (e.relatedTarget && !entity.value?.contains(e.relatedTarget)) {
-		closeMethod = 'tab';
+		closeMethod = TAB_CLOSE_METHOD;
 		isOpen.value = false;
 	}
 }

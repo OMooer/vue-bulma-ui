@@ -1,4 +1,5 @@
 export const DIALOG_APP_ID = 'vb_dialog_app_node';
+export const TAB_CLOSE_METHOD = 'tab';
 export const OUT_OF_RANGE = 'out of range';
 export const FILE_UPLOAD_FAILED = 'file upload failed.';
 export const ERROR_ACCEPT = '上传组件的 accept 属性，不同于原生属性，只允许设置扩展名，否则无法正常使用';

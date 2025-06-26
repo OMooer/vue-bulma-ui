@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { useKeydown } from '@/actions/keydown';
 import { useUILocale } from '@/actions/locale';
-import { computed, inject, onUpdated, ref, watch } from 'vue';
-import { isOverBoxSize, scroll2Middle, vFocus } from '@/utils';
+import { computed, inject, ref, watch } from 'vue';
+import { isOverBoxSize, scroll2Middle, TAB_CLOSE_METHOD, vFocus } from '@/utils';
 import Empty from '../../empty';
 
 const isParentSmall = inject('isSmall', ref(false));
 const props = defineProps<{
-	modelValue?: any;
 	list: TVO.List;
 	placeholder?: string;
 	holderIcon?: string;
@@ -17,7 +16,8 @@ const props = defineProps<{
 	filterText?: string;
 	emptyText?: string;
 }>();
-const emit = defineEmits(['update:modelValue', 'error']);
+const emit = defineEmits(['error']);
+const innerValue = defineModel();
 const {$vbt} = useUILocale();
 const {keyIndex, handler} = useKeydown();
 const isError = ref(false);
@@ -30,14 +30,8 @@ const keyword = ref('');
 let closeMethod = '';
 
 const findValue = computed(() => {
-	const find = props.list?.find((item: any) => item.value === props.modelValue);
+	const find = props.list?.find((item: any) => item.value === innerValue.value);
 	return find || null;
-});
-// 如果设置的值并不存在，则更新值为空
-onUpdated(() => {
-	if (!findValue.value && props.modelValue) {
-		emit('update:modelValue', null);
-	}
 });
 
 const classList = computed(() => {
@@ -60,6 +54,7 @@ const filterList = computed(() => {
 
 const event = (ev: Event) => {
 	if (!(ev.target as HTMLElement).closest('.vb-select.is-active')) {
+		closeMethod = TAB_CLOSE_METHOD;
 		isOpen.value = false;
 	}
 };
@@ -85,7 +80,7 @@ watch(isOpen, (is) => {
 		keyword.value = '';
 		keyIndex.value = -1;
 		// 如果不是焦点离开的此处将焦点定到按钮上
-		if (closeMethod !== 'tab') {
+		if (closeMethod !== TAB_CLOSE_METHOD) {
 			frontFocus();
 		}
 		document.removeEventListener('click', event, {capture: true});
@@ -120,7 +115,7 @@ function toggleDropdown() {
 
 function selectValue(value: any) {
 	setError(false);
-	emit('update:modelValue', value);
+	innerValue.value = value;
 	isOpen.value = false;
 }
 
@@ -129,7 +124,7 @@ function frontFocus() {
 }
 
 function resetKeyIndex() {
-	keyIndex.value = props.modelValue ? filterList.value.findIndex((item: any) => item.value === props.modelValue) : -1;
+	keyIndex.value = innerValue.value ? filterList.value.findIndex((item: any) => item.value === innerValue.value) : -1;
 }
 
 function keyAction(e: any) {
@@ -169,7 +164,7 @@ function keyAction(e: any) {
 
 function blurEntity(e: any) {
 	if (e.relatedTarget && !entity.value?.contains(e.relatedTarget)) {
-		closeMethod = 'tab';
+		closeMethod = TAB_CLOSE_METHOD;
 		isOpen.value = false;
 	}
 }
