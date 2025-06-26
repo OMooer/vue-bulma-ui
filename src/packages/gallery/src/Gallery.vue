@@ -524,6 +524,10 @@ onBeforeUnmount(() => {
 				transition: transform .3s ease;
 				transform: translateX(0);
 			}
+
+			&:not(:hover)::-webkit-scrollbar {
+				visibility: hidden;
+			}
 		}
 	}
 

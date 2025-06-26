@@ -45,7 +45,7 @@ watch(() => props.panel?.folded, (isFold) => {
 const styles = computed(() => {
 	const sty = {};
 	if (showing.value) {
-		Object.assign(sty, {overflow: 'auto', height: panelHeight.value + 'px'});
+		Object.assign(sty, {overflow: 'hidden', height: panelHeight.value + 'px'});
 	}
 	return sty;
 });
