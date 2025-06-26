@@ -13,6 +13,8 @@ export { default as VbBackToTop } from './packages/backToTop';
 export { default as VbBadge } from './packages/badge';
 // 面包屑
 export { default as VbBreadcrumb } from './packages/breadcrumb';
+// 按钮
+export { default as VbButton } from './packages/button';
 // 级联选择器
 export { default as VbCascade } from './packages/cascade';
 // 图表
@@ -132,6 +134,8 @@ export { default as VbTable } from './packages/table';
 export { default as VbTabs } from './packages/tabs';
 // 多标签选择器
 export { default as VbTags } from './packages/tags';
+// 文本框
+export { default as VbText} from './packages/textarea';
 // 工具提示组件
 export { default as VbTips } from './packages/tooltips';
 // 树

@@ -9,6 +9,7 @@ declare module 'vue' {
 		VbBackToTop: typeof import("vue3-bulma-ui/components")["VbBackToTop"];
 		VbBadge: typeof import("vue3-bulma-ui/components")["VbBadge"];
 		VbBreadcrumb: typeof import("vue3-bulma-ui/components")["VbBreadcrumb"];
+		VbButton: typeof import("vue3-bulma-ui/components")["VbButton"];
 		VbCascade: typeof import("vue3-bulma-ui/components")["VbCascade"];
 		VbCharts: typeof import("vue3-bulma-ui/components")["VbCharts"];
 		VbChartsBar: typeof import("vue3-bulma-ui/components")["VbChartsBar"];
@@ -65,6 +66,7 @@ declare module 'vue' {
 		VbTabs: typeof import("vue3-bulma-ui/components")["VbTabs"];
 		VbTags: typeof import("vue3-bulma-ui/components")["VbTags"];
 		VbTell: typeof import("vue3-bulma-ui/components")["VbTell"];
+		VbText: typeof import("vue3-bulma-ui/components")["VbText"];
 		VbTime: typeof import("vue3-bulma-ui/components")["VbTime"];
 		VbTips: typeof import("vue3-bulma-ui/components")["VbTips"];
 		VbToast: typeof import("vue3-bulma-ui/components")["VbToast"];
