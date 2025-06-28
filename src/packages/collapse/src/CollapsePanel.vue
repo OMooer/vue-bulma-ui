@@ -155,7 +155,6 @@ const isArrowStart = computed(() => {
 	}
 
 	.card-body {
-		overflow: hidden;
 		margin: 0 .75rem;
 		border-top: solid 1px va.$split-color;
 		transition: height .2s ease-in-out, opacity .2s ease-in-out;
