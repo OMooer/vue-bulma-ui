@@ -37,3 +37,31 @@ $placeholder-color: hsla(var(--bulma-text-h), var(--bulma-text-s), var(--bulma-t
 		color: var(--link-active-color);
 	}
 }
+
+@mixin scrollbar {
+	&:hover {
+		&::-webkit-scrollbar {
+			display: block;
+		}
+	}
+
+	&::-webkit-scrollbar {
+		display: none;
+		width: .25em; /* 垂直滚动条宽度 */
+		height: .25em; /* 水平滚动条高度 */
+
+		&-track {
+			background: var(--bulma-background);
+			border-radius: var(--bulma-radius);
+		}
+
+		&-thumb {
+			background: var(--bulma-background-active);
+			border-radius: var(--bulma-radius);
+		}
+
+		&-button {
+			display: none; /* 通常隐藏 */
+		}
+	}
+}

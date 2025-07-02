@@ -135,7 +135,12 @@ export { default as VbTabs } from './packages/tabs';
 // 多标签选择器
 export { default as VbTags } from './packages/tags';
 // 文本框
-export { default as VbText} from './packages/textarea';
+export { default as VbText } from './packages/textarea';
+// 时间轴
+export {
+	TimelineItem as VbTimelineItem,
+	default as VbTimeline
+} from './packages/timeline';
 // 工具提示组件
 export { default as VbTips } from './packages/tooltips';
 // 树

@@ -68,6 +68,8 @@ declare module 'vue' {
 		VbTell: typeof import("vue3-bulma-ui/components")["VbTell"];
 		VbText: typeof import("vue3-bulma-ui/components")["VbText"];
 		VbTime: typeof import("vue3-bulma-ui/components")["VbTime"];
+		VbTimeline: typeof import("vue3-bulma-ui/components")["VbTimeline"];
+		VbTimelineItem: typeof import("vue3-bulma-ui/components")["VbTimelineItem"];
 		VbTips: typeof import("vue3-bulma-ui/components")["VbTips"];
 		VbToast: typeof import("vue3-bulma-ui/components")["VbToast"];
 		VbTree: typeof import("vue3-bulma-ui/components")["VbTree"];

@@ -31,7 +31,7 @@ import {
 	faMagnifyingGlassPlus,
 	faCircleInfo,
 	faCirclePlus,
-	faArrowUp
+	faArrowUp, faCircleDot, faRotateRight
 } from '@fortawesome/free-solid-svg-icons';
 import {
 	faSquareMinus,
@@ -67,12 +67,14 @@ export default {
 			faCircleQuestion,
 			faCircleInfo,
 			faCirclePlus,
+			faCircleDot,
 			faDownload,
 			faEye, faEyeSlash, faExpand, faCompress,
 			faFileArrowDown,
 			faGlobe,
 			faMinus, faPlus,
 			faRotate,
+			faRotateRight,
 			faSort, faSortAsc, faSortDesc,
 			faSpinner,
 			faSquareMinus, faSquarePlus,
