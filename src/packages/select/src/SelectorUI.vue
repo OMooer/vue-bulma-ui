@@ -184,7 +184,7 @@ defineExpose({
 	<div ref="entity" :class="classList" :data-required="required" @blur.capture="blurEntity" @keydown="keyAction">
 		<select
 				class="entity-shadow" tabindex="-1" aria-hidden="true" required
-				@focus="frontFocus" v-if="modelValue == undefined && required"></select>
+				@focus="frontFocus" v-if="innerValue == undefined && required"></select>
 		<div class="dropdown-trigger">
 			<button
 					ref="frontRef" type="button" @click="toggleDropdown" :disabled="disabled"
@@ -216,7 +216,7 @@ defineExpose({
 					<a
 							class="dropdown-item"
 							@click="selectValue(item.value)"
-							:class="{'is-active': item.value === modelValue, 'is-disabled': item.disabled, 'is-focused': keyIndex === index}"
+							:class="{'is-active': item.value === innerValue, 'is-disabled': item.disabled, 'is-focused': keyIndex === index}"
 							:key="item.value.toString()" v-for="(item, index) in filterList">
 						<i :class="item.icon" v-if="item.icon"></i>
 						<span>{{ item.title }}</span>
