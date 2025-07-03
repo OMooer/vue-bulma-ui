@@ -9,7 +9,7 @@ const modeCls = computed(() => mode ? `is-${ mode }` : '');
 </script>
 
 <template>
-	<button :type class="button" :class="[$attrs.class, modeCls]">
+	<button :type class="button" :class="modeCls">
 		<slot/>
 	</button>
 </template>
