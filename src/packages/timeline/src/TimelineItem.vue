@@ -36,7 +36,7 @@ const {color, pending} = defineProps<{
 	}
 
 	&__content {
-		font-size: .875em;
+		//font-size: .875em;
 	}
 
 	&:not(:last-of-type) {

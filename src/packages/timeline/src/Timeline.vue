@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TimelineItem from './TimelineItem.vue';
-import { flattenVNode, isEmptyElement } from '@/utils';
-import { cloneVNode, defineComponent, h, onMounted, ref, useAttrs, type VNodeChild, watchEffect } from 'vue';
+import { flattenVNode, isEmptyElement, vScrollbar } from '@/utils';
+import { cloneVNode, defineComponent, h, onMounted, ref, useAttrs, type VNodeChild, withDirectives } from 'vue';
 
 const {mode = 'left', reverse, pending} = defineProps<{
 	mode?: 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -39,29 +39,19 @@ const getItems = () => {
 	return newItems;
 }
 
-watchEffect(() => {
-	if (mode) {
-		requestAnimationFrame(() => {
-			horizontalScroll.value = timelineEntity.value?.scrollWidth > timelineEntity.value?.clientWidth;
-			verticalScroll.value = timelineEntity.value?.scrollHeight > timelineEntity.value?.clientHeight;
-		});
-	}
-});
-
 const timelineEntity = ref();
-const horizontalScroll = ref(false);
-const verticalScroll = ref(false);
 const TimeLine = defineComponent(() => {
-	return () => h('ul', {
+	return () => withDirectives(h('ul', {
 		...attrs,
 		class: {
-			'vb-timeline'         : true,
-			[`is-${ mode }`]      : mode,
-			'is-horizontal-scroll': horizontalScroll.value,
-			'is-vertical-scroll'  : verticalScroll.value
+			'vb-timeline'   : true,
+			[`is-${ mode }`]: mode,
 		},
 		ref  : timelineEntity
-	}, getItems() as []);
+	}, getItems() as []), [
+		[vScrollbar, ['is-horizontal-scroll'], 'x'],
+		[vScrollbar, ['is-vertical-scroll'], 'y']
+	]);
 });
 
 onMounted(() => {
@@ -83,9 +73,9 @@ onMounted(() => {
 
 @mixin pendingStyle($dir) {
 	@if $dir == 'block' {
-		padding-block-end: 3.6em;
+		padding-block-end: 3.2em;
 	} @else {
-		padding-inline-end: 3.6em;
+		padding-inline-end: 3.2em;
 	}
 	&::after {
 		border-style: dotted;
@@ -99,25 +89,13 @@ onMounted(() => {
 	@include va.scrollbar();
 
 	&.is-vertical-scroll {
-		padding-right: .75em;
-
-		&:hover {
-			padding-right: .5em;
-		}
+		--vertical-padding: .5em;
+		padding-right: calc(var(--vertical-padding) + var(--scrollbar-width, .5em));
 	}
 
 	&.is-horizontal-scroll {
-		padding-bottom: .75em;
-
-		&:hover {
-			padding-bottom: .5em;
-		}
-	}
-
-	:deep(.vb-timeline-item) {
-		&.is-pending {
-			user-select: none;
-		}
+		--horizontal-padding: .5em;
+		padding-bottom: calc(var(--horizontal-padding) + var(--scrollbar-height, .95em));
 	}
 
 	// 左对齐
@@ -214,7 +192,6 @@ onMounted(() => {
 	// 居中对齐
 	&.is-center {
 		flex-flow: column;
-		//align-items: center;
 
 		:deep(.vb-timeline-item) {
 			padding-inline-end: 0;

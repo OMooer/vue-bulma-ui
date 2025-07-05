@@ -195,6 +195,8 @@ function changeSelect(value: any, selected: boolean) {
 	border-radius: va.$radius;
 	min-width: 100%;
 
+	@include va.scrollbar(false);
+
 	.head-dropdown {
 		position: absolute;
 		z-index: 20;

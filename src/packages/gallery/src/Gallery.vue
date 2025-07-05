@@ -10,7 +10,8 @@ import {
 	EVENT_TO_RIGHT, EVENT_TO_TOP,
 	flattenVNode,
 	isPromise,
-	scaleGenerator
+	scaleGenerator,
+	vScrollbar
 } from '@/utils';
 import Loading, { AnimateDot } from '../../loading';
 import InteractiveTracker from '../../InteractiveTracker';
@@ -415,7 +416,7 @@ onBeforeUnmount(() => {
 	<teleport to="body">
 		<div ref="galleryRef" class="vb-gallery" :class="{'is-fullscreen': isFullscreen}">
 			<a class="vb-gallery__close delete" aria-label="Close" @click="exit"></a>
-			<div ref="sideRef" class="vb-gallery__side" v-if="showSide">
+			<div ref="sideRef" class="vb-gallery__side" v-scrollbar:x="false" v-scrollbar:y v-if="showSide">
 				<a
 						class="vb-gallery__side__item" :class="{'is-active': index === currentIndex}" @click="switchShow(index)"
 						v-for="(item, index) in photos" :key="item.small">
@@ -498,6 +499,8 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped lang="scss">
+@use "@/scss/variables" as va;
+
 .vb-gallery {
 	position: fixed;
 	top: 0;
@@ -524,10 +527,6 @@ onBeforeUnmount(() => {
 				transition: transform .3s ease;
 				transform: translateX(0);
 			}
-
-			&:not(:hover)::-webkit-scrollbar {
-				visibility: hidden;
-			}
 		}
 	}
 
@@ -539,6 +538,9 @@ onBeforeUnmount(() => {
 	}
 
 	&__side {
+		@include va.scrollbar();
+		--vertical-padding: 1em;
+
 		grid-area: side;
 		display: flex;
 		flex-direction: column;
@@ -727,8 +729,12 @@ onBeforeUnmount(() => {
 			width: 100%;
 			height: 5em;
 
+			&::-webkit-scrollbar {
+				display: none !important;
+			}
+
 			&__item {
-				width: 5em;
+				width: 4.5em;
 			}
 		}
 
