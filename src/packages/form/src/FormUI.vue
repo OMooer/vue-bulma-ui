@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
-import { computed, watchEffect } from "vue";
+import { computed, reactive, watchEffect } from "vue";
 import DatetimePicker from '../../datetimePicker';
 import InputUI, { PasswordInput } from '../../input';
 import SelectorUI from '../../select';
@@ -14,15 +14,18 @@ const props = defineProps<{
 	submitText?: string;
 	disableSubmit?: boolean;
 }>();
-const formValue = defineModel<Normal.AnyObj>({default: {}});
+const formValue = defineModel<Normal.AnyObj>({default: reactive({})});
 const {$vbt} = useUILocale();
 watchEffect(() => {
 	if (props.config) {
 		// 根据配置设置默认值
 		props.config?.items?.forEach((item: any) => {
-			if (!(item.name in formValue.value)) {
-				formValue.value[item.name] = item.value;
-			}
+			// 防止收集 formValue 的监听依赖导致重复执行这个默认值配置
+			setTimeout(() => {
+				if (!(item.name in formValue.value)) {
+					formValue.value[item.name] = item.value;
+				}
+			});
 		});
 	}
 });
