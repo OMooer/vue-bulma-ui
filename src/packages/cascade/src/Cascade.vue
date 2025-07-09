@@ -10,7 +10,6 @@ const {$vbt} = useUILocale();
 const {keyIndex, handler} = useKeydown();
 const isParentSmall = inject('isSmall', ref(false));
 const props = withDefaults(defineProps<{
-	modelValue?: any[];
 	mode?: 'detach' | 'combo';
 	required?: boolean | boolean[] | string;
 	disabled?: boolean;
@@ -24,7 +23,8 @@ const props = withDefaults(defineProps<{
 	loadingText?: string;
 	isSmall?: boolean;
 }>(), {mode: 'detach', cache: false});
-const emit = defineEmits(['update:modelValue', 'error']);
+const emit = defineEmits(['error']);
+const modelValue = defineModel<any[]>({default: []});
 
 const isLoading = ref(false);
 const isError = ref(false);
@@ -32,10 +32,8 @@ const isOpen = ref(false);
 const isUp = ref(false);
 const entity = ref();
 const frontRef = ref();
-const current = ref();
-const currentLevel = ref(0);
-const confirmValue = ref();
-const cascadeList = ref<{ list: TVO.CascadeItem[]; required?: boolean, value: any }[]>([]);
+const lastSelectLevel = ref(0);
+const cascadeList = ref<{ list: TVO.CascadeItem[]; required?: boolean; value: any; }[]>([]);
 const cacheStore = ref<{ [propName: string]: TVO.CascadeItem[] }>({});
 const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 watch(() => props.list, (newList) => {
@@ -48,16 +46,16 @@ watch(() => props.list, (newList) => {
 	];
 	updatePresetValue();
 }, {immediate: true});
-watch(() => props.modelValue, () => {
-	updatePresetValue();
-});
+watch(modelValue, () => updatePresetValue());
 // 获取级联选项的值
 const cascadeValue = computed(() => {
 	return cascadeList.value.map((item: any) => item.value);
 });
-const comboSelectedData = ref();
+const lastSelectValue = computed(() => {
+	return cascadeValue.value[cascadeValue.value.length - 1];
+});
 const comboShowValue = computed(() => {
-	return comboSelectedData.value ?? findSelectedValue(props?.modelValue || []);
+	return getSelectedValue(modelValue.value || []);
 });
 
 const captureEvent = (ev: Event) => {
@@ -77,9 +75,8 @@ watch(isOpen, (is) => {
 	}
 	else {
 		isUp.value = false;
-		comboSelectedData.value = undefined;
 		keyIndex.value = -1;
-		frontFocus();
+		// frontFocus();
 		document.removeEventListener('click', captureEvent, {capture: true});
 	}
 });
@@ -87,7 +84,7 @@ watch(isOpen, (is) => {
 watch(keyIndex, (index) => {
 	if (index >= 0) {
 		requestAnimationFrame(() => {
-			const cont = entity.value?.querySelectorAll('.cascade-level')[currentLevel.value] as HTMLElement;
+			const cont = entity.value?.querySelectorAll('.cascade-level')[lastSelectLevel.value] as HTMLElement;
 			const findIt = cont?.querySelector('.dropdown-item.is-focused') as HTMLElement;
 			if (findIt) {
 				scroll2Middle(findIt, cont);
@@ -117,13 +114,14 @@ function getCascadeRequire(level: number = 0) {
 
 // 设置组件预设值
 async function updatePresetValue() {
-	const modelValue = props.modelValue;
-	if (modelValue && modelValue.length) {
-		for (let i = 0; i < modelValue.length; i++) {
-			const value = modelValue[i];
-			if (value) {
-				current.value = value;
-				currentLevel.value = i;
+	const currentValue = modelValue.value;
+	if (currentValue?.length) {
+		lastSelectLevel.value = currentValue.length - 1;
+		// 检测后续值是否存在于级联列表中
+		// 如果其中某个节点不匹配则更新节点
+		for (const [i, value] of currentValue.entries()) {
+			const level = cascadeList.value[i];
+			if (value && level.value !== value) {
 				await updateNodeData(i, value);
 			}
 		}
@@ -131,8 +129,8 @@ async function updatePresetValue() {
 }
 
 // 获取组件选择值
-function findSelectedValue(modelValue: any[]) {
-	const matchVal = modelValue.reduce((result: any, value: any) => {
+function getSelectedValue(values: any[]): { icon: string | string[], title: string } | null {
+	const matchVal = values.reduce((result: any, value: any) => {
 		let find: any;
 		for (const item of cascadeList.value) {
 			find = item.list.find((l: any) => l.value === value);
@@ -162,24 +160,16 @@ function findSelectedValue(modelValue: any[]) {
 	return null;
 }
 
-// 更新级联节点
-function updateNodeData(level: number, data: any) {
-	if (!data) {
-		return;
-	}
-	cascadeList.value[level].value = data;
-	const currentList = cascadeList.value[level].list;
-	const findNode = currentList.find((item: any) => item.value === data);
-	// 获取下级数据，如果有的话
-	isLoading.value = true;
-	let loadDataFn;
+// 加载数据的函数工厂
+function loadDataFactory(staticNode: any, level: number, data: any) {
+	let func;
 	if (props.lazy) {
-		loadDataFn = props.lazyLoad as () => Promise<TVO.CascadeItem[]>;
+		func = props.lazyLoad as () => Promise<TVO.CascadeItem[]>;
 	}
 	else {
-		loadDataFn = () => new Promise<TVO.CascadeItem[]>((resolve, reject) => {
-			if (findNode && findNode?.children) {
-				resolve(findNode.children);
+		func = () => new Promise<TVO.CascadeItem[]>((resolve, reject) => {
+			if (staticNode && staticNode?.children) {
+				resolve(staticNode.children);
 			}
 			else {
 				reject(ERROR_NO_SUBLIST);
@@ -188,13 +178,30 @@ function updateNodeData(level: number, data: any) {
 	}
 	// 如果允许缓存则从缓存中获取
 	if (props.cache) {
-		loadDataFn = getCacheDataFunc(loadDataFn, level, data);
+		func = getCacheDataFunc(func, level, data);
 	}
 
+	return func;
+}
+
+// 更新级联列表节点
+function updateNodeData(level: number, data: any) {
+	if (!data) {
+		return;
+	}
+	// 将当前选择的值更新到级联列表所在层级里
+	cascadeList.value[level].value = data;
+	const currentList = cascadeList.value[level].list;
+	const findNode = currentList.find((item: any) => item.value === data);
+	isLoading.value = true;
+	// 获取加载数据函数
+	const loadDataFn = loadDataFactory(findNode, level, data);
+	// 将级联列表在当前层级后可能存在的旧数据清除
 	cascadeList.value.splice(level + 1);
+	// 获取下级数据，如果有的话
 	return loadDataFn({data, level, hasChild: !!findNode?.children}).then(
 			(subList: TVO.CascadeItem[]) => {
-				currentLevel.value = level + 1;
+				lastSelectLevel.value = level + 1;
 				cascadeList.value.push({
 					list    : subList,
 					required: getCascadeRequire(level + 1),
@@ -212,17 +219,14 @@ function updateNodeData(level: number, data: any) {
 
 // 选择级联层级的值
 async function selectLevel(index: number, value: any) {
-	current.value = value;
 	keyIndex.value = 0;
 	await updateNodeData(index, value);
 	if (!cascadeList.value[index + 1]) {
 		isOpen.value = false;
-		confirmValue.value = true;
-		comboSelectedData.value = findSelectedValue(cascadeValue.value);
-		emit('update:modelValue', cascadeValue.value);
+		modelValue.value = cascadeValue.value;
 	}
 	else if (props.mode !== 'combo') {
-		emit('update:modelValue', cascadeValue.value);
+		modelValue.value = cascadeValue.value;
 	}
 }
 
@@ -256,10 +260,10 @@ function keyAction(e: any) {
 	// 如果是箭头按键和 Tab 的输入就先获取当前值为索引
 	if (e.code.startsWith('Arrow') || e.code === 'Tab') {
 		if (isOpen.value && keyIndex.value === -1) {
-			keyIndex.value = cascadeList.value[currentLevel.value].list.findIndex((item: any) => item.value === current.value);
+			keyIndex.value = cascadeList.value[lastSelectLevel.value].list.findIndex((item: any) => item.value === lastSelectValue.value);
 		}
 	}
-	const levelList = cascadeList.value[currentLevel.value]?.list;
+	const levelList = cascadeList.value[lastSelectLevel.value]?.list;
 	const action = handler(e, levelList, !isOpen.value);
 
 	switch (action) {
@@ -274,19 +278,19 @@ function keyAction(e: any) {
 			break;
 		case 'ArrowLeft':
 			e.preventDefault();
-			if (currentLevel.value > 0) {
-				currentLevel.value--;
+			if (lastSelectLevel.value > 0) {
+				lastSelectLevel.value--;
 				// 找到现值在列表中的索引
-				const levelData = cascadeList.value[currentLevel.value];
+				const levelData = cascadeList.value[lastSelectLevel.value];
 				keyIndex.value = levelData.list.findIndex((item: any) => item.value === levelData.value);
-				cascadeList.value[currentLevel.value].value = '';
-				cascadeList.value.splice(currentLevel.value + 1);
+				cascadeList.value[lastSelectLevel.value].value = '';
+				cascadeList.value.splice(lastSelectLevel.value + 1);
 			}
 			break;
 		case 'ArrowRight':
 			e.preventDefault();
 			if (levelList[keyIndex.value]?.children) {
-				selectLevel(currentLevel.value, levelList[keyIndex.value].value);
+				selectLevel(lastSelectLevel.value, levelList[keyIndex.value].value);
 			}
 			break;
 		case 'Toggle':
@@ -296,7 +300,7 @@ function keyAction(e: any) {
 		case 'Space':
 		case 'Enter':
 			e.preventDefault();
-			selectLevel(currentLevel.value, levelList[keyIndex.value].value);
+			selectLevel(lastSelectLevel.value, levelList[keyIndex.value].value);
 			break;
 	}
 }
@@ -326,6 +330,7 @@ defineExpose({
 
 <template>
 	<div ref="entity" class="vb-cascade" :class="{'is-disabled': disabled}">
+		<!-- 组合选择 -->
 		<template v-if="mode === 'combo'">
 			<div class="dropdown cascade-dropdown is-block" :class="classList" @keydown="keyAction">
 				<select
@@ -350,15 +355,15 @@ defineExpose({
 				</div>
 				<div class="dropdown-menu" role="menu">
 					<div class="dropdown-content" @mouseover="resetKeyIndex">
-						<div class="cascade-level" v-for="(item, level) in cascadeList">
-							<template v-for="(node, index) in item.list">
+						<div class="cascade-level" :key="level" v-for="(item, level) in cascadeList">
+							<template :key="node.value" v-for="(node, index) in item.list">
 								<a
 										class="dropdown-item"
-										:class="{'is-disabled': node.disabled, 'is-active': cascadeValue.includes(node.value), 'is-focused': keyIndex === index && currentLevel === level}"
+										:class="{'is-disabled': node.disabled, 'is-active': cascadeValue.includes(node.value), 'is-focused': keyIndex === index && lastSelectLevel === level}"
 										@click="selectLevel(level, node.value)">
 									<span>{{ node.title }}</span>
 									<i class="icon is-small" v-if="node.children">
-										<FasIcon icon="spinner" spin-pulse v-if="current === node.value && isLoading"/>
+										<FasIcon icon="spinner" spin-pulse v-if="lastSelectValue === node.value && isLoading"/>
 										<FasIcon icon="angle-right" v-else/>
 									</i>
 								</a>
@@ -371,11 +376,12 @@ defineExpose({
 				</div>
 			</div>
 		</template>
+		<!-- 分离下拉框 -->
 		<div class="is-grouped" v-else>
 			<SelectorUI
 					class="cascade-item" :class="{'is-danger is-shake': isError}" :disabled="disabled" :required="item?.required"
 					:list="item.list" :placeholder="placeholder || $vbt('cascade.placeholder')" :model-value="item.value"
-					@update:modelValue="selectLevel(index, $event)" v-for="(item, index) in cascadeList"/>
+					@update:modelValue="selectLevel(index, $event)" :key="item.value" v-for="(item, index) in cascadeList"/>
 			<div class="dropdown cascade-item" v-if="isLoading">
 				<div class="dropdown-trigger is-fullwidth">
 					<button
