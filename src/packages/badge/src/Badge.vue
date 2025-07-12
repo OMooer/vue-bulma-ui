@@ -147,11 +147,57 @@ const content = computed(() => {
 		position: absolute;
 		top: 0;
 		right: 0;
-		border: solid .0625em var(--bulma-background);
+		border: solid max(1px, .0625em) var(--bulma-background);
 		box-sizing: content-box;
 		z-index: 3;
 		transform: translate(50%, -50%);
 		transform-origin: top right;
+	}
+
+	// 大小
+	&.is-xs {
+		font-size: 0.6875rem;
+
+		&:empty {
+			width: 4px;
+			height: 4px;
+		}
+	}
+
+	&.is-sm {
+		font-size: 0.875rem;
+
+		&:empty {
+			width: 6px;
+			height: 6px;
+		}
+	}
+
+	&.is-lg {
+		font-size: 1.25rem;
+
+		&:empty {
+			width: 10px;
+			height: 10px;
+		}
+	}
+
+	&.is-xl {
+		font-size: 1.5rem;
+
+		&:empty {
+			width: 12px;
+			height: 12px;
+		}
+	}
+
+	&.is-2xl {
+		font-size: 2rem;
+
+		&:empty {
+			width: 16px;
+			height: 16px;
+		}
 	}
 
 	// 无数字点标
@@ -159,29 +205,8 @@ const content = computed(() => {
 		padding: 0;
 		line-height: 0;
 		font-size: 0;
-		width: .375em;
-		height: .375em;
-	}
-
-	// 大小
-	&.is-xs {
-		font-size: 0.6875rem;
-	}
-
-	&.is-sm {
-		font-size: 0.875rem;
-	}
-
-	&.is-lg {
-		font-size: 1.25rem;
-	}
-
-	&.is-xl {
-		font-size: 1.5rem;
-	}
-
-	&.is-2xl {
-		font-size: 2rem;
+		width: 8px;
+		height: 8px;
 	}
 }
 
