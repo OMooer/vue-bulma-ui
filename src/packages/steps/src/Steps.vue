@@ -128,7 +128,7 @@ defineExpose({
 
 <template>
 	<ul ref="steps" class="steps" :class="{'is-box-style': isBoxed}">
-		<li :class="{'is-active': index === stepValue}" v-for="(item, index) in filterSteps">
+		<li :class="{'is-active': index === stepValue}" :key="item.n" v-for="(item, index) in filterSteps">
 			<a :aria-readonly="allowSwitch ? undefined : 'true'" @click="changeStep(index)">
 				{{ item.text }}
 			</a>

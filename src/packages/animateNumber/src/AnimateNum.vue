@@ -39,7 +39,7 @@ watch(charList, (newList, oldList, onCleanup) => {
 
 <template>
 	<span class="vb-animate-number" :key="text">
-		<template v-for="(char, index) in charList">
+		<template :key="char" v-for="(char, index) in charList">
 			<span v-if="isNaN(parseInt(char, 0))">{{ char }}</span>
 			<span
 					class="number-char"

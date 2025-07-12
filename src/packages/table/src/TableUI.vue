@@ -22,8 +22,8 @@ const showCheck = computed(() => {
 const selectedIndex = ref<number[]>([]);
 // 是否全选
 const selectedAll = ref(false);
-watch(() => selectedAll.value, () => {
-	if (selectedAll.value) {
+watch(() => selectedAll.value, (allSelect) => {
+	if (allSelect) {
 		selectedIndex.value = props.tableData?.map((_: any, index: number) => index) ?? [];
 	}
 	else if (selectedIndex.value.length === props.tableData?.length) {
@@ -36,7 +36,7 @@ watch(() => selectedIndex.value, () => {
 	}
 	emit('select', selectedIndex.value);
 });
-watch(() => props.tableData, () => {
+watch([() => props.tableData, () => props.tableData.length], () => {
 	selectedIndex.value = [];
 });
 // 显示的表头值
@@ -144,6 +144,7 @@ function changeSelect(value: any, selected: boolean) {
 				<th
 						:class="[item.slot?`col-${item.slot}`:`col-${idx}`, {'is-sticky' : item.sticky}]"
 						:style="item.style ?? null"
+						:key="item.field"
 						v-for="(item, idx) in renderColumns">
 					{{ item.label }}
 					<!-- 如果有排序 -->
@@ -155,7 +156,8 @@ function changeSelect(value: any, selected: boolean) {
 			</thead>
 			<tbody>
 			<tr
-					:class="{'is-checked': selectedIndex.includes(index)}" :key="Object.values(data)?.[0] ?? index"
+					:class="{'is-checked': selectedIndex.includes(index)}"
+					:key="data[tableConfig?.uniqueKey ?? ''] ?? Object.values(data)?.[0] ?? index"
 					v-for="(data, index) in tableData">
 				<!-- 如果有勾选列 -->
 				<td class="col-check is-sticky" v-if="tableConfig?.showSelectColumn">
@@ -170,7 +172,7 @@ function changeSelect(value: any, selected: boolean) {
 						v-for="(item, idx) in renderColumns">
 					<!-- 如果有插槽则显示插槽的内容，否则显示纯数据值 -->
 					<template v-if="item.slot">
-						<slot :name="item.slot" :row="data" :val="data[item.field]">{{ $vbt('table.unknownSlot') }}</slot>
+						<slot :name="item.slot" :row="data" :val="data[item.field]" :index="index">{{ $vbt('table.unknownSlot') }}</slot>
 					</template>
 					<template v-else>{{ data[item.field] }}</template>
 				</td>

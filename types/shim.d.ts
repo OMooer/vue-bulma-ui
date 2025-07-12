@@ -86,8 +86,9 @@ declare namespace VBTable {
 	}
 
 	interface Config {
+		uniqueKey?: string;
 		showSelectColumn?: boolean;
-		columns: Column[]
+		columns: Column[];
 	}
 }
 

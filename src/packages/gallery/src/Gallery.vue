@@ -490,7 +490,7 @@ onBeforeUnmount(() => {
 			</div>
 			<!-- Exif 信息 -->
 			<div class="vb-gallery__exif-info" @click.stop v-if="currentPhotoExif" v-show="showExifInfo">
-				<p v-for="[key, value] in Object.entries(currentPhotoExif)">
+				<p :key="key" v-for="[key, value] in Object.entries(currentPhotoExif)">
 					{{ key }}: {{ value }}
 				</p>
 			</div>

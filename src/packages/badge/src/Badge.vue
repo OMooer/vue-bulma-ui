@@ -4,12 +4,13 @@ import type { Props } from './types/badge';
 import { computed } from 'vue';
 
 defineOptions({inheritAttrs: false});
-const {type    = 'none',
+const {
+	      type = 'none',
 	      state, preset, color,
 	      size,
 	      effect, active, less,
 	      text,
-	      max    = 0, number = 1
+	      max  = 0, number = 1
       } = defineProps<Props>();
 const classCss = computed(() => {
 	const stateStyle = {
@@ -156,6 +157,8 @@ const content = computed(() => {
 	// 无数字点标
 	&:empty {
 		padding: 0;
+		line-height: 0;
+		font-size: 0;
 		width: .375em;
 		height: .375em;
 	}

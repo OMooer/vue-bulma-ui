@@ -276,7 +276,7 @@ defineExpose({
 		<div class="dropdown" :class="{'is-active': isOpen, 'is-up': isUp}">
 			<div class="dropdown-trigger">
 				<div class="tag-list field is-grouped is-grouped-multiline" v-if="selectedTags.length">
-					<div class="control" v-for="item in showSelectedTags">
+					<div class="control" :key="item.value as string" v-for="item in showSelectedTags">
 						<div class="tags has-addons" :class="{'are-medium': !isReallySmall}">
 							<span class="tag">
 								<i :class="item.icon" v-if="item.icon"></i>
@@ -305,7 +305,7 @@ defineExpose({
 			</div>
 			<div class="dropdown-menu is-fullwidth" @click.stop @mouseover="resetKeyIndex">
 				<ul class="dropdown-content" tabindex="0">
-					<li v-for="(item, index) in filterList">
+					<li :key="item.value" v-for="(item, index) in filterList">
 						<a
 								class="tag-item dropdown-item"
 								:class="{'is-active': item.selected, 'is-disabled': item.disabled, 'is-focused': keyIndex === index}"

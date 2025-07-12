@@ -264,7 +264,7 @@ onBeforeUnmount(() => {
 				name="indicator" :autoplay="props.autoplay" :total="total" :index="current" :moveTo="moveTo" :percent="percent"
 				v-if="showIndicator && total">
 			<ol class="swiper-indicator" :style="`--bg-percent: ${percent}%`">
-				<li :class="{'is-active': i === current + 1}" @click="moveTo(i - 1)" v-for="i in total"></li>
+				<li :class="{'is-active': i === current + 1}" @click="moveTo(i - 1)" :key="i" v-for="i in total"></li>
 			</ol>
 		</slot>
 	</div>

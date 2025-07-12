@@ -32,13 +32,13 @@ function changeTab(index: number) {
 	<div class="tabs" v-bind="$attrs">
 		<ul>
 			<slot :current="activeIndex" :changeTab="changeTab">
-				<li :class="{'is-active': activeIndex === index}" v-for="(item, index) in list">
+				<li :class="{'is-active': activeIndex === index}" :key="item as string" v-for="(item, index) in list">
 					<a @click="changeTab(index)">{{ item }}</a>
 				</li>
 			</slot>
 		</ul>
 	</div>
-	<template v-for="(_, index) in list">
+	<template :key="index" v-for="(_, index) in list">
 		<slot :name="`item${index}`" v-if="$slots[`item${index}`] && activeIndex === index"/>
 	</template>
 </template>

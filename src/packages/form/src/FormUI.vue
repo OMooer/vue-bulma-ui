@@ -155,7 +155,7 @@ function reset() {
 			<div class="field is-grouped" :class="{'column': hasConfigItems}">
 				<slot name="buttons">
 					<template v-if="config?.buttons.length">
-						<div class="control" :class="{'is-expanded': btn.fulled}" v-for="btn in config.buttons">
+						<div class="control" :class="{'is-expanded': btn.fulled}" :key="index" v-for="(btn, index) in config.buttons">
 							<button
 									:type="btn.type || 'button'"
 									:class="[btn.class, btn.fulled ? 'is-fullwidth' : '', isSmall ? 'is-small' : '']"
