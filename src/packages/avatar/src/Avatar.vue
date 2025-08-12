@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { EMPTY_IMG } from '@/utils';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
@@ -7,7 +8,7 @@ const props = defineProps<{
 	size?: 'sm' | 'xl' | '2xl';
 	r?: string | number;
 }>();
-const normal = ref('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=');
+const normal = ref(EMPTY_IMG);
 const loadedFailed = ref(false);
 const url = computed(() => {
 	return loadedFailed.value ? normal.value : (props.src || normal.value);

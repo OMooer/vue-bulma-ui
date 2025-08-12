@@ -7,6 +7,8 @@ export const ERROR_DATA_ITEM_OUTSIDE = 'DataViewItem must be a child of DataView
 export const ERROR_NEED_ROUTER = '组件需要传入 $router';
 export const ERROR_NO_SUBLIST = 'no sublist';
 
+export const EMPTY_IMG = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
 export const EVENT_TO_LEFT = 'toLeft';
 export const EVENT_TO_RIGHT = 'toRight';
 export const EVENT_TO_TOP = 'toTop';
