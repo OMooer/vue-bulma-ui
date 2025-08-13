@@ -17,4 +17,3 @@ export const EVENT_TO_BOTTOM = 'toBottom';
 
 export const SYMBOL_SELECT_ALL = Symbol('selectAll');
 export const SYMBOL_ECHARTS_KEY = Symbol('eCharts');
-export const SYMBOL_EDITOR_KEY = Symbol('editor');
