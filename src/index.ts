@@ -38,7 +38,7 @@ import {
 	faSquarePlus
 } from '@fortawesome/free-regular-svg-icons';
 import { type App, isRef, type Ref, toValue, watchEffect } from 'vue';
-import { SYMBOL_ECHARTS_KEY, SYMBOL_EDITOR_KEY } from './utils';
+import { SYMBOL_ECHARTS_KEY } from './utils';
 import { useUILocale } from './actions/locale';
 import { useDialog } from './actions/dialog';
 import { vFocus, vScrollbar, vLazy } from './utils';
@@ -106,8 +106,7 @@ export default {
 		Vue.config.globalProperties.$confirm = $confirm;
 		// 导入插件
 		const keySymbol: { [key in keyof Plugin]: symbol } = {
-			echarts: SYMBOL_ECHARTS_KEY,
-			editor: SYMBOL_EDITOR_KEY,
+			echarts: SYMBOL_ECHARTS_KEY
 		};
 		Object.keys(opt?.plugins ?? {}).forEach((key) => {
 			Vue.provide(keySymbol[key as keyof typeof keySymbol], opt?.plugins?.[key as keyof typeof opt.plugins]);
