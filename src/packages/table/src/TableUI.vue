@@ -209,6 +209,7 @@ function changeSelect(value: any, selected: boolean) {
 		table-layout: fixed;
 		width: auto;
 		min-width: 100%;
+		min-height: 100%;
 		border-collapse: separate;
 		border-spacing: 0;
 
