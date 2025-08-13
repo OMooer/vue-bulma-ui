@@ -87,7 +87,7 @@ declare module 'vue' {
 }
 
 declare module 'vue3-bulma-ui' {
-	import type { Plugin, Ref } from "vue";
+	import type { Plugin, Ref, Directive } from "vue";
 	const _default: Plugin;
 	export default _default;
 	const {useDialog, useUILocale}: {
@@ -104,6 +104,8 @@ declare module 'vue3-bulma-ui' {
 	};
 	export * from 'vue3-bulma-ui/components';
 	export { useDialog, useUILocale };
+	const {vFocus, vScrollbar, vLazy}: { vFocus: Directive; vScrollbar: Directive; vLazy: Directive; };
+	export { vFocus, vScrollbar, vLazy };
 	export const version: string;
 }
 

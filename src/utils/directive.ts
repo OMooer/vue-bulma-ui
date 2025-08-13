@@ -1,11 +1,43 @@
+import { EMPTY_IMG } from './statement';
+
 export const vFocus = {
-	updated: (el: HTMLElement, binding: any) => {
+	mounted(el: HTMLElement, binding: any) {
 		const isFocus = binding.value ?? true;
 		if (isFocus) {
 			setTimeout(() => {
 				el.focus()
 			});
 		}
+	}
+}
+
+const instObserver = new IntersectionObserver((entries) => {
+	for (const entry of entries) {
+		if (entry.isIntersecting) {
+			const img = entry.target as HTMLImageElement;
+			if (img.dataset.src) {
+				img.src = img.dataset.src;
+			}
+			img.removeAttribute('data-src');
+			instObserver.unobserve(img);
+		}
+	}
+}, {
+	root      : null,
+	rootMargin: '0px',
+	threshold : 0
+});
+export const vLazy = {
+	beforeMount(el: HTMLImageElement, binding: any) {
+		const place = binding.value || EMPTY_IMG;
+		// 将图片的原地址改为占位符
+		el.dataset.src = el.src;
+		el.src = place;
+		// 设置监听
+		instObserver.observe(el);
+	},
+	beforeUnmount(el: HTMLImageElement) {
+		instObserver.unobserve(el);
 	}
 }
 

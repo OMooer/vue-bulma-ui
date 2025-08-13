@@ -40,6 +40,7 @@ import {
 import { type App, isRef, type Ref, toValue, watchEffect } from 'vue';
 import { useUILocale } from './actions/locale';
 import { useDialog } from './actions/dialog';
+import { vFocus, vScrollbar, vLazy } from './utils';
 import * as components from './components';
 
 export default {
@@ -97,4 +98,5 @@ export default {
 
 export * from './components';
 export { useDialog, useUILocale };
+export { vFocus, vScrollbar, vLazy };
 export const version = import.meta.env.VERSION;
