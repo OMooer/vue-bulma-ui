@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, ref, shallowRef, watch } from 'vue';
 import type { ChildProps } from './types/charts';
+import { useResize } from '@/actions/resize';
 
 const props = defineProps<ChildProps>();
-const echarts = inject('echarts');
+const echarts = inject('echarts') as any;
 const radarRef = ref();
 const eChartsInstance = shallowRef<any>(null);
 const theme = computed(() => {
-	return props.dark ? 'dark' : 'macarons';
+	return props.dark ? 'dark' : 'default';
 });
 const seriesData = computed(() => {
 	const _data: Normal.AnyObj[] = [];
@@ -26,10 +27,18 @@ const indicatorData = computed(() => props.data.series.map((item: any) => {
 	return {name: item.name, max: item.data[IndicatorIndex]};
 }));
 // 主题更改的话，需要重新初始化
-watch(() => theme.value, () => {
+// 6.x + 可以直接使用 setTheme() 方法切换
+watch(() => theme.value, (skin) => {
 	if (eChartsInstance.value) {
-		eChartsInstance.value?.dispose();
-		drawChart();
+		const ver = echarts.version.split('.');
+		if (Number(ver[0]) >= 6) {
+			eChartsInstance.value?.setTheme(skin);
+			updateData();
+		}
+		else {
+			eChartsInstance.value?.dispose();
+			drawChart();
+		}
 	}
 });
 // 监听数据变化
@@ -60,6 +69,7 @@ function drawChart() {
 		// @ts-ignore
 		eChartsInstance.value = echarts?.init(radarRef.value, theme.value);
 		eChartsInstance.value?.setOption(chartOption);
+		useResize(radarRef.value, () => eChartsInstance.value?.resize());
 		updateData();
 	});
 }
@@ -68,6 +78,7 @@ function updateData() {
 	eChartsInstance.value?.setOption({
 		legend: {
 			right: 0,
+			top  : 0,
 			data : props.data.xData
 		},
 		series: [

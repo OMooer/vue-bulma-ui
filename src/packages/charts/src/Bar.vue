@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, ref, shallowRef, watch } from 'vue';
 import type { ChildProps } from './types/charts';
+import { useResize } from '@/actions/resize';
 
 const props = defineProps<ChildProps>();
-const echarts = inject('echarts');
+const echarts = inject('echarts') as any;
 const barRef = ref();
 const eChartsInstance = shallowRef<any>(null);
 const theme = computed(() => {
-	return props.dark ? 'dark' : 'macarons';
+	return props.dark ? 'dark' : 'default';
 });
 const seriesData = computed(() => {
 	return props.data.series.map((item: any) => {
@@ -26,10 +27,18 @@ const legendData = computed(() => props.data.legend.map((item: any) => {
 	return {name: item, icon: 'roundRect'};
 }));
 // 主题更改的话，需要重新初始化
-watch(() => theme.value, () => {
+// 6.x + 可以直接使用 setTheme() 方法切换
+watch(() => theme.value, (skin) => {
 	if (eChartsInstance.value) {
-		eChartsInstance.value?.dispose();
-		drawChart();
+		const ver = echarts.version.split('.');
+		if (Number(ver[0]) >= 6) {
+			eChartsInstance.value?.setTheme(skin);
+			updateData();
+		}
+		else {
+			eChartsInstance.value?.dispose();
+			drawChart();
+		}
 	}
 });
 // 监听数据变化
@@ -78,6 +87,7 @@ function drawChart() {
 		},
 		legend : {
 			type      : 'scroll',
+			top       : '3%',
 			left      : '5%',
 			itemWidth : 15,
 			itemHeight: 15,
@@ -106,6 +116,7 @@ function drawChart() {
 		// @ts-ignore
 		eChartsInstance.value = echarts?.init(barRef.value, theme.value);
 		eChartsInstance.value?.setOption(chartOption);
+		useResize(barRef.value, () => eChartsInstance.value?.resize());
 		updateData();
 	});
 }
