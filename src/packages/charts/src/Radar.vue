@@ -60,7 +60,8 @@ function drawChart() {
 			trigger: 'axis'
 		},
 		radar  : {
-			indicator: indicatorData.value
+			indicator: indicatorData.value,
+			radius   : '75%'
 		},
 		series : []
 	};

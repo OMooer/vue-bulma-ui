@@ -88,7 +88,7 @@ function drawChart() {
 		legend : {
 			type      : 'scroll',
 			top       : '3%',
-			left      : '5%',
+			left      : 'center',
 			itemWidth : 15,
 			itemHeight: 15,
 			itemGap   : 25,
