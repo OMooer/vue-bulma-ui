@@ -12,7 +12,7 @@ import Line from './Line.vue';
 import Pie from './Pie.vue';
 import Radar from './Radar.vue';
 
-const emit = defineEmits(['fetch']);
+const emit = defineEmits(['fetch', 'changeTheme']);
 const slots = defineSlots();
 const props = withDefaults(defineProps<{
 	theme?: string;
@@ -178,6 +178,14 @@ function refresh() {
 	emit('fetch', Object.assign({}, toolbarForm, {start, end}));
 }
 
+function pullThemeInfo(instance: any, theme: string) {
+	const bgColor = instance._theme?.backgroundColor;
+	emit('changeTheme', {
+		theme,
+		backgroundColor: bgColor
+	});
+}
+
 provide('echarts', eCharts);
 provide('parentChartTitle', props.title);
 </script>
@@ -194,7 +202,7 @@ provide('parentChartTitle', props.title);
 		<Component
 				:dark="isDarkTheme" :colors="chartColors" :data="chartData"
 				:style="chartSize" :is="childChart"
-				v-if="echartsReady">
+				@updateTheme="pullThemeInfo" v-if="echartsReady">
 			<slot>
 				<Loading timeout-state="keep" style="position: relative"/>
 			</slot>

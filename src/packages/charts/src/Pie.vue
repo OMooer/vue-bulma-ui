@@ -4,6 +4,7 @@ import type { ChildProps } from './types/charts';
 import { useResize } from '@/actions/resize';
 
 const props = defineProps<ChildProps & { topOffset?: number }>();
+const emit = defineEmits(['updateTheme']);
 const parentChartTitle = inject('parentChartTitle', '');
 const echarts = inject('echarts') as any;
 const pieRef = ref();
@@ -33,6 +34,7 @@ watch(() => theme.value, (skin) => {
 			eChartsInstance.value?.dispose();
 			drawChart();
 		}
+		emit('updateTheme', eChartsInstance.value, skin);
 	}
 });
 // 监听数据变化
@@ -100,6 +102,7 @@ function drawChart() {
 		eChartsInstance.value?.setOption(chartOption);
 		useResize(pieRef.value, () => eChartsInstance.value?.resize());
 		updateData();
+		emit('updateTheme', eChartsInstance.value, theme.value);
 	});
 }
 

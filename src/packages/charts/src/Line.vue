@@ -4,6 +4,7 @@ import type { ChildProps } from './types/charts';
 import { useResize } from '@/actions/resize';
 
 const props = defineProps<ChildProps>();
+const emit = defineEmits(['updateTheme']);
 const echarts = inject('echarts') as any;
 const lineRef = ref();
 const eChartsInstance = shallowRef<any>(null);
@@ -49,6 +50,7 @@ watch(() => theme.value, (skin) => {
 			eChartsInstance.value?.dispose();
 			drawChart();
 		}
+		emit('updateTheme', eChartsInstance.value, skin);
 	}
 });
 // 监听数据变化
@@ -106,6 +108,7 @@ function drawChart() {
 		eChartsInstance.value?.setOption(chartOption);
 		useResize(lineRef.value, () => eChartsInstance.value?.resize());
 		updateData();
+		emit('updateTheme', eChartsInstance.value, theme.value);
 	});
 }
 
