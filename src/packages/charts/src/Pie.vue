@@ -4,7 +4,6 @@ import type { ChildProps } from './types/charts';
 import { useResize } from '@/actions/resize';
 
 const props = defineProps<ChildProps & { topOffset?: number }>();
-const emit = defineEmits(['updateTheme']);
 const parentChartTitle = inject('parentChartTitle', '');
 const echarts = inject('echarts') as any;
 const pieRef = ref();
@@ -34,7 +33,6 @@ watch(() => theme.value, (skin) => {
 			eChartsInstance.value?.dispose();
 			drawChart();
 		}
-		emit('updateTheme', eChartsInstance.value, skin);
 	}
 });
 // 监听数据变化
@@ -51,12 +49,13 @@ watch(() => seriesData.value, () => {
 
 function drawChart() {
 	const chartOption: any = {
-		color  : props.colors,
-		tooltip: {
+		backgroundColor: 'transparent',
+		color          : props.colors,
+		tooltip        : {
 			trigger  : 'item',
 			formatter: "{b}: {c} ({d}%)"
 		},
-		title  : {
+		title          : {
 			left     : 0,
 			top      : 0,
 			text     : props.data.xData[0],
@@ -65,7 +64,7 @@ function drawChart() {
 				fontSize  : 13
 			}
 		},
-		legend : {
+		legend         : {
 			type     : 'scroll',
 			orient   : 'vertical',
 			right    : 0,
@@ -73,7 +72,7 @@ function drawChart() {
 			itemWidth: 14,
 			data     : []
 		},
-		series : [
+		series         : [
 			{
 				name             : parentChartTitle,
 				type             : 'pie',
@@ -102,7 +101,6 @@ function drawChart() {
 		eChartsInstance.value?.setOption(chartOption);
 		useResize(pieRef.value, () => eChartsInstance.value?.resize());
 		updateData();
-		emit('updateTheme', eChartsInstance.value, theme.value);
 	});
 }
 

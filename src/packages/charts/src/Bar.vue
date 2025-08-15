@@ -4,7 +4,6 @@ import type { ChildProps } from './types/charts';
 import { useResize } from '@/actions/resize';
 
 const props = defineProps<ChildProps>();
-const emit = defineEmits(['updateTheme']);
 const echarts = inject('echarts') as any;
 const barRef = ref();
 const eChartsInstance = shallowRef<any>(null);
@@ -40,7 +39,6 @@ watch(() => theme.value, (skin) => {
 			eChartsInstance.value?.dispose();
 			drawChart();
 		}
-		emit('updateTheme', eChartsInstance.value, skin);
 	}
 });
 // 监听数据变化
@@ -80,14 +78,15 @@ function getLabelOption(type: string) {
 
 function drawChart() {
 	const chartOption: any = {
-		color  : props.colors,
-		tooltip: {
+		backgroundColor: 'transparent',
+		color          : props.colors,
+		tooltip        : {
 			trigger    : 'axis',
 			axisPointer: {
 				type: 'shadow'
 			}
 		},
-		legend : {
+		legend         : {
 			type      : 'scroll',
 			top       : '3%',
 			left      : 'center',
@@ -96,22 +95,22 @@ function drawChart() {
 			itemGap   : 25,
 			data      : []
 		},
-		grid   : {
+		grid           : {
 			left        : '3%',
 			right       : '4%',
 			bottom      : '3%',
 			containLabel: true
 		},
-		xAxis  : [
+		xAxis          : [
 			{
 				type: 'category',
 				data: []
 			}
 		],
-		yAxis  : [
+		yAxis          : [
 			{type: 'value'}
 		],
-		series : []
+		series         : []
 	};
 
 	nextTick(() => {
@@ -120,7 +119,6 @@ function drawChart() {
 		eChartsInstance.value?.setOption(chartOption);
 		useResize(barRef.value, () => eChartsInstance.value?.resize());
 		updateData();
-		emit('updateTheme', eChartsInstance.value, theme.value);
 	});
 }
 

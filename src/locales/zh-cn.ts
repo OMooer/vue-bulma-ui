@@ -28,15 +28,15 @@ export default {
 		submitText: '提交'
 	},
 
-	gallery: {
-		error: '图片无法加载'
-	},
-
 	guide: {
 		next  : '下一步',
 		prev  : '上一步',
 		finish: '完成',
 		exit  : '跳过'
+	},
+
+	gallery: {
+		error: '图片无法加载'
 	},
 
 	popup: {
