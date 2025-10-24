@@ -75,7 +75,7 @@ export {
 	PasswordInput as VbPassword
 } from './packages/input';
 // 交互追踪
-export { default as VbInteractiveTracker } from './packages/InteractiveTracker';
+// export { default as VbInteractiveTracker } from './packages/InteractiveTracker';
 // 加载动画
 export {
 	default as VbLoading,

@@ -321,7 +321,10 @@ function ready() {
 	photoIsReady.value = true;
 }
 
-function maskClickHandler() {
+function maskClickHandler(e: Event) {
+	if ((e.target as HTMLElement)?.nodeName === 'FIGURE') {
+		return;
+	}
 	if (maskClose) {
 		exit();
 	}
@@ -445,7 +448,7 @@ onBeforeUnmount(() => {
 						<p>{{ $vbt('gallery.error') }}</p>
 					</div>
 					<img
-							draggable="false" :src="currentPhoto?.origin" :alt="currentPhoto?.name" @load="ready" @click.stop
+							draggable="false" :src="currentPhoto?.origin" :alt="currentPhoto?.name" @load="ready"
 							@error="photoIsFailed = true; photoIsReady = true;" v-show="photoIsReady" v-else/>
 				</InteractiveTracker>
 

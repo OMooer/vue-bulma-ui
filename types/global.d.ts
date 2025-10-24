@@ -35,7 +35,7 @@ declare module 'vue' {
 		VbGuide: typeof import("vue3-bulma-ui/components")["VbGuide"];
 		VbIncrement: typeof import("vue3-bulma-ui/components")["VbIncrement"];
 		VbInput: typeof import("vue3-bulma-ui/components")["VbInput"];
-		VbInteractiveTracker: typeof import("vue3-bulma-ui/components")["VbInteractiveTracker"];
+		// VbInteractiveTracker: typeof import("vue3-bulma-ui/components")["VbInteractiveTracker"];
 		VbLink: typeof import("vue3-bulma-ui/components")["VbLink"];
 		VbLoading: typeof import("vue3-bulma-ui/components")["VbLoading"];
 		VbLoadingBall: typeof import("vue3-bulma-ui/components")["VbLoadingBall"];

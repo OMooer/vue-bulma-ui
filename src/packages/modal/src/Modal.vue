@@ -43,6 +43,15 @@ function mClose(isMaskClose: boolean | string) {
 	}
 }
 
+function btnClose(e: Event) {
+	const btn = e.target as HTMLElement;
+	if (btn?.nodeName === 'BUTTON') {
+		if (btn.classList.contains('delete')) {
+			dismiss();
+		}
+	}
+}
+
 provide('modalDismiss', dismiss);
 defineExpose({
 	open,
@@ -61,10 +70,10 @@ defineExpose({
 					<template v-if="title">
 						<InteractiveTracker
 								tag="header" class="modal-card-head" :class="{'is-moving': isMoving}" :event-trigger="['drag']"
-								@start="isMoving = true" @end="isMoving = false" v-model:x="modalX" v-model:y="modalY">
+								@click="btnClose" @start="isMoving = true" @end="isMoving = false"
+								v-model:x="modalX" v-model:y="modalY">
 							<p class="modal-card-title">{{ title }}</p>
-							<button
-									type="button" class="delete" aria-label="close" @click="dismiss" v-if="isTruthy(hasClose)"></button>
+							<button type="button" class="delete" aria-label="close" v-if="isTruthy(hasClose)"></button>
 						</InteractiveTracker>
 						<section class="modal-card-body">
 							<slot :dismiss="dismiss"/>
