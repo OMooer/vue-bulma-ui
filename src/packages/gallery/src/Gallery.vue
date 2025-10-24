@@ -431,7 +431,7 @@ onBeforeUnmount(() => {
 				<InteractiveTracker
 						tag="figure" :style="`transform: translate(${offsetX}px, ${offsetY}px)`"
 						:x="offsetX" :y="offsetY" :scale="scale"
-						@direction="moveDirection = $event"
+						@ing="moveDirection = $event.direction"
 						@xSlide="jumpPhoto('x', $event)" @ySlide="jumpPhoto('y', $event)"
 						@end="fixPosition"
 						@update:scale="updateScale"
