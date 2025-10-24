@@ -25,6 +25,7 @@ function openNow(ev: Event) {
 		return;
 	}
 	if (!props.show) {
+		opened.value = false;
 		doneHandler();
 		return;
 	}
