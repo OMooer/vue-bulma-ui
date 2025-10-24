@@ -1,5 +1,5 @@
 import { EVENT_TO_BOTTOM, EVENT_TO_LEFT, EVENT_TO_RIGHT, EVENT_TO_TOP } from '@/utils';
-import { defineComponent, h, PropType } from 'vue';
+import { defineComponent, h, PropType, ref } from 'vue';
 
 export default defineComponent({
 	name     : 'Tracker',
@@ -23,6 +23,8 @@ export default defineComponent({
 			default: 0,
 		},
 
+		triggerItem: String,
+
 		eventTrigger: {
 			type   : Array as PropType<string[]>,
 			default: () => ['wheel', 'touch', 'drag']
@@ -32,16 +34,19 @@ export default defineComponent({
 		'update:x',
 		'update:y',
 		'update:scale',
+		'click',
 		'start',
 		'end',
-		'direction',
+		'ing',
 		'xSlide',
 		'ySlide',
 		'xWheel',
 		'yWheel'
 	],
-	setup(props, {emit, slots}) {
+	setup(props, {emit, slots, expose}) {
+		const trackerRef = ref(null);
 		let isMoveable = false;
+		let isClickEvent: MouseEvent | null = null;
 		let startX = 0;
 		let startY = 0;
 		let oldX = 0;
@@ -103,7 +108,11 @@ export default defineComponent({
 			const newY = oldY + moveY / props.scale;
 			emit('update:x', newX);
 			emit('update:y', newY);
-			emit('direction', {x: getXDir(moveX), y: getYDir(moveY)});
+			emit('ing', {
+				client   : {x: x, y: y},
+				direction: {x: getXDir(moveX), y: getYDir(moveY)},
+				offset   : {x: newX, y: newY},
+			});
 		}
 
 		function scaleStartHandler(touches: TouchList) {
@@ -137,30 +146,26 @@ export default defineComponent({
 			}
 		}
 
-		function checkEvent(event: string) {
-			return props.eventTrigger.includes(event);
-		}
-
-		function moveStart(e: MouseEvent) {
-			if (checkEvent('drag')) {
-				startHandler(e.clientX, e.clientY);
+		function checkEvent(event: string, e?: Event) {
+			const item = props.triggerItem;
+			const triggerDom = item ? (trackerRef.value as unknown as HTMLElement)?.querySelector(item) : null;
+			let result = true;
+			// 存在触发元素设置，检查事件的触发对象是否是触发元素
+			if (triggerDom) {
+				result = result && triggerDom === e?.target;
 			}
-		}
-
-		function moveEnd(e: MouseEvent) {
-			if (checkEvent('drag')) {
-				endHandler(e.clientX, e.clientY);
-			}
+			return result && props.eventTrigger.includes(event);
 		}
 
 		function moving(e: MouseEvent) {
-			if (checkEvent('drag')) {
+			isClickEvent = null;
+			if (checkEvent('drag', e)) {
 				ingHandler(e.clientX, e.clientY);
 			}
 		}
 
 		function touchStart(e: TouchEvent) {
-			if (checkEvent('touch')) {
+			if (checkEvent('touch', e)) {
 				scaleStartHandler(e.touches);
 				startHandler(e.touches[0].clientX, e.touches[0].clientY);
 				multiple = e.touches.length > 1;
@@ -168,7 +173,7 @@ export default defineComponent({
 		}
 
 		function touchEnd(e: TouchEvent) {
-			if (checkEvent('touch')) {
+			if (checkEvent('touch', e)) {
 				initialTouches = [];
 				initialDistance = 0;
 				endHandler(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
@@ -176,11 +181,29 @@ export default defineComponent({
 		}
 
 		function touchMoving(e: TouchEvent) {
-			if (checkEvent('touch')) {
+			if (checkEvent('touch', e)) {
 				// 双指缩放
 				scalingHandler(e.touches);
 				// 移动
 				ingHandler(e.touches[0].clientX, e.touches[0].clientY);
+			}
+		}
+
+		function beginSlide(e: PointerEvent) {
+			isClickEvent = e;
+			if (checkEvent('drag', e)) {
+				(trackerRef.value as any)?.setPointerCapture(e.pointerId);
+				startHandler(e.clientX, e.clientY);
+			}
+		}
+
+		function stopSlide(e: PointerEvent) {
+			if (isClickEvent) {
+				emit('click', isClickEvent);
+			}
+			(trackerRef.value as any)?.releasePointerCapture(e.pointerId);
+			if (checkEvent('drag', e)) {
+				endHandler(e.clientX, e.clientY);
 			}
 		}
 
@@ -260,16 +283,20 @@ export default defineComponent({
 			}
 		}
 
+		expose({
+			$el: trackerRef
+		});
+
 		return () => {
 			return h(props.tag, {
-				onMousedown : moveStart,
-				onMouseup   : moveEnd,
-				onMousemove : moving,
-				onMouseleave: moveEnd,
+				ref          : trackerRef,
+				onPointerdown: beginSlide,
+				onPointerup  : stopSlide,
+				onPointermove: moving,
 				onTouchstart: touchStart,
 				onTouchend  : touchEnd,
 				onTouchmove : touchMoving,
-				onWheel     : wheeling
+				onWheel: wheeling
 			}, slots?.default?.())
 		}
 	}
