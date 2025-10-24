@@ -95,7 +95,8 @@ function checkImageSafeRange() {
 	}
 	// 如果图片宽高小于裁剪框宽高，则进行强制放大
 	else if (Math.round(imgSize.width) < viewWidth || Math.round(imgSize.height) < viewHeight) {
-		const newScale = Number(Math.max(viewWidth / imgSize.renderWidth, viewHeight / imgSize.renderHeight).toFixed(3));
+		const maxDimension = Math.max((viewWidth + 2) / imgSize.renderWidth, (viewHeight + 2) / imgSize.renderHeight);
+		const newScale = Number(maxDimension.toFixed(3));
 		changes.push(() => {
 			scale.value = newScale;
 			tranX.value = 0;
