@@ -122,6 +122,8 @@ export {
 } from './packages/skeleton';
 // 排序状态按钮
 export { default as VbSort } from './packages/sort';
+// 分隔区域
+export { default as VbSplitArea } from './packages/splitArea';
 // 步骤条
 export { default as VbSteps } from './packages/steps';
 // 滑动容器
