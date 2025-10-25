@@ -32,6 +32,15 @@ const styleObj = computed(() => {
 });
 const splitArea = useTemplateRef<HTMLElement>('splitArea');
 
+function transBasicPercent(basic: string) {
+	if (basic.endsWith('%') || !splitArea.value) {
+		return parseFloat(basic);
+	}
+	const pixel = parseFloat(basic);
+	const rect = splitArea.value.getBoundingClientRect();
+	return pixel / rect[direction === 'horizontal' ? 'width' : 'height'] * 100;
+}
+
 function endDrag() {
 	isDragging.value = false;
 	isBordered.value = bordered;
@@ -52,11 +61,11 @@ function clickHandle(e: MouseEvent) {
 	}
 
 	const rect = splitArea.value.getBoundingClientRect();
-	const currentBasic = parseInt(basic.value);
+	const currentBasic = transBasicPercent(basic.value);
 
 	if (setBasic === 'start') {
 		// 如果小于等于原始的 basicStart 则设置为 0
-		if (currentBasic <= parseInt(basicStart)) {
+		if (currentBasic <= transBasicPercent(basicStart)) {
 			const start = Math.max(minStart, 0);
 			basic.value = `${ (start / rect[direction === 'horizontal' ? 'width' : 'height'] * 100).toFixed(2) }%`;
 		}
@@ -66,7 +75,7 @@ function clickHandle(e: MouseEvent) {
 	}
 	else if (setBasic === 'end') {
 		// 如果小于原始的 basicStart 则设置为 basicStart
-		if (currentBasic < parseInt(basicStart)) {
+		if (currentBasic < transBasicPercent(basicStart)) {
 			basic.value = basicStart;
 		}
 		else {
