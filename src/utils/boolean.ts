@@ -16,6 +16,14 @@ export function isTruthy(property: any) {
 }
 
 /**
+ * 检测值是否是有效键入值，即合法的数字与字符串
+ * @param value
+ */
+export function isValidInputValue(value: any) {
+	return (typeof value === 'string' && value.trim() !== '') || (typeof value === 'number' && !isNaN(value));
+}
+
+/**
  * 检测目标元素是否超出容器的边距
  * @param target
  * @param offset 附加偏移数值
@@ -52,7 +60,7 @@ export function isPromise(fn: any) {
  * 判断目标元素是否部分被隐藏
  * @param element
  */
-export function isElementPartiallyHidden(element:HTMLElement) {
+export function isElementPartiallyHidden(element: HTMLElement) {
 	// 获取目标元素的边界矩形
 	const rect = element.getBoundingClientRect();
 

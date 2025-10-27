@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isValidInputValue } from '@/utils';
 import InteractiveTracker from '../../InteractiveTracker';
 import { computed, ref, useTemplateRef } from 'vue';
 
@@ -32,11 +33,20 @@ const styleObj = computed(() => {
 });
 const splitArea = useTemplateRef<HTMLElement>('splitArea');
 
-function transBasicPercent(basic: string) {
-	if (basic.endsWith('%') || !splitArea.value) {
-		return parseFloat(basic);
+function transBasicPercent(bs: string | number) {
+	// 先将数字的转为字符串好适应后续的处理
+	if (typeof bs === 'number') {
+		bs = bs.toFixed(2);
 	}
-	const pixel = parseFloat(basic);
+	// 如果是百分比则直接返回对应的数字
+	if (bs.endsWith('%') || !splitArea.value) {
+		return parseFloat(bs);
+	}
+	// 与实际的长度值进行百分比的转换，排除非法值
+	const pixel = parseFloat(bs);
+	if (!isNaN(pixel)) {
+		return 0;
+	}
 	const rect = splitArea.value.getBoundingClientRect();
 	return pixel / rect[direction === 'horizontal' ? 'width' : 'height'] * 100;
 }
@@ -125,12 +135,24 @@ function preventScroll(e: TouchEvent) {
 		e.preventDefault();
 	}
 }
+
+function changeBasic(b: string) {
+	if (!isValidInputValue(b)) {
+		return;
+	}
+	const percentage = transBasicPercent(b);
+	basic.value = `${ percentage.toFixed(2) }%`;
+}
+
+defineExpose({
+	changeBasic
+});
 </script>
 
 <template>
 	<div
 			ref="splitArea"
-			:class="['vb-split-area', direction, isDragging ? 'is-dragging' : null]"
+			:class="[$attrs.class, 'vb-split-area', direction, isDragging ? 'is-dragging' : null]"
 			:style="styleObj"
 			@touchmove="preventScroll">
 		<div class="vb-split-area-start">
