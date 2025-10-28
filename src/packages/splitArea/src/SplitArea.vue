@@ -44,7 +44,7 @@ function transBasicPercent(bs: string | number) {
 	}
 	// 与实际的长度值进行百分比的转换，排除非法值
 	const pixel = parseFloat(bs);
-	if (!isNaN(pixel)) {
+	if (isNaN(pixel)) {
 		return 0;
 	}
 	const rect = splitArea.value.getBoundingClientRect();
