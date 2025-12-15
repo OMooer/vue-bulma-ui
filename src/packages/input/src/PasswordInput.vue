@@ -10,6 +10,7 @@ defineOptions({
 const isAtElement = inject('formElement', false);
 const attrs = useAttrs();
 const props = defineProps<{
+	name?: string;
 	type?: 'password' | 'text';
 	readonly?: boolean;
 	required?: boolean;
