@@ -12,8 +12,8 @@ const props = defineProps({
 });
 const slots = defineSlots<{
 	default?: (scope: { setError?: any }) => VNodeChild;
-	addonLeft?: () => VNodeChild;
-	addonRight?: () => VNodeChild;
+	addonLeft?: (scope: { setError?: any }) => VNodeChild;
+	addonRight?: (scope: { setError?: any }) => VNodeChild;
 	leftIcon?: () => VNodeChild;
 	rightIcon?: () => VNodeChild;
 	tips?: (scope: { text?: string, error?: boolean }) => VNodeChild;
@@ -96,9 +96,9 @@ const ElementCom = defineComponent(() => {
 			},
 			'data-tips': wrapTips.value
 		}, [
-			slots.addonLeft?.(),
+			slots.addonLeft?.({setError}),
 			control,
-			slots.addonRight?.()
+			slots.addonRight?.({setError})
 		]);
 	}
 });

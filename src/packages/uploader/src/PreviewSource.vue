@@ -89,7 +89,9 @@ function deleteSource() {
 @use "@/scss/variables" as va;
 
 .image-source, .file-source {
-	margin-bottom: .25rem;
+	&:not(:first-child) {
+		margin-top: .25rem;
+	}
 }
 
 .file-source {

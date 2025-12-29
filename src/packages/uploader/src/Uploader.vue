@@ -476,6 +476,10 @@ defineExpose({
 				width: 100%;
 			}
 		}
+
+		.upload-result + .file {
+			margin-top: 0.25rem;
+		}
 	}
 }
 </style>
