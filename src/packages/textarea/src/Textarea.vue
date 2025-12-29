@@ -24,5 +24,6 @@ defineExpose({
 			ref="textRef" class="textarea"
 			:class="[fixed ? 'has-fixed-size' : '', isError ? 'is-shake is-danger' : null]"
 			@invalid="setError(true, ($event as any).target?.validationMessage)"
+			@input="setError(false)"
 			v-model="modelValue"></textarea>
 </template>

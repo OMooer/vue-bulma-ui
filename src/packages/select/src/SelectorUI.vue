@@ -184,7 +184,7 @@ defineExpose({
 	<div ref="entity" :class="classList" :data-required="required" @blur.capture="blurEntity" @keydown="keyAction">
 		<select
 				class="entity-shadow" tabindex="-1" aria-hidden="true" required
-				@focus="frontFocus" v-if="innerValue == undefined && required"></select>
+				@focus="frontFocus" v-if="!findValue && required"></select>
 		<div class="dropdown-trigger">
 			<button
 					ref="frontRef" type="button" @click="toggleDropdown" :disabled="disabled"
