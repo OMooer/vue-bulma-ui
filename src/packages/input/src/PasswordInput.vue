@@ -38,13 +38,13 @@ watch(innerValue, () => {
 const inputVNode = defineComponent(() => {
 	return () => [
 		h(InputUI, {
-			ref: entity,
+			ref  : entity,
 			type : showPassword.value ? 'text' : 'password',
 			class: [attrs.class, 'vb-password'],
 			...bindProps.value,
 			modelValue: innerValue.value,
-			'onUpdate:modelValue'(val: string) {
-				innerValue.value = val;
+			'onUpdate:modelValue'(val: string | number) {
+				innerValue.value = val as string;
 			},
 			onError: setError
 		}),

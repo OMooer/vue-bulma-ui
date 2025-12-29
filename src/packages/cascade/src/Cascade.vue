@@ -356,7 +356,7 @@ defineExpose({
 				<div class="dropdown-menu" role="menu">
 					<div class="dropdown-content" @mouseover="resetKeyIndex">
 						<div class="cascade-level" :key="level" v-for="(item, level) in cascadeList">
-							<template :key="node.value" v-for="(node, index) in item.list">
+							<template :key="node.value as string" v-for="(node, index) in item.list">
 								<a
 										class="dropdown-item"
 										:class="{'is-disabled': node.disabled, 'is-active': cascadeValue.includes(node.value), 'is-focused': keyIndex === index && lastSelectLevel === level}"
