@@ -137,3 +137,32 @@ function skipFindIndex(arr: any[], fn: (item: any, index: number, ...args: any[]
 	}
 	return index;
 }
+
+/**
+ * 带超时的执行器
+ * @param {Function} taskFn - 你想要执行的主要异步任务 (必须返回 Promise)
+ * @param {Function} fallbackFn - 超时后执行的备用任务
+ * @param {number} timeoutMs - 超时时间 (毫秒)
+ */
+export async function runWithTimeout(taskFn: Function, fallbackFn: Function, timeoutMs: number) {
+	let timerId: any;
+
+	// 1. 创建一个在指定时间后 resolve 的 Promise (代表超时)
+	const timeoutPromise = new Promise((resolve) => {
+		timerId = setTimeout(() => {
+			// 执行备用方法并返回其结果
+			resolve(fallbackFn());
+		}, timeoutMs);
+	});
+
+	// 2. 包装主任务，为了在完成后清除定时器 (防止内存泄漏或意外执行)
+	const taskPromise = new Promise((resolve) => {
+		resolve(taskFn());
+	}).then((result: any) => {
+		clearTimeout(timerId); // 如果主任务先完成，清除定时器
+		return result;
+	});
+
+	// 3. 让它们赛跑
+	return Promise.any([taskPromise, timeoutPromise]);
+}

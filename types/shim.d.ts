@@ -83,11 +83,13 @@ declare namespace VBTable {
 		sticky?: boolean;
 		style?: Normal.AnyObj | string;
 		slot?: string;
+		formatter?: (value: T) => string | T;
 	}
 
 	interface Config {
 		uniqueKey?: string;
 		showSelectColumn?: boolean;
+		readonly?: boolean | ((item: T) => boolean);
 		columns: Column[];
 	}
 }

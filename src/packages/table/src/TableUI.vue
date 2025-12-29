@@ -24,17 +24,17 @@ const selectedIndex = ref<number[]>([]);
 const selectedAll = ref(false);
 watch(() => selectedAll.value, (allSelect) => {
 	if (allSelect) {
-		selectedIndex.value = props.tableData?.map((_: any, index: number) => index) ?? [];
+		selectedIndex.value = props.tableData?.map((item: any, index: number) => {
+			return isReadonly(item) ? -1 : index;
+		}).filter(i => i > -1) ?? [];
 	}
-	else if (selectedIndex.value.length === props.tableData?.length) {
+	else if (selectedIndex.value.length === props.tableData?.filter((item: any) => !isReadonly(item)).length) {
 		selectedIndex.value = [];
 	}
 });
-watch(() => selectedIndex.value, () => {
-	if (selectedIndex.value.length !== props.tableData?.length) {
-		selectedAll.value = false;
-	}
-	emit('select', selectedIndex.value);
+watch(() => selectedIndex.value, (selectedArrays) => {
+	selectedAll.value = selectedArrays.length === props.tableData?.filter((item: any) => !isReadonly(item)).length;
+	emit('select', selectedArrays);
 });
 watch([() => props.tableData, () => props.tableData.length], () => {
 	selectedIndex.value = [];
@@ -124,6 +124,11 @@ function changeSelect(value: any, selected: boolean) {
 		}
 	}
 }
+
+function isReadonly(data: any) {
+	const readonly = props.tableConfig?.readonly;
+	return typeof readonly === 'function' ? readonly(data) : readonly ?? false;
+}
 </script>
 
 <template>
@@ -156,13 +161,13 @@ function changeSelect(value: any, selected: boolean) {
 			</thead>
 			<tbody>
 			<tr
-					:class="{'is-checked': selectedIndex.includes(index)}"
+					:class="{'is-checked': selectedIndex.includes(index), 'is-readonly': isReadonly(data)}"
 					:key="data[tableConfig?.uniqueKey ?? ''] ?? Object.values(data)?.[0] ?? index"
 					v-for="(data, index) in tableData">
 				<!-- 如果有勾选列 -->
 				<td class="col-check is-sticky" v-if="tableConfig?.showSelectColumn">
 					<label class="checkbox">
-						<input type="checkbox" :value="index" v-model="selectedIndex">
+						<input type="checkbox" :disabled="isReadonly(data)" :value="index" v-model="selectedIndex">
 					</label>
 				</td>
 				<td
@@ -172,9 +177,11 @@ function changeSelect(value: any, selected: boolean) {
 						v-for="(item, idx) in renderColumns">
 					<!-- 如果有插槽则显示插槽的内容，否则显示纯数据值 -->
 					<template v-if="item.slot">
-						<slot :name="item.slot" :row="data" :val="data[item.field]" :index="index">{{ $vbt('table.unknownSlot') }}</slot>
+						<slot :name="item.slot" :row="data" :val="data[item.field]" :index="index">
+							{{ $vbt('table.unknownSlot') }}
+						</slot>
 					</template>
-					<template v-else>{{ data[item.field] }}</template>
+					<template v-else>{{ item.formatter?.(data[item.field]) ?? data[item.field] }}</template>
 				</td>
 			</tr>
 			<tr v-if="!tableData?.length || !columnCount">
