@@ -71,7 +71,7 @@ const isArrowStart = computed(() => {
 
 			<div class="card-operations" v-if="$slots.primaryButton">
 				<Transition name="animate-slide-left">
-					<div class="buttons are-small" @click.stop v-show="!panel?.folded">
+					<div class="buttons are-small is-gap-1" @click.stop v-show="!panel?.folded">
 						<slot name="primaryButton" :folded="panel?.folded"/>
 					</div>
 				</Transition>

@@ -152,7 +152,7 @@ function reset() {
 		<slot v-else/>
 
 		<slot name="formFooter">
-			<div class="field is-grouped" :class="{'column': hasConfigItems}">
+			<div class="field is-grouped is-gap-1" :class="{'column': hasConfigItems}">
 				<slot name="buttons">
 					<template v-if="config?.buttons.length">
 						<div class="control" :class="{'is-expanded': btn.fulled}" :key="index" v-for="(btn, index) in config.buttons">
