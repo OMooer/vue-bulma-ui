@@ -33,7 +33,7 @@ watch(() => selectedAll.value, (allSelect) => {
 	}
 });
 watch(() => selectedIndex.value, (selectedArrays) => {
-	selectedAll.value = selectedArrays.length === props.tableData?.filter((item: any) => !isReadonly(item)).length;
+	selectedAll.value = selectedArrays.length > 0 && selectedArrays.length === props.tableData?.filter((item: any) => !isReadonly(item)).length;
 	emit('select', selectedArrays);
 });
 watch([() => props.tableData, () => props.tableData.length], () => {
@@ -147,7 +147,7 @@ function isReadonly(data: any) {
 					</label>
 				</th>
 				<th
-						:class="[item.slot?`col-${item.slot}`:`col-${idx}`, {'is-sticky' : item.sticky}]"
+						:class="[`col-${idx}`, {[`col-${item.slot}`]: item.slot, 'is-sticky': item.sticky}]"
 						:style="item.style ?? null"
 						:key="item.field"
 						v-for="(item, idx) in renderColumns">
@@ -171,7 +171,7 @@ function isReadonly(data: any) {
 					</label>
 				</td>
 				<td
-						:class="[`col-${idx}`, {[`col-${item.slot}`]: item.slot, 'is-sticky' : item.sticky}]"
+						:class="[`col-${idx}`, {[`col-${item.slot}`]: item.slot, 'is-sticky': item.sticky}]"
 						:style="item.style ?? null"
 						:key="item.field"
 						v-for="(item, idx) in renderColumns">
