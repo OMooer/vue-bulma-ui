@@ -14,6 +14,14 @@ const props = defineProps<{
 	custom?: boolean;
 }>();
 const {$vbt} = useUILocale();
+const innerTableData = computed(() => {
+	return props.tableData?.map((item: any) => {
+		return {
+			...item,
+			readonly: isReadonly(item)
+		}
+	}) ?? [];
+});
 // 是否显示可勾选
 const showCheck = computed(() => {
 	return props.tableConfig?.showSelectColumn;
@@ -22,23 +30,22 @@ const showCheck = computed(() => {
 const selectedIndex = ref<number[]>([]);
 // 是否全选
 const selectedAll = ref(false);
-watch(() => selectedAll.value, (allSelect) => {
-	if (allSelect) {
-		selectedIndex.value = props.tableData?.map((item: any, index: number) => {
-			return isReadonly(item) ? -1 : index;
-		}).filter(i => i > -1) ?? [];
-	}
-	else if (selectedIndex.value.length === props.tableData?.filter((item: any) => !isReadonly(item)).length) {
-		selectedIndex.value = [];
-	}
+const unselectable = computed(() => {
+	return !innerTableData.value?.some((item: any) => !item.readonly);
 });
 watch(() => selectedIndex.value, (selectedArrays) => {
-	selectedAll.value = selectedArrays.length > 0 && selectedArrays.length === props.tableData?.filter((item: any) => !isReadonly(item)).length;
+	selectedAll.value = selectedArrays.length > 0 && selectedArrays.length >= innerTableData.value?.filter((item: any) => !item.readonly).length;
 	emit('select', selectedArrays);
 });
-watch([() => props.tableData, () => props.tableData.length], () => {
+watch([() => props.tableData, () => props.tableData.length], ([list]) => {
 	selectedIndex.value = [];
-});
+	list.forEach((item: any, index: number) => {
+		// 检查是否预勾选
+		if (isChecked(item)) {
+			selectedIndex.value.push(index);
+		}
+	});
+}, {immediate: true});
 // 显示的表头值
 const showHeadList = ref<string[]>([]);
 watchEffect(() => {
@@ -101,7 +108,7 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 	emit('sort', sortCond);
 }
 
-function changeSelect(value: any, selected: boolean) {
+function changeSelectTableHead(value: any, selected: boolean) {
 	if (!selected) {
 		if (value === SYMBOL_SELECT_ALL) {
 			showHeadList.value.splice(0);
@@ -125,9 +132,26 @@ function changeSelect(value: any, selected: boolean) {
 	}
 }
 
+function toggleSelectAll() {
+	const allSelect = selectedAll.value;
+	if (allSelect) {
+		selectedIndex.value = innerTableData.value?.map((item: any, index: number) => {
+			return item.readonly ? -1 : index;
+		}).filter(i => i > -1) ?? [];
+	}
+	else {
+		selectedIndex.value = [];
+	}
+}
+
 function isReadonly(data: any) {
-	const readonly = props.tableConfig?.readonly;
-	return typeof readonly === 'function' ? readonly(data) : readonly ?? false;
+	const readonly = props.tableConfig?.isReadonly;
+	return !!(typeof readonly === 'function' ? readonly(data) : readonly);
+}
+
+function isChecked(data: any) {
+	const checked = props.tableConfig?.isChecked;
+	return !!(typeof checked === 'function' ? checked(data) : checked);
 }
 </script>
 
@@ -136,14 +160,14 @@ function isReadonly(data: any) {
 		<Dropdown
 				class="head-dropdown is-small"
 				showSelect :list="tableHeads" parentElement="body"
-				@select="changeSelect" v-if="custom"/>
+				@select="changeSelectTableHead" v-if="custom"/>
 		<table class="table is-bordered is-hoverable is-striped">
 			<thead>
 			<tr>
 				<!-- 如果有勾选列 -->
 				<th class="col-check is-sticky" v-if="tableConfig?.showSelectColumn">
 					<label class="checkbox">
-						<input type="checkbox" v-model="selectedAll">
+						<input type="checkbox" :disabled="unselectable" @change="toggleSelectAll" v-model="selectedAll">
 					</label>
 				</th>
 				<th
@@ -161,13 +185,13 @@ function isReadonly(data: any) {
 			</thead>
 			<tbody>
 			<tr
-					:class="{'is-checked': selectedIndex.includes(index), 'is-readonly': isReadonly(data)}"
+					:class="{'is-checked': selectedIndex.includes(index), 'is-readonly': data.readonly}"
 					:key="data[tableConfig?.uniqueKey ?? ''] ?? Object.values(data)?.[0] ?? index"
-					v-for="(data, index) in tableData">
+					v-for="(data, index) in innerTableData">
 				<!-- 如果有勾选列 -->
 				<td class="col-check is-sticky" v-if="tableConfig?.showSelectColumn">
 					<label class="checkbox">
-						<input type="checkbox" :disabled="isReadonly(data)" :value="index" v-model="selectedIndex">
+						<input type="checkbox" :disabled="data.readonly" :value="index" v-model="selectedIndex">
 					</label>
 				</td>
 				<td

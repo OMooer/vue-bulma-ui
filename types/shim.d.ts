@@ -89,7 +89,8 @@ declare namespace VBTable {
 	interface Config {
 		uniqueKey?: string;
 		showSelectColumn?: boolean;
-		readonly?: boolean | ((item: T) => boolean);
+		isReadonly?: boolean | ((item: T) => boolean);
+		isChecked?: boolean | ((item: T) => boolean);
 		columns: Column[];
 	}
 }
