@@ -8,6 +8,7 @@ const props = defineProps<{
 	formatter?: (value: string) => string;
 	placeholder?: string;
 	disguise?: boolean;
+	disabled?: boolean;
 }>();
 const modelValue = defineModel({default: ''});
 const isEditable = ref(false);
@@ -38,9 +39,9 @@ defineExpose({
 </script>
 
 <template>
-	<div class="dual-input" :class="{'is-readable': !isEditable, 'is-disguise': disguise}">
+	<div class="dual-input" :class="{'is-readable': !isEditable, 'is-disguise': disguise, 'is-disabled': disabled}">
 		<input
-				ref="entityInput" class="input" v-bind="$attrs" :placeholder v-model="modelValue"
+				ref="entityInput" class="input" v-bind="$attrs" :disabled :placeholder v-model="modelValue"
 				@focus="activeInput" @blur="changeValueShow">
 		<div
 				class="shadow-input control" :class="[{'is-empty': isEmptyValue}, $attrs.class]" :style="$attrs.style as any"
@@ -81,6 +82,13 @@ defineExpose({
 			opacity: 0;
 			z-index: 0;
 		}
+	}
+
+	&.is-disabled {
+		opacity: .7;
+		pointer-events: none;
+		user-select: none;
+		@include va.file-bg-color();
 	}
 
 	input, .shadow-input {
