@@ -1,11 +1,16 @@
 <script setup lang="ts">
-defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean});
+defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean, 'noIcon': Boolean});
 </script>
 
 <template>
-	<span class="vb-tips icon" :data-tips="tips" v-if="!$slots?.default">
-		<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
+	<span class="vb-tips tooltip" :data-tips="tips" v-if="!$slots?.default">
+		<span class="icon">
+			<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
+		</span>
 	</span>
+	<div class="vb-tips tooltip" :data-tips="tips" v-else-if="noIcon">
+		<slot/>
+	</div>
 	<div class="vb-tips icon-text" v-else-if="inline">
 		<span class="icon">
 			<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
@@ -29,58 +34,69 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean});
 </template>
 
 <style scoped lang="scss">
-@use "@/scss/variables" as va;
-
-.vb-tips.icon {
+.vb-tips.tooltip {
 	display: inline-flex;
-	align-items: flex-end;
+	align-items: flex-start;
 	justify-content: center;
-	color: va.$link;
-	height: auto;
 
-	&:before {
+	&::before {
 		content: attr(data-tips);
 		white-space: pre-wrap;
 		visibility: hidden;
 		position: absolute;
 		padding: 3px 8px;
 		border-radius: 4px;
-		background-color: rgba(51, 51, 51, 0.85);
+		background-color: rgba(51, 51, 51, 0);
 		text-align: left;
 		font-size: 12px;
-		color: #FFF;
+		color: transparent;
 		max-width: 200px;
-		transform: translateY(-24px);
-		opacity: 0;
-		transition: opacity .3s ease-in;
+		transform: translateY(calc(-100% - 5px));
+		transition: background-color .3s ease-in, color .3s ease-in;
 	}
 
-	&:after {
+	&::after {
 		content: "";
 		visibility: hidden;
 		position: absolute;
 		border: solid 5px;
-		border-color: transparent rgba(51, 51, 51, 0.85) rgba(51, 51, 51, 0.85) transparent;
-		//border-radius: 2px;
-		transform: rotate(45deg) translate(-14px, -13px);
+		border-color: transparent rgba(51, 51, 51, 0) rgba(51, 51, 51, 0) transparent;
+		transform: translateY(-100%) rotate(45deg);
 		line-height: 0;
 		font-size: 0;
 		width: 0;
 		height: 0;
-		opacity: 0;
-		transition: opacity .3s ease-in;
+		transition: border-color .3s ease-in;
 	}
 
 	&:hover {
-		&:before, &:after {
+		&::before, &::after {
 			visibility: visible;
-			opacity: 1;
 			z-index: 9999;
+		}
+
+		&::before {
+			background-color: rgba(51, 51, 51, 0.85);
+			color: var(--bulma-white);
+		}
+
+		&::after {
+			border-color: transparent rgba(51, 51, 51, 0.85) rgba(51, 51, 51, 0.85) transparent;
 		}
 	}
 }
 
+.vb-tips.icon-text {
+	gap: 0;
+}
+
 .vb-tips.dropdown {
+	vertical-align: unset;
+
+	.dropdown-trigger {
+		line-height: normal;
+	}
+
 	.dropdown-menu {
 		transform: translateX(-30%);
 
