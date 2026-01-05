@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineComponent, h, provide, ref, toRef, type VNode, type VNodeChild, watchEffect } from 'vue';
+import { computed, defineComponent, h, inject, provide, ref, type VNode, type VNodeChild, watchEffect } from 'vue';
 
 const props = defineProps({
 	label     : String,
@@ -18,8 +18,12 @@ const slots = defineSlots<{
 	rightIcon?: () => VNodeChild;
 	tips?: (scope: { text?: string, error?: boolean }) => VNodeChild;
 }>();
+const isFormSmall = inject('isSmall', ref(false));
 const isError = ref(false);
 const helpMsg = ref();
+const isRealSmall = computed(() => {
+	return isFormSmall.value || props.isSmall;
+});
 const wrapTips = computed(() => {
 	return props.floatTips ? props.tips?.replace(/\\n/g, '\n') : null;
 });
@@ -115,7 +119,7 @@ const HelpCom = defineComponent(() => {
 	}
 });
 
-provide('isSmall', toRef(props, 'isSmall'));
+provide('isSmall', isRealSmall);
 provide('formElement', true);
 </script>
 

@@ -35,10 +35,24 @@ watch(charList, (newList, oldList, onCleanup) => {
 		}
 	}
 }, {immediate: true});
+
+function charClick(e: MouseEvent) {
+	if (e.detail >= 2) {
+		const selection = window.getSelection();
+		const range = document.createRange();
+
+		// 选中整个父容器的内容
+		range.selectNodeContents(e.currentTarget as HTMLElement);
+
+		// 清除现有选择并应用新选择
+		selection?.removeAllRanges();
+		selection?.addRange(range);
+	}
+}
 </script>
 
 <template>
-	<span class="vb-animate-number" :key="text">
+	<span class="vb-animate-number" :key="text" @click="charClick">
 		<template :key="char" v-for="(char, index) in charList">
 			<span v-if="isNaN(parseInt(char, 0))">{{ char }}</span>
 			<span

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
-import { computed, reactive, watchEffect } from "vue";
+import { computed, provide, reactive, watchEffect } from "vue";
 import DatetimePicker from '../../datetimePicker';
 import InputUI, { PasswordInput } from '../../input';
 import SelectorUI from '../../select';
@@ -13,6 +13,7 @@ const props = defineProps<{
 	config?: VBForm.Config;
 	submitText?: string;
 	disableSubmit?: boolean;
+	isSmall?: boolean;
 }>();
 const formValue = defineModel<Normal.AnyObj>({default: reactive({})});
 const {$vbt} = useUILocale();
@@ -30,7 +31,7 @@ watchEffect(() => {
 	}
 });
 const hasConfigItems = computed(() => !!props.config?.items?.length);
-const isSmall = computed(() => props.config?.isSmall || false);
+const isSmall = computed(() => (props.isSmall || props.config?.isSmall) ?? false);
 const classList = computed(() => {
 	return {
 		"vb-form"     : true,
@@ -60,6 +61,8 @@ function reset() {
 	});
 	emit("reset");
 }
+
+provide('isSmall', isSmall);
 </script>
 
 <template>
@@ -103,7 +106,7 @@ function reset() {
 						:disabled="item.disabled"
 						:readonly="item.readonly"
 						:placeholder="item.placeholder"
-						v-model.trim="formValue[item.name]" v-else-if="item.type==='password'"/>
+						v-model.trim="formValue[item.name]" v-else-if="item.type === 'password'"/>
 
 				<!-- 日期 -->
 				<DatetimePicker
@@ -112,7 +115,7 @@ function reset() {
 						:min="item.min"
 						:max="item.max"
 						v-model="formValue[item.name]"
-						v-if="item.type==='datetime'"/>
+						v-if="item.type === 'datetime'"/>
 				<DatetimePicker
 						is-range
 						:required="item.required"
@@ -120,14 +123,14 @@ function reset() {
 						:max="item.max"
 						:messages="{'zh-cn':{calendar:{rangeStart:item.rangeText?.[0], rangeEnd:item.rangeText?.[1]}}}"
 						v-model="formValue[item.name]"
-						v-else-if="item.type==='dateRange'"/>
+						v-else-if="item.type === 'dateRange'"/>
 				<DatetimePicker
 						auto-close
 						:required="item.required"
 						:min="item.min"
 						:max="item.max"
 						v-model="formValue[item.name]"
-						v-else-if="item.type==='date'"/>
+						v-else-if="item.type === 'date'"/>
 
 				<!-- tags -->
 				<Tags
@@ -155,7 +158,9 @@ function reset() {
 			<div class="field is-grouped is-gap-1" :class="{'column': hasConfigItems}">
 				<slot name="buttons">
 					<template v-if="config?.buttons.length">
-						<div class="control" :class="{'is-expanded': btn.fulled}" :key="index" v-for="(btn, index) in config.buttons">
+						<div
+								class="control" :class="{'is-expanded': btn.fulled}" :key="index"
+								v-for="(btn, index) in config.buttons">
 							<button
 									:type="btn.type || 'button'"
 									:class="[btn.class, btn.fulled ? 'is-fullwidth' : '', isSmall ? 'is-small' : '']"

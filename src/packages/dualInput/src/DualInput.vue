@@ -4,9 +4,12 @@ import { computed, ref } from 'vue';
 defineOptions({
 	inheritAttrs: false
 });
-const emit = defineEmits(['tab']);
-const props = defineProps(['formatter', 'placeholder']);
-const modelValue = defineModel();
+const props = defineProps<{
+	formatter?: (value: string) => string;
+	placeholder?: string;
+	disguise?: boolean;
+}>();
+const modelValue = defineModel({default: ''});
 const isEditable = ref(false);
 const innerText = computed(() => {
 	const placeholder = props.placeholder ?? '';
@@ -22,18 +25,11 @@ function activeInput() {
 	isEditable.value = true;
 	setTimeout(() => {
 		entityInput.value.focus();
-		entityInput.value.select();
 	}, 100);
 }
 
 function changeValueShow(e: Event) {
 	isEditable.value = false;
-}
-
-function dispatchTab(e: any) {
-	if (e.code === 'Tab') {
-		emit('tab', e.shiftKey);
-	}
 }
 
 defineExpose({
@@ -42,12 +38,12 @@ defineExpose({
 </script>
 
 <template>
-	<div class="dual-input" :class="{'is-readable': !isEditable}">
+	<div class="dual-input" :class="{'is-readable': !isEditable, 'is-disguise': disguise}">
 		<input
-				ref="entityInput" v-bind="$attrs" tabindex="-1" :placeholder @keydown="dispatchTab" v-model="modelValue"
-				@blur="changeValueShow">
+				ref="entityInput" class="input" v-bind="$attrs" :placeholder v-model="modelValue"
+				@focus="activeInput" @blur="changeValueShow">
 		<div
-				class="shadow-input" :class="[{'is-empty': isEmptyValue}, $attrs.class]" :style="$attrs.style as any"
+				class="shadow-input control" :class="[{'is-empty': isEmptyValue}, $attrs.class]" :style="$attrs.style as any"
 				@click="activeInput" v-if="!isEditable">
 			{{ innerText }}
 		</div>
@@ -60,25 +56,23 @@ defineExpose({
 .dual-input {
 	display: flex;
 	align-items: center;
-	position: relative;
-	overflow: hidden;
-	padding: calc(.5em - 1px) .5em;
 	border-radius: var(--bulma-radius);
-	height: 100%;
+
+	.field.has-addons .control:not(:first-child) & {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
 
 	.field.has-addons .control:not(:last-child) & {
-		margin-right: 1px;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
 	}
 
-	&:focus-within {
-		outline: solid 1px va.$link;
-		background-color: transparent !important;
-		box-shadow: var(--bulma-focus-shadow-size) hsla(var(--bulma-focus-h), var(--bulma-focus-s), var(--bulma-focus-l), var(--bulma-focus-shadow-alpha));
-	}
-
-	&:hover {
-		@include va.file-bg-color();
-		cursor: text;
+	&:not(.is-disguise) {
+		&:hover {
+			@include va.file-bg-color();
+			cursor: text;
+		}
 	}
 
 	&.is-readable {
@@ -91,41 +85,56 @@ defineExpose({
 
 	input, .shadow-input {
 		flex-grow: 1;
-		padding: 0;
-		border: 0;
-		line-height: 1.5;
-		font-size: 1rem;
 	}
 
 	input {
-		background-color: transparent;
-		color: hsl(var(--bulma-input-h), var(--bulma-input-s), var(--bulma-input-color-l));
 		min-width: 0;
 		width: 100%;
 
-		&::placeholder {
-			font-weight: normal;
-		}
-
 		&::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
 			appearance: none;
-		}
-
-		&:focus {
-			border: 0;
-			box-shadow: none;
-			outline: none;
 		}
 	}
 
 	.shadow-input {
 		overflow: hidden;
+		padding: var(--bulma-control-padding-vertical) var(--bulma-control-padding-horizontal);
+		border: 1px solid transparent;
 		white-space: nowrap;
 		z-index: 1;
 
 		&.is-empty {
-			color: va.$grey-lighter !important;
-			font-weight: normal !important;
+			color: var(--bulma-input-placeholder-color);
+			font-weight: normal;
+		}
+	}
+
+	&.is-disguise {
+		.shadow-input {
+			border-radius: var(--bulma-input-radius);
+			border-color: var(--bulma-input-border-color);
+			color: hsl(var(--bulma-input-h), var(--bulma-input-s), var(--bulma-input-color-l));
+			box-shadow: inset 0 0.0625em 0.125em hsla(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-invert-l), 0.05);
+			transition-duration: var(--bulma-duration);
+			transition-property: background-color, border-color, box-shadow, color;
+
+			&:hover {
+				--bulma-input-border-l-delta: var(--bulma-input-hover-border-l-delta);
+			}
+
+			&.is-empty {
+				color: var(--bulma-input-placeholder-color);
+			}
+
+			.field.has-addons .control:not(:first-child) & {
+				border-top-left-radius: 0;
+				border-bottom-left-radius: 0;
+			}
+
+			.field.has-addons .control:not(:last-child) & {
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+			}
 		}
 	}
 }
