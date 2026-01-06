@@ -169,7 +169,7 @@ provide('isSmall', isSmall);
 							</button>
 						</div>
 					</template>
-					<div class="control is-expanded" v-else>
+					<div class="control is-expanded mt-4" v-else>
 						<button
 								type="submit" class="button is-success is-fullwidth"
 								:class="{'is-small': isSmall}"
