@@ -119,6 +119,7 @@ defineExpose({
 
 	&.is-disguise {
 		.shadow-input {
+			background-color: hsl(var(--bulma-input-h), var(--bulma-input-s), calc(var(--bulma-input-background-l) + var(--bulma-input-background-l-delta)));
 			border-radius: var(--bulma-input-radius);
 			border-color: var(--bulma-input-border-color);
 			color: hsl(var(--bulma-input-h), var(--bulma-input-s), var(--bulma-input-color-l));
