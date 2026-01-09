@@ -199,7 +199,7 @@ function updateNodeData(level: number, data: any) {
 	// 将级联列表在当前层级后可能存在的旧数据清除
 	cascadeList.value.splice(level + 1);
 	// 获取下级数据，如果有的话
-	return loadDataFn({data, level, hasChild: !!findNode?.children}).then(
+	return loadDataFn({data, level, hasChild: !!findNode?.children, detail: findNode}).then(
 			(subList: TVO.CascadeItem[]) => {
 				lastSelectLevel.value = level + 1;
 				cascadeList.value.push({

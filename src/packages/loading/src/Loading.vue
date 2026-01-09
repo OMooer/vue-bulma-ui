@@ -72,7 +72,9 @@ function timeout() {
 	timer = setTimeout(() => {
 		percent.value = 100;
 		status.value = 'error';
-		dismiss();
+		if (props.timeoutState !== 'keep') {
+			dismiss();
+		}
 	}, props.timeout);
 }
 
@@ -89,9 +91,7 @@ function dismiss() {
 		timer = null;
 	}
 	setTimeout(() => {
-		if (props.timeoutState !== 'keep') {
-			isLoading.value = false;
-		}
+		isLoading.value = false;
 		emit('dismiss', status.value);
 	}, 300);
 }

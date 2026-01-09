@@ -1,9 +1,9 @@
 <script setup lang="ts">
-defineProps(['text']);
+defineProps({text: String, rainbow: Boolean});
 </script>
 
 <template>
-	<div class="dot-loading">
+	<div class="dot-loading" :class="{'rainbow': rainbow}">
 		<div class="dot-list">
 			<span></span>
 			<span></span>
