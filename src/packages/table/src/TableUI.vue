@@ -7,13 +7,31 @@ import Empty from '../../empty';
 import SortUI from '../../sort';
 
 const emit = defineEmits(['sort', 'select']);
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	tableConfig: VBTable.Config;
 	tableData: Normal.AnyObj[];
 	emptyText?: string;
 	custom?: boolean;
-}>();
+	mode?: 'grid',
+	hoverable?: boolean;
+	striped?: boolean;
+	bordered?: boolean;
+	narrow?: boolean;
+}>(), {
+	hoverable: true,
+	bordered : true
+});
 const {$vbt} = useUILocale();
+// 表格样式
+const tableStyle = computed(() => {
+	return {
+		'is-bordered' : props.bordered,
+		'is-hoverable': props.hoverable,
+		'is-striped'  : props.striped,
+		'is-narrow'   : props.narrow,
+		'grid-style'  : props.mode === 'grid'
+	}
+});
 const innerTableData = computed(() => {
 	return props.tableData?.map((item: any) => {
 		return {
@@ -161,7 +179,10 @@ function isChecked(data: any) {
 				class="head-dropdown is-small"
 				showSelect :list="tableHeads" parentElement="body"
 				@select="changeSelectTableHead" v-if="custom"/>
-		<table class="table is-bordered is-hoverable is-striped">
+		<table
+				class="table"
+				:class="tableStyle"
+				:style="`--columns: ${columnCount - 1};${showCheck ? ' --first-width: 2.7em;' : ''}`">
 			<thead>
 			<tr>
 				<!-- 如果有勾选列 -->
@@ -185,7 +206,7 @@ function isChecked(data: any) {
 			</thead>
 			<tbody>
 			<tr
-					:class="{'is-checked': selectedIndex.includes(index), 'is-readonly': data.readonly}"
+					:class="{'is-selected': selectedIndex.includes(index), 'is-readonly': data.readonly}"
 					:key="data[tableConfig?.uniqueKey ?? ''] ?? Object.values(data)?.[0] ?? index"
 					v-for="(data, index) in innerTableData">
 				<!-- 如果有勾选列 -->
@@ -224,8 +245,6 @@ function isChecked(data: any) {
 .vb-table {
 	margin: 2em 0;
 	overflow: auto;
-	border: solid va.$split-color 2px;
-	border-radius: va.$radius;
 	min-width: 100%;
 
 	@include va.scrollbar(false);
@@ -234,6 +253,11 @@ function isChecked(data: any) {
 		position: absolute;
 		z-index: 20;
 		margin-top: -1em;
+	}
+
+	&:has(.table.is-bordered) {
+		border: solid va.$split-color 2px;
+		border-radius: va.$radius;
 	}
 
 	.table {
@@ -256,9 +280,13 @@ function isChecked(data: any) {
 			}
 		}
 
-		tr.is-checked {
+		tr.is-selected {
+			background: none;
+
 			td {
 				background-color: hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-scheme-main-ter-l));
+				border-color: var(--bulma-table-cell-border-color);
+				border-bottom-color: var(--bulma-table-row-active-color);
 			}
 		}
 
@@ -280,10 +308,6 @@ function isChecked(data: any) {
 
 				& + th, & + td {
 					border-left: 0;
-				}
-
-				&:not(:last-child) {
-					border-right-width: 1px;
 				}
 			}
 
@@ -310,33 +334,63 @@ function isChecked(data: any) {
 			}
 		}
 
-		&.is-striped {
-			tr:nth-child(even):not(.is-checked) {
-				td {
-					&.is-sticky {
-						background-color: var(--bulma-table-striped-row-even-background-color);
+		&.is-bordered {
+			th, td {
+				&.is-sticky {
+					&:not(:last-child) {
+						border-right-width: 1px;
 					}
 				}
 			}
 		}
 
+		&.is-striped {
+			tr:nth-child(even):not(.is-selected) {
+				td {
+					background-color: var(--bulma-table-striped-row-even-background-color);
+				}
+			}
+		}
+
 		&.is-hoverable {
-			tr:hover:not(.is-checked) {
-				&:nth-child(odd) {
-					td {
-						&.is-sticky {
+			tr:hover:not(.is-selected) {
+				td {
+					background-color: var(--bulma-table-row-hover-background-color);
+				}
+			}
+
+			&.is-striped {
+				tr:hover:not(.is-selected) {
+					&:nth-child(odd) {
+						td {
 							background-color: var(--bulma-table-striped-row-even-background-color);
 						}
 					}
-				}
 
-				&:nth-child(even) {
-					td {
-						&.is-sticky {
+					&:nth-child(even) {
+						td {
 							background-color: var(--bulma-table-striped-row-even-hover-background-color);
 						}
 					}
 				}
+			}
+		}
+
+		&.is-narrow {
+			font-size: 0.875rem;
+		}
+
+		&.grid-style {
+			display: grid;
+			grid-template-columns: var(--first-width, 1fr) repeat(var(--columns, 0), 1fr);
+
+			thead, tbody, tr {
+				display: contents;
+			}
+
+			th, td {
+				display: flex;
+				align-items: center;
 			}
 		}
 	}

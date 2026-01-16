@@ -36,8 +36,6 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean, 'noIcon':
 <style scoped lang="scss">
 .vb-tips.tooltip {
 	--color-opacity: 0;
-	--color: rgba(51, 51, 51, var(--color-opacity));
-	--text: var(--bulma-white);
 	display: inline-flex;
 	align-items: flex-start;
 	justify-content: center;
@@ -115,17 +113,37 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean, 'noIcon':
 	}
 }
 
+@mixin lightMode {
+	--color: rgba(51, 51, 51, var(--color-opacity));
+	--text: var(--bulma-white);
+}
+
+@mixin darkMode {
+	--color: rgba(204, 204, 204, var(--color-opacity));
+	--text: var(--bulma-black);
+}
+
+[data-theme="light"] {
+	.vb-tips.tooltip {
+		@include lightMode();
+	}
+}
+
 [data-theme="dark"] {
 	.vb-tips.tooltip {
-		--color: rgba(195, 195, 195, var(--color-opacity));
-		--text: var(--bulma-black);
+		@include darkMode();
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	.vb-tips.tooltip {
+		@include lightMode();
 	}
 }
 
 @media (prefers-color-scheme: dark) {
 	.vb-tips.tooltip {
-		--color: rgba(204, 204, 204, var(--color-opacity));
-		--text: var(--bulma-black);
+		@include darkMode();
 	}
 }
 </style>
