@@ -230,7 +230,7 @@ function isChecked(data: any) {
 				</td>
 			</tr>
 			<tr v-if="!tableData?.length || !columnCount">
-				<td :colspan="columnCount">
+				<td class="empty-column" :colspan="columnCount">
 					<Empty :text="emptyText || $vbt('table.emptyText')"/>
 				</td>
 			</tr>
@@ -391,6 +391,10 @@ function isChecked(data: any) {
 			th, td {
 				display: flex;
 				align-items: center;
+			}
+
+			td.empty-column {
+				grid-column: 1/-1;
 			}
 		}
 	}
