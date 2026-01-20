@@ -20,6 +20,8 @@ const props = withDefaults(defineProps<{
 	type: 'line' | 'pie' | 'bar' | 'radar' | 'gauge';
 	dateFilter?: boolean;
 	dateText?: string[];
+	minDate?: string;
+	maxDate?: string;
 	width?: string | number;
 	height?: string | number;
 	stack?: string;
@@ -187,7 +189,7 @@ provide('parentChartTitle', props.title);
 		<h3 class="title is-5" v-if="title">{{ title }}</h3>
 		<div class="toolbar" v-if="toolbar">
 			<div class="tool-date" v-if="dateFilter">
-				<DatetimePicker class="is-small" :messages is-range v-model="dateRange"/>
+				<DatetimePicker class="is-small" :min="minDate" :max="maxDate" :messages is-range v-model="dateRange"/>
 			</div>
 			<slot name="toolbar" :start="dateRange[0]" :end="dateRange[1]"/>
 		</div>
