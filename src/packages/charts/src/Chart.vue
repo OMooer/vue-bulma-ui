@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<{
 	type: 'line' | 'pie' | 'bar' | 'radar' | 'gauge';
 	dateFilter?: boolean;
 	dateText?: string[];
+	presetDate?: [string, string];
 	minDate?: string;
 	maxDate?: string;
 	width?: string | number;
@@ -142,7 +143,12 @@ const chartData = computed(() => {
 	};
 });
 
-const dateRange = ref([]);
+const isValidPresetDate = () => {
+	return props.presetDate?.length === 2
+			&& props.presetDate.every((date: string) => !isNaN(new Date(date).getTime()));
+};
+const presetDate = (props.dateFilter && isValidPresetDate()) ? props.presetDate as string[] : [];
+const dateRange = ref(presetDate);
 watchEffect(() => {
 	if (dateRange.value.length) {
 		refresh();
