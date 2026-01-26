@@ -227,4 +227,8 @@ export declare namespace VBSkeleton {
 	type Grid = Item[][] | Item[];
 
 	type GraphicsGrid = Item[][];
+
+	type Graphics = {
+		grid?: Grid
+	};
 }

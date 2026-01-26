@@ -17,7 +17,8 @@
 		"./style": "./dist/index.css",
 		"./components": {
 			"types": "./dist/types/components.d.ts"
-		}
+		},
+		"./types": "./dist/shim.js"
 	},
 	"scripts": {
 		"dev": "vite",

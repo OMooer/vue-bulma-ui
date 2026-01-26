@@ -19,9 +19,7 @@ import {
 const {loading = true, active, graph} = defineProps<{
 	loading?: boolean;
 	active?: boolean;
-	graph?: {
-		grid?: VBSkeleton.Grid;
-	};
+	graph?: VBSkeleton.Graphics;
 }>();
 
 const slots = defineSlots<{ default: () => VNodeChild | undefined; }>();
