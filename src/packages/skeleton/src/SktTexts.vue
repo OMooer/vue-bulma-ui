@@ -2,22 +2,22 @@
 import type { VBSkeleton } from '@/types/shim';
 import { computed, defineComponent, inject, ref } from 'vue';
 
-interface Props extends Pick<VBSkeleton.TextSkeleton, 'line'> {
+interface Props extends Pick<VBSkeleton.TextSkeleton, 'line' | 'width'> {
 	active?: boolean;
 }
 
 defineOptions({inheritAttrs: false});
-const {line = 4, active} = defineProps<Props>();
+const {line = 4, active, width} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const lastWidth = computed(() => {
 	return Math.max(10, Math.round(Math.random() * 95));
 });
 const TextCom = defineComponent(() => {
-	return () => <ul class="vb-skeleton__texts">
+	return () => <ul class="vb-skeleton__texts" style={ width ? `width: ${ width }` : undefined }>
 		{
 			[...Array(line)].map((_, i) => {
-				const styleCss = i + 1 === line ? `width:${ lastWidth.value }%` : '';
+				const styleCss = (line > 1 && i + 1 === line) ? `width:${ lastWidth.value }%` : '';
 				return <li class={ {'is-active': isActive.value} } style={ styleCss }></li>;
 			})
 		}
@@ -50,7 +50,7 @@ const TextCom = defineComponent(() => {
 		border-radius: var(--bulma-radius);
 		height: 1.1em;
 
-		&:first-child {
+		&:first-child:not(:only-child) {
 			margin: .7em 0 1em;
 			width: 50%;
 		}

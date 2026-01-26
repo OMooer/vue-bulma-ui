@@ -62,7 +62,7 @@ const ButtonCom = defineComponent(() => {
 		border-radius: 0;
 	}
 
-	&.is-center {
+	&.is-centered {
 		justify-self: center;
 		align-self: center;
 	}

@@ -36,7 +36,7 @@ watchEffect(() => {
 const layoutGrid = computed(() => {
 	// 如果没有布局信息则返回默认布局
 	if (!graph || !graph.grid) {
-		return [[{type: 'text'}]];
+		return [[{type: 'text'}]] as VBSkeleton.GraphicsGrid;
 	}
 	let grid = graph.grid;
 	// 如果数组不是二维的则转换为二维数组
@@ -85,8 +85,11 @@ function getItems() {
 			case 'input':
 				sktItem = h(SktInput, {...item});
 				break;
+			case 'empty':
+				sktItem = item.content ?? '';
+				break;
 			default:
-				sktItem = item.type ?? '';
+				sktItem = '';
 		}
 		const colWidth = getColWidth(item);
 		return h('div', {
@@ -100,7 +103,13 @@ function getItems() {
 
 function getGridTemplate() {
 	return layoutGrid.value[maxColsRow.value].map(item => {
-		return item.type === 'text' ? '1fr' : 'auto';
+		if (item.type === 'text') {
+			return '1fr';
+		}
+		if (item.type === 'input') {
+			return '1fr';
+		}
+		return 'auto';
 	}).join(' ');
 }
 

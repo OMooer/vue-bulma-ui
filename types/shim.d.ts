@@ -181,7 +181,7 @@ export declare namespace VBSkeleton {
 		line?: number;
 		shape?: never;
 		size?: never;
-		width?: never;
+		width?: string;
 		height?: never;
 	}
 
@@ -222,7 +222,10 @@ export declare namespace VBSkeleton {
 		height?: string;
 	}
 
-	type Item = Base & (TextSkeleton | InputSkeleton | AvatarSkeleton | ButtonSkeleton | ImageSkeleton);
+	type Item = Base & (TextSkeleton | InputSkeleton | AvatarSkeleton | ButtonSkeleton | ImageSkeleton) | {
+		type: 'empty';
+		content?: string;
+	};
 
 	type Grid = Item[][] | Item[];
 
