@@ -1,4 +1,7 @@
-/// <reference path="shim.d.ts" />
+/// <reference path="normal.d.ts" />
+/// <reference path="op.d.ts" />
+/// <reference path="tracker.d.ts" />
+/// <reference path="tvo.d.ts" />
 
 declare module 'vue' {
 	export interface GlobalComponents {

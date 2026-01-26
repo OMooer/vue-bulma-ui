@@ -18,7 +18,7 @@
 		"./components": {
 			"types": "./dist/types/components.d.ts"
 		},
-		"./types": "./dist/shim.js"
+		"./shim": "./dist/types/shim.js"
 	},
 	"scripts": {
 		"dev": "vite",
