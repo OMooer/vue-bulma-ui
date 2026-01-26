@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { VBSkeleton } from '@/types/shim';
 import SktButton from './SktButton.vue';
 import SktImage from './SktImage.vue';
 import SktAvatar from './SktAvatar.vue';
 import SktTexts from './SktTexts.vue';
+import SktInput from './SktInput.vue';
 import {
 	type Component,
 	computed,
@@ -82,6 +84,9 @@ function getItems() {
 			case 'button':
 				sktItem = h(SktButton, {...item});
 				break;
+			case 'input':
+				sktItem = h(SktInput, {...item});
+				break;
 			default:
 				sktItem = item.type ?? '';
 		}
@@ -139,19 +144,23 @@ provide('active', toRef(() => active));
 }
 
 .vb-skeleton {
-	:deep(.is-active) {
-		position: relative;
-		overflow: hidden;
+	:deep(.cell) {
+		display: grid;
 
-		&::after {
-			content: "";
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			inset-inline-start: -150%;
-			inset-inline-end: -150%;
-			background-image: linear-gradient(100deg, transparent 25%, var(--bulma-background-hover) 37%, transparent 63%);
-			animation: shimmer 1.5s infinite linear;
+		.is-active {
+			position: relative;
+			overflow: hidden;
+
+			&::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				inset-inline-start: -150%;
+				inset-inline-end: -150%;
+				background-image: linear-gradient(100deg, transparent 25%, var(--bulma-background-hover) 37%, transparent 63%);
+				animation: shimmer 1.5s infinite linear;
+			}
 		}
 	}
 }

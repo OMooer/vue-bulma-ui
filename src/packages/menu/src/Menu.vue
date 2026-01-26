@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { VBMenu } from '@/types/shim';
+import type { PropType } from 'vue';
 import MenuItem from './MenuItem.vue';
 
 defineProps({
@@ -7,7 +9,7 @@ defineProps({
 		default: 'zh-cn'
 	},
 	menuData   : {
-		type   : Array<VBMenu.Item>,
+		type   : Array as PropType<VBMenu.Item[]>,
 		default: []
 	},
 	activeClass: String,

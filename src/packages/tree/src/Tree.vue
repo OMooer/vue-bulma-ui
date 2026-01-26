@@ -1,5 +1,6 @@
 <script lang="ts">
 import { useUILocale } from '@/actions/locale';
+import type { VBTree } from '@/types/shim';
 import { computed, defineComponent, h, ref, type VNode, watchEffect } from 'vue';
 import { iconNormalize, isTruthy } from '@/utils';
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
@@ -46,15 +47,15 @@ export default defineComponent({
 		const {$vbt} = useUILocale();
 		const selectValues = ref<string[]>([]);
 		const activeNode = ref();
-		const treeData = ref<Tree.Leaf[]>([]);
+		const treeData = ref<VBTree.Leaf[]>([]);
 		const isSelectable = computed(() => {
 			return isTruthy(props.selectable);
 		});
 
-		function getNode(tree: Tree.Leaf[]) {
-			return tree.reduce((nodes: Tree.Leaf[], item: Tree.Leaf) => {
+		function getNode(tree: VBTree.Leaf[]) {
+			return tree.reduce((nodes: VBTree.Leaf[], item: VBTree.Leaf) => {
 				const itemSub = item.children;
-				let subNode: Tree.Leaf[] = [];
+				let subNode: VBTree.Leaf[] = [];
 				if (itemSub && itemSub.length) {
 					subNode = subNode.concat(getNode(itemSub));
 				}
@@ -67,7 +68,7 @@ export default defineComponent({
 			}, []);
 		}
 
-		function findRelation(tr: Tree.Leaf[], key: string): Tree.RelationNodes | null {
+		function findRelation(tr: VBTree.Leaf[], key: string): VBTree.RelationNodes | null {
 			let findRes = null;
 			for (let item of tr) {
 				// 如果命中结果直接返回
@@ -117,25 +118,25 @@ export default defineComponent({
 
 		function changeSelect(val: string, isAdd: boolean) {
 			// 找出当前值的上下级，并进行相应的操作
-			const relation = findRelation(treeData.value, val) as Tree.RelationNodes;
+			const relation = findRelation(treeData.value, val) as VBTree.RelationNodes;
 			relation.self.checked = isAdd;
 			// 将所有下级与当前状态设置一致
-			relation.subNode.forEach((item: Tree.Leaf) => {
+			relation.subNode.forEach((item: VBTree.Leaf) => {
 				item.checked = isAdd;
 			});
 			const updateParent: string[] = [];
 			// 如果是新选的，所有上级都一并勾选上
 			if (isAdd) {
-				relation.parentNode.forEach((item: Tree.Leaf) => {
+				relation.parentNode.forEach((item: VBTree.Leaf) => {
 					item.checked = true;
 				});
-				updateParent.push(...relation.parentNode.map((item: Tree.Leaf) => item.value));
+				updateParent.push(...relation.parentNode.map((item: VBTree.Leaf) => item.value));
 			}
 			else {
 				// 判断上级是否应该取消勾选
 				for (let i = relation.parentNode.length; i > 0; i--) {
 					const parent = relation.parentNode[i - 1];
-					if (parent?.children?.some((item: Tree.Leaf) => item.checked)) {
+					if (parent?.children?.some((item: VBTree.Leaf) => item.checked)) {
 						break;
 					}
 					else {
@@ -156,14 +157,14 @@ export default defineComponent({
 			return item === activeNode.value;
 		}
 
-		function reduceTree(data: Tree.Leaf[], padStartFlag: string = ''): Tree.Leaf[] {
-			return data.map((item: Tree.Leaf, index: number) => {
+		function reduceTree(data: VBTree.Leaf[], padStartFlag: string = ''): VBTree.Leaf[] {
+			return data.map((item: VBTree.Leaf, index: number) => {
 				const isLastNode = index === data.length - 1;
 				const tabSpace = ' ';
 				const newItem = {
 					checked: props.selected.includes(item.value),
 					flags  : padStartFlag + (isLastNode ? '└─' : '├─')
-				} as Tree.Leaf;
+				} as VBTree.Leaf;
 				if (item.children && item.children?.length) {
 					newItem.children = reduceTree(item.children, `${ padStartFlag }${ isLastNode ? '' : '│' }${ tabSpace }`);
 				}
@@ -173,11 +174,11 @@ export default defineComponent({
 
 		watchEffect(() => {
 			selectValues.value = ([] as string[]).concat(props.selected as string[]);
-			treeData.value = reduceTree(props.sourceData as Tree.Leaf[]);
+			treeData.value = reduceTree(props.sourceData as VBTree.Leaf[]);
 		});
 
 		return () => {
-			function buildTree(data: Tree.Leaf[]): VNode[] {
+			function buildTree(data: VBTree.Leaf[]): VNode[] {
 				return data.map(item => {
 					const hasChildren = item.children && item.children.length;
 					return h('li', {'data-flag': item.flags}, [

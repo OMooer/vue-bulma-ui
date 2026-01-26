@@ -2,25 +2,22 @@
 import type { VBSkeleton } from '@/types/shim';
 import { computed, defineComponent, inject, ref } from 'vue';
 
-interface Props extends Omit<VBSkeleton.ButtonSkeleton, 'type' | 'line'> {
+interface Props extends Omit<VBSkeleton.InputSkeleton, 'type' | 'line' | 'size'> {
 	active?: boolean;
 }
 
 defineOptions({inheritAttrs: false});
-const {active, shape = 'none', size = 'none', width, height, center} = defineProps<Props>();
+const {active, shape = 'none', width, height} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const hasStyle = computed(() => !!(width || height));
-const ButtonCom = defineComponent(() => {
+const InputCom = defineComponent(() => {
 	return () => <div
 			class={ {
-				'vb-skeleton__button': true,
-				'is-active'          : isActive.value,
-				'is-large'           : size === 'large',
-				'is-small'           : size === 'small',
-				'is-square'          : shape === 'square',
-				'is-round'           : shape === 'round',
-				'is-centered'        : center
+				'vb-skeleton__input': true,
+				'is-active'         : isActive.value,
+				'is-square'         : shape === 'square',
+				'is-round'          : shape === 'round'
 			} }
 			style={ hasStyle.value ? {width, height} : undefined }
 	>
@@ -31,18 +28,18 @@ const ButtonCom = defineComponent(() => {
 <template>
 	<Suspense>
 		<slot>
-			<ButtonCom/>
+			<InputCom/>
 		</slot>
 		<template #fallback>
-			<ButtonCom/>
+			<InputCom/>
 		</template>
 	</Suspense>
 </template>
 
 <style lang="scss">
-.vb-skeleton__button {
+.vb-skeleton__input {
 	background-color: var(--bulma-background);
-	width: 5.5em;
+	width: 15em;
 	height: 2em;
 	border-radius: var(--bulma-radius);
 
@@ -50,21 +47,8 @@ const ButtonCom = defineComponent(() => {
 		border-radius: 9999px;
 	}
 
-	&.is-large {
-		font-size: 1.5em;
-	}
-
-	&.is-small {
-		font-size: 0.75em;
-	}
-
 	&.is-square {
 		border-radius: 0;
-	}
-
-	&.is-center {
-		justify-self: center;
-		align-self: center;
 	}
 }
 </style>

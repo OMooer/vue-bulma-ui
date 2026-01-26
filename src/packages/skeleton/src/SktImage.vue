@@ -1,12 +1,13 @@
 <script setup lang="tsx">
+import type { VBSkeleton } from '@/types/shim';
 import { computed, defineComponent, inject, ref } from 'vue';
 
-defineOptions({inheritAttrs: false});
-const {active, width, height} = defineProps<{
+interface Props extends Pick<VBSkeleton.ImageSkeleton, 'width' | 'height'> {
 	active?: boolean;
-	width?: string;
-	height?: string;
-}>();
+}
+
+defineOptions({inheritAttrs: false});
+const {active, width, height} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const ImageCom = defineComponent(() => {

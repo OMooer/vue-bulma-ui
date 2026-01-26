@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
 import { Link } from '@/packages/menu';
+import type { VBBreadcrumb } from '@/types/shim';
 import { getI18nData, iconNormalize } from '@/utils';
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 import { computed, defineComponent, h, ref, type Ref, type VNodeChild } from 'vue';

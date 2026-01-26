@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
+import type { VBForm } from '@/types/shim';
 import { computed, provide, reactive, watchEffect } from "vue";
 import DatetimePicker from '../../datetimePicker';
 import InputUI, { PasswordInput } from '../../input';

@@ -1,12 +1,13 @@
 <script setup lang="tsx">
+import type { VBSkeleton } from '@/types/shim';
 import { computed, defineComponent, inject, ref } from 'vue';
 
-defineOptions({inheritAttrs: false});
-const {active, shape = 'round', size = 'none'} = defineProps<{
+interface Props extends Pick<VBSkeleton.AvatarSkeleton, 'shape' | 'size'> {
 	active?: boolean;
-	shape?: 'round' | 'none';
-	size?: 'large' | 'none';
-}>();
+}
+
+defineOptions({inheritAttrs: false});
+const {active, shape = 'round', size = 'none'} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const AvatarCom = defineComponent(() => {
@@ -15,6 +16,7 @@ const AvatarCom = defineComponent(() => {
 				'vb-skeleton__avatar': true,
 				'is-active'          : isActive.value,
 				'is-large'           : size === 'large',
+				'is-small'           : size === 'small',
 				'is-round'           : shape === 'round'
 			} }>
 	</div>
@@ -45,6 +47,11 @@ const AvatarCom = defineComponent(() => {
 
 	&.is-large {
 		font-size: 1.5em;
+	}
+
+	&.is-small {
+		margin: 1em 0;
+		font-size: 0.5em;
 	}
 }
 </style>

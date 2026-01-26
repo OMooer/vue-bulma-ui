@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { VBMenu } from '@/types/shim';
 import { ref } from 'vue';
 import { getI18nData } from '@/utils';
 import Link from './Link.vue';

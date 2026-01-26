@@ -1,23 +1,6 @@
-declare namespace TVO {
-	type Value = string | number | boolean | symbol;
-	type Item = {
-		title: string;
-		value: Value;
-		icon?: string;
-		head?: boolean;
-		selected?: boolean;
-		disabled?: boolean;
-	};
-	type List = Item[];
+export {}
 
-	type CascadeItem = Item & {
-		children?: TVO.List;
-	}
-
-	type DropdownItem = Item | null;
-}
-
-declare namespace Tree {
+export declare namespace VBTree {
 	interface Leaf {
 		text: string;
 		value: string;
@@ -35,47 +18,7 @@ declare namespace Tree {
 	}
 }
 
-declare namespace OP {
-	type MsgObj = {
-		id: symbol;
-		type: string;
-		image?: string;
-		message: string;
-		autoClose?: number;
-		showClose?: boolean;
-	}
-
-	type DialogText = {
-		doneText?: string;
-		cancelText?: string;
-	}
-
-	type DialogOption = {
-		id?: symbol;
-		type?: 'alert' | 'confirm';
-		title?: string;
-		content: string;
-		width?: string;
-	} & DialogText;
-
-	type FastDialogOpt = Omit<DialogOption, 'id' | 'type' | 'content'>;
-
-	type Toast = { (msg: string | MsgObj): void };
-	type Notification = { (msg: string | MsgObj): void };
-	type Dialog = { (opt: DialogOption): Promise<unknown> };
-	type Alert = { (content: string, options?: FastDialogOpt): Promise<unknown> };
-	type Confirm = { (content: string, options?: FastDialogOpt): Promise<unknown> };
-}
-
-declare namespace Normal {
-	type AnyObj<T = any> = { [key: string]: T };
-	type PhotoObj = { name?: string; small?: string; origin?: string; };
-	type DeepPartial<T> = {
-		[P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-	};
-}
-
-declare namespace VBTable {
+export declare namespace VBTable {
 	type Column = {
 		field: string;
 		label: string;
@@ -95,7 +38,7 @@ declare namespace VBTable {
 	}
 }
 
-declare namespace VBForm {
+export declare namespace VBForm {
 	type Btn = {
 		text: string;
 		type: 'submit' | 'reset' | 'button',
@@ -172,7 +115,7 @@ declare namespace VBForm {
 	}
 }
 
-declare namespace VBMenu {
+export declare namespace VBMenu {
 	type TitleLang = {
 		[propName: string]: string;
 	}
@@ -197,17 +140,7 @@ declare namespace VBMenu {
 	}
 }
 
-declare namespace Tracker {
-	interface MoveEventData {
-		dir: string;
-		detail: {
-			multiple: boolean;
-			offset: number;
-		}
-	}
-}
-
-declare namespace VBGuide {
+export declare namespace VBGuide {
 	type GuideStyle = {
 		top?: string;
 		left?: string;
@@ -228,7 +161,7 @@ declare namespace VBGuide {
 	} & GuideStyle;
 }
 
-declare namespace VBBreadcrumb {
+export declare namespace VBBreadcrumb {
 	type Item = {
 		url: string;
 		text: string | Normal.AnyObj<string>;
@@ -237,7 +170,7 @@ declare namespace VBBreadcrumb {
 	}
 }
 
-declare namespace VBSkeleton {
+export declare namespace VBSkeleton {
 	type Base = {
 		span?: number;
 		active?: never;
@@ -252,11 +185,30 @@ declare namespace VBSkeleton {
 		height?: never;
 	}
 
-	type AvatarAndButtonSkeleton = {
-		type: 'avatar' | 'button';
+	type InputSkeleton = {
+		type: 'input';
+		line?: never;
+		shape?: 'round' | 'square' | 'none';
+		size?: never;
+		width?: string;
+		height?: string;
+	}
+
+	type ButtonSkeleton = {
+		type: 'button';
+		line?: never;
+		shape?: 'round' | 'square' | 'none';
+		size?: 'none' | 'small' | 'large';
+		width?: string;
+		height?: string;
+		center?: boolean;
+	}
+
+	type AvatarSkeleton = {
+		type: 'avatar';
 		line?: never;
 		shape?: 'round' | 'none';
-		size?: 'none' | 'large';
+		size?: 'none' | 'small' | 'large';
 		width?: never;
 		height?: never;
 	}
@@ -270,7 +222,7 @@ declare namespace VBSkeleton {
 		height?: string;
 	}
 
-	type Item = Base & (TextSkeleton | AvatarAndButtonSkeleton | ImageSkeleton);
+	type Item = Base & (TextSkeleton | InputSkeleton | AvatarSkeleton | ButtonSkeleton | ImageSkeleton);
 
 	type Grid = Item[][] | Item[];
 

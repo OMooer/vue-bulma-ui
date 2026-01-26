@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
 import Dropdown from '@/packages/dropdown';
+import type { VBTable } from '@/types/shim';
 import { SYMBOL_SELECT_ALL } from '@/utils';
 import { computed, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';

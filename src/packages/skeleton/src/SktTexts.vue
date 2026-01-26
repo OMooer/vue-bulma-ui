@@ -1,11 +1,13 @@
 <script setup lang="tsx">
+import type { VBSkeleton } from '@/types/shim';
 import { computed, defineComponent, inject, ref } from 'vue';
 
-defineOptions({inheritAttrs: false});
-const {line = 4, active} = defineProps<{
-	line?: number;
+interface Props extends Pick<VBSkeleton.TextSkeleton, 'line'> {
 	active?: boolean;
-}>();
+}
+
+defineOptions({inheritAttrs: false});
+const {line = 4, active} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const lastWidth = computed(() => {

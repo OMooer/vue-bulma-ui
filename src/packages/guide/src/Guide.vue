@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
+import type { VBGuide } from '@/types/shim';
 import { computed, onMounted, ref, watch } from 'vue';
 
 const {list = [], start = true} = defineProps<{
