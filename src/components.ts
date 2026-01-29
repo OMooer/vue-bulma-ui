@@ -118,6 +118,7 @@ export {
 	SktAvatar as VbSkeletonAvatar,
 	SktButton as VbSkeletonButton,
 	SktImage as VbSkeletonImage,
+	SktInput as VbSkeletonInput,
 	SktTexts as VbSkeletonText
 } from './packages/skeleton';
 // 排序状态按钮

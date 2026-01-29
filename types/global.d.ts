@@ -60,6 +60,7 @@ declare module 'vue' {
 		VbSkeletonAvatar: typeof import("vue3-bulma-ui/components")["VbSkeletonAvatar"];
 		VbSkeletonButton: typeof import("vue3-bulma-ui/components")["VbSkeletonButton"];
 		VbSkeletonImage: typeof import("vue3-bulma-ui/components")["VbSkeletonImage"];
+		VbSkeletonInput: typeof import("vue3-bulma-ui/components")["VbSkeletonInput"];
 		VbSkeletonText: typeof import("vue3-bulma-ui/components")["VbSkeletonText"];
 		VbSort: typeof import("vue3-bulma-ui/components")["VbSort"];
 		VbSplitArea: typeof import("vue3-bulma-ui/components")["VbSplitArea"];
@@ -107,6 +108,7 @@ declare module 'vue3-bulma-ui' {
 		}
 	};
 	export * from 'vue3-bulma-ui/components';
+	export type * from 'vue3-bulma-ui/shim';
 	export { useDialog, useUILocale };
 	const {vFocus, vScrollbar, vLazy}: { vFocus: Directive; vScrollbar: Directive; vLazy: Directive; };
 	export { vFocus, vScrollbar, vLazy };
