@@ -107,8 +107,16 @@ declare module 'vue3-bulma-ui' {
 			locale: Ref<string>;
 		}
 	};
-	export * from 'vue3-bulma-ui/components';
-	export type * from 'vue3-bulma-ui/shim';
+	export * from './components';
+	export type {
+		VBBreadcrumb,
+		VBForm,
+		VBGuide,
+		VBMenu,
+		VBSkeleton,
+		VBTable,
+		VBTree
+	} from './shim';
 	export { useDialog, useUILocale };
 	const {vFocus, vScrollbar, vLazy}: { vFocus: Directive; vScrollbar: Directive; vLazy: Directive; };
 	export { vFocus, vScrollbar, vLazy };

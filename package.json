@@ -17,9 +17,6 @@
 		"./style": "./dist/index.css",
 		"./components": {
 			"types": "./dist/types/components.d.ts"
-		},
-		"./shim": {
-			"types": "./dist/types/shim.d.ts"
 		}
 	},
 	"scripts": {
