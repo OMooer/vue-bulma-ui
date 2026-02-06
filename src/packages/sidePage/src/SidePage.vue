@@ -80,7 +80,7 @@ function afterDismissAnimate() {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	z-index: 39;
+	z-index: 40;
 
 	.sp-container {
 		position: absolute;
@@ -94,7 +94,7 @@ function afterDismissAnimate() {
 			border-width: 0 0 0 1px;
 			left: 0;
 			bottom: 0;
-			width: 45%;
+			width: max(750px, 45%);
 			height: 100%;
 		}
 
@@ -102,7 +102,7 @@ function afterDismissAnimate() {
 			border-width: 0 1px 0 0;
 			right: 0;
 			bottom: 0;
-			width: 45%;
+			width: max(750px, 45%);
 			height: 100%;
 		}
 
@@ -112,7 +112,7 @@ function afterDismissAnimate() {
 			left: 0;
 			right: 0;
 			width: 100%;
-			height: 45%;
+			height: max(500px, 60%);
 		}
 
 		&.is-bottom {
@@ -121,7 +121,7 @@ function afterDismissAnimate() {
 			left: 0;
 			right: 0;
 			width: 100%;
-			height: 45%;
+			height: max(500px, 60%);
 		}
 
 		> .delete {
