@@ -17,6 +17,7 @@ const props = defineProps<{
 	disabled?: boolean;
 	placeholder?: string;
 	pattern?: string;
+	passwordrules?: string;
 	minlength?: string | number;
 	maxlength?: string | number;
 	autocomplete?: string;
