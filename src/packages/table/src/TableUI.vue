@@ -217,17 +217,17 @@ function isChecked(data: any) {
 					</label>
 				</td>
 				<td
-						:class="[`col-${idx}`, {[`col-${item.slot}`]: item.slot, 'is-sticky': item.sticky}]"
-						:style="item.style ?? null"
-						:key="item.field"
-						v-for="(item, idx) in renderColumns">
+						:class="[`col-${idx}`, {[`col-${columnConf.slot}`]: columnConf.slot, 'is-sticky': columnConf.sticky}]"
+						:style="columnConf.style ?? null"
+						:key="columnConf.field"
+						v-for="(columnConf, idx) in renderColumns">
 					<!-- 如果有插槽则显示插槽的内容，否则显示纯数据值 -->
-					<template v-if="item.slot">
-						<slot :name="item.slot" :row="data" :val="data[item.field]" :index="index">
+					<template v-if="columnConf.slot">
+						<slot :name="columnConf.slot" :row="data" :val="data[columnConf.field]" :index="index">
 							{{ $vbt('table.unknownSlot') }}
 						</slot>
 					</template>
-					<template v-else>{{ item.formatter?.(data[item.field]) ?? data[item.field] }}</template>
+					<template v-else>{{ columnConf.formatter?.(data[columnConf.field]) ?? data[columnConf.field] }}</template>
 				</td>
 			</tr>
 			<tr v-if="!tableData?.length || !columnCount">
