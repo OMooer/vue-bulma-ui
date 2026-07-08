@@ -4,10 +4,11 @@ import { computed, defineComponent, inject, ref } from 'vue';
 
 interface Props extends Omit<VBSkeleton.InputSkeleton, 'type' | 'line' | 'size'> {
 	active?: boolean;
+	color?: string;
 }
 
 defineOptions({inheritAttrs: false});
-const {active, shape = 'none', width, height} = defineProps<Props>();
+const {active, shape = 'none', width, height, color} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const hasStyle = computed(() => !!(width || height));
@@ -19,7 +20,11 @@ const InputCom = defineComponent(() => {
 				'is-square'         : shape === 'square',
 				'is-round'          : shape === 'round'
 			} }
-			style={ hasStyle.value ? {width, height} : undefined }
+			style={ {
+				'--active-color'  : isActive.value && color ? `color-mix(in srgb, ${ color } 50%, white)` : undefined,
+				'background-color': color || undefined,
+				...(hasStyle.value ? {width, height} : undefined)
+			} }
 	>
 	</div>
 });

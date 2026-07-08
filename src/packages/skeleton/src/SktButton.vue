@@ -4,10 +4,11 @@ import { computed, defineComponent, inject, ref } from 'vue';
 
 interface Props extends Omit<VBSkeleton.ButtonSkeleton, 'type' | 'line'> {
 	active?: boolean;
+	color?: string;
 }
 
 defineOptions({inheritAttrs: false});
-const {active, shape = 'none', size = 'none', width, height, center} = defineProps<Props>();
+const {active, shape = 'none', size = 'none', width, height, center, color} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const hasStyle = computed(() => !!(width || height));
@@ -22,7 +23,11 @@ const ButtonCom = defineComponent(() => {
 				'is-round'           : shape === 'round',
 				'is-centered'        : center
 			} }
-			style={ hasStyle.value ? {width, height} : undefined }
+			style={ {
+				'--active-color'  : isActive.value && color ? `color-mix(in srgb, ${ color } 50%, white)` : undefined,
+				'background-color': color || undefined,
+				...(hasStyle.value ? {width, height} : undefined)
+			} }
 	>
 	</div>
 });

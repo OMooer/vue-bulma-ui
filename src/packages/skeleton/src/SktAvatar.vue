@@ -4,10 +4,11 @@ import { computed, defineComponent, inject, ref } from 'vue';
 
 interface Props extends Pick<VBSkeleton.AvatarSkeleton, 'shape' | 'size'> {
 	active?: boolean;
+	color?: string;
 }
 
 defineOptions({inheritAttrs: false});
-const {active, shape = 'round', size = 'none'} = defineProps<Props>();
+const {active, shape = 'round', size = 'none', color} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const AvatarCom = defineComponent(() => {
@@ -18,7 +19,12 @@ const AvatarCom = defineComponent(() => {
 				'is-large'           : size === 'large',
 				'is-small'           : size === 'small',
 				'is-round'           : shape === 'round'
-			} }>
+			} }
+			style={ {
+				'--active-color'  : isActive.value && color ? `color-mix(in srgb, ${ color } 50%, white)` : undefined,
+				'background-color': color || undefined
+			} }
+	>
 	</div>
 });
 </script>

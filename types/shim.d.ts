@@ -174,6 +174,7 @@ export declare namespace VBSkeleton {
 	type Base = {
 		span?: number;
 		active?: never;
+		color?: string;
 	}
 
 	type TextSkeleton = {

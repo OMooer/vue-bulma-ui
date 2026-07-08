@@ -4,21 +4,29 @@ import { computed, defineComponent, inject, ref } from 'vue';
 
 interface Props extends Pick<VBSkeleton.TextSkeleton, 'line' | 'width'> {
 	active?: boolean;
+	color?: string;
 }
 
 defineOptions({inheritAttrs: false});
-const {line = 4, active, width} = defineProps<Props>();
+const {line = 4, active, width, color} = defineProps<Props>();
 const parentActive = inject('active', ref(false));
 const isActive = computed(() => active || parentActive.value);
 const lastWidth = computed(() => {
 	return Math.max(10, Math.round(Math.random() * 95));
 });
 const TextCom = defineComponent(() => {
-	return () => <ul class="vb-skeleton__texts" style={ width ? `width: ${ width }` : undefined }>
+	return () => <ul
+			class="vb-skeleton__texts" style={ {
+		'width'         : width || undefined,
+		'--active-color': isActive.value && color ? `color-mix(in srgb, ${ color } 50%, white)` : undefined
+	} }>
 		{
 			[...Array(line)].map((_, i) => {
 				const styleCss = (line > 1 && i + 1 === line) ? `width:${ lastWidth.value }%` : '';
-				return <li class={ {'is-active': isActive.value} } style={ styleCss }></li>;
+				return <li
+						class={ {'is-active': isActive.value} }
+						style={ styleCss + color ? `background-color: ${ color }` : undefined }
+				></li>;
 			})
 		}
 	</ul>

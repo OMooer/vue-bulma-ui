@@ -151,6 +151,8 @@ provide('active', toRef(() => active));
 }
 
 .vb-skeleton {
+	--active-color: var(--bulma-background-hover);
+
 	:deep(.cell) {
 		display: grid;
 
@@ -165,7 +167,7 @@ provide('active', toRef(() => active));
 				bottom: 0;
 				inset-inline-start: -150%;
 				inset-inline-end: -150%;
-				background-image: linear-gradient(100deg, transparent 25%, var(--bulma-background-hover) 37%, transparent 63%);
+				background-image: linear-gradient(100deg, transparent 25%, var(--active-color) 37%, transparent 63%);
 				animation: shimmer 1.5s infinite linear;
 			}
 		}
