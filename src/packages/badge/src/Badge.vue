@@ -111,7 +111,7 @@ const content = computed(() => {
 			display: block;
 			inset: 0;
 			border-radius: inherit;
-			border: solid 0.125em var(--af-border-color);
+			border: solid max(1px, 0.125em) var(--af-border-color);
 			animation: pulse 1s infinite ease-in-out;
 		}
 	}
