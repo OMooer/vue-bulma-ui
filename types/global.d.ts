@@ -123,4 +123,6 @@ declare module 'vue3-bulma-ui' {
 	export const version: string;
 }
 
+declare module 'vue3-bulma-ui/style';
+
 export {};
