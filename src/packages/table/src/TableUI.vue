@@ -22,6 +22,12 @@ const props = withDefaults(defineProps<{
 	hoverable: true,
 	bordered : true
 });
+// 行数据快照：来自 computed 派生，修改不会回写到源数据 tableData
+type TableRow = Readonly<Normal.AnyObj & { readonly: boolean }>;
+// 具名插槽作用域声明：row 为只读，使用者无法（也不应）通过它反向修改源数据
+defineSlots<{
+	[name: string]: (props: { row: TableRow; val: any; index: number }) => any;
+}>();
 const {$vbt} = useUILocale();
 // 表格样式
 const tableStyle = computed(() => {
@@ -33,12 +39,12 @@ const tableStyle = computed(() => {
 		'grid-style'  : props.mode === 'grid'
 	}
 });
-const innerTableData = computed(() => {
+const innerTableData = computed<TableRow[]>(() => {
 	return props.tableData?.map((item: any) => {
 		return {
 			...item,
 			readonly: isReadonly(item)
-		}
+		} as TableRow;
 	}) ?? [];
 });
 // 是否显示可勾选
