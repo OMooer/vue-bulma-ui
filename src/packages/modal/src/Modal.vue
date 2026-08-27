@@ -12,7 +12,7 @@ const {title, maskClose, hasClose = true, hasCancel = true} = defineProps<{
 	hasCancel?: boolean;
 	style?: any;
 }>();
-const isShow = defineModel('show', {default: true});
+const isShow = defineModel<boolean>('show', {default: true});
 const isMainShow = ref(isShow.value);
 const isMoving = ref(false);
 const modalX = ref(0);

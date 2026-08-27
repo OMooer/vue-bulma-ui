@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<{
 	isSmall?: boolean;
 }>(), {mode: 'detach', cache: false});
 const emit = defineEmits(['error']);
-const modelValue = defineModel<any[]>({default: []});
+const modelValue = defineModel<any[]>({default: () => []});
 
 const isLoading = ref(false);
 const isError = ref(false);

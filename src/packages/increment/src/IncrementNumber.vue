@@ -87,7 +87,7 @@ function removeAuto() {
 	<div class="vb-increment field has-addons" @keydown.capture.prevent="keyAuto">
 		<div class="control">
 			<button
-					type="button" class="button" v-bind:class="$attrs.class" :disabled="disabled || isMinimum"
+					type="button" class="button" v-bind:class="$attrs.class as string" :disabled="disabled || isMinimum"
 					@click="minusNumber" @touchstart="autoMinus" @touchend="removeAuto"
 					@mousedown="autoMinus" @mouseup="removeAuto" @mouseleave="removeAuto">
 				<span class="icon"><FasIcon icon="minus"/></span>
@@ -95,11 +95,11 @@ function removeAuto() {
 		</div>
 		<div class="control">
 			<input
-					type="number" class="input" v-bind:class="$attrs.class" readonly :disabled :step v-model.number="modelValue">
+					type="number" class="input" v-bind:class="$attrs.class as string" readonly :disabled :step v-model.number="modelValue">
 		</div>
 		<div class="control">
 			<button
-					type="button" class="button" v-bind:class="$attrs.class" :disabled="disabled || isMaximum"
+					type="button" class="button" v-bind:class="$attrs.class as string" :disabled="disabled || isMaximum"
 					@click="addNumber" @touchstart="autoAdd" @touchend="removeAuto"
 					@mousedown="autoAdd" @mouseup="removeAuto" @mouseleave="removeAuto">
 				<span class="icon"><FasIcon icon="plus"/></span>

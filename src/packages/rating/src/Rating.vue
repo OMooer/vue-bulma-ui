@@ -14,7 +14,7 @@ const props = defineProps({
 	showScore: Boolean,
 	readonly : Boolean
 });
-const score = defineModel({default: 0});
+const score = defineModel<number>({default: 0});
 const shapes = computed(() => {
 	const [a, b] = props.fill;
 	return [a, b ?? a];

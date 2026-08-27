@@ -23,7 +23,7 @@ const props = defineProps<{
 	autocomplete?: string;
 }>();
 const emit = defineEmits(['update:modelValue', 'showPlain', 'error']);
-const innerValue = defineModel({default: ''});
+const innerValue = defineModel<string>({default: ''});
 const showPassword = ref(false);
 const isError = ref(false);
 const entity = ref();
@@ -38,7 +38,7 @@ watch(innerValue, () => {
 
 const inputVNode = defineComponent(() => {
 	return () => [
-		h(InputUI, {
+		h(InputUI as any, {
 			ref  : entity,
 			type : showPassword.value ? 'text' : 'password',
 			class: [attrs.class, 'vb-password'],

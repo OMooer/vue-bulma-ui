@@ -16,7 +16,7 @@ const props = defineProps<{
 	disableSubmit?: boolean;
 	isSmall?: boolean;
 }>();
-const formValue = defineModel<Normal.AnyObj>({default: reactive({})});
+const formValue = defineModel<Normal.AnyObj>({default: () => reactive({})});
 const {$vbt} = useUILocale();
 watchEffect(() => {
 	if (props.config) {

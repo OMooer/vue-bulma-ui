@@ -21,7 +21,7 @@ const {$vbt} = useUILocale();
 const {keyIndex, handler} = useKeydown();
 const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 const isError = ref(false);
-const currentValue = defineModel<TVO.Value[]>({default: []});
+const currentValue = defineModel<TVO.Value[]>({default: () => []});
 // 面板开关状态
 const isOpen = ref(false);
 const isUp = ref(false);

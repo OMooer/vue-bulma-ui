@@ -7,7 +7,7 @@ const props = defineProps({
 	hasClose : {type: Boolean, default: true},
 });
 
-const isShow = defineModel('show', {default: true});
+const isShow = defineModel<boolean>('show', {default: true});
 const isMainShow = ref(false);
 
 watchEffect(() => {
