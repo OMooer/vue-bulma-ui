@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useTemplateRef, watchEffect } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch, watchEffect } from 'vue';
 
 const props = defineProps({
 	sets       : {
@@ -23,6 +23,21 @@ const point = ref(-1);
 // 返回大步骤展示队列用于导航
 const filterSteps = computed(() => {
 	return stepHistory.value.filter((item: any) => item.n % 1 === 0);
+});
+// 返回当前步骤的小步骤总数
+const subSteps = computed(() => {
+	return stepHistory.value.filter((item: any) => Math.floor(item.n) === stepValue.value);
+});
+const subProgress = computed(() => {
+	// 切分每个小步骤的进度
+	const sp = 100 / subSteps.value.length;
+	// 获取当前小步骤的位置索引
+	const index = subSteps.value.findIndex((item: any) => item.n === stepHistory.value[point.value].n);
+	// 如果索引不存在，则返回0
+	if (index === -1) {
+		return 0;
+	}
+	return sp * index;
 });
 
 // 获取当前步骤指针的实际下标位置
@@ -118,6 +133,27 @@ onMounted(() => {
 	}
 });
 
+watchEffect(() => {
+	if (stepsRef.value) {
+		if (subProgress.value) {
+			stepsRef.value.style.setProperty('--progress', `${ subProgress.value }`);
+		}
+		else {
+			stepsRef.value.style.removeProperty('--progress');
+		}
+	}
+});
+watch(() => stepValue.value, () => {
+	if (stepsRef.value) {
+		stepsRef.value.classList.add('not-transition');
+		nextTick(() => {
+			requestAnimationFrame(() => {
+				stepsRef.value!.classList.remove('not-transition');
+			});
+		});
+	}
+});
+
 defineExpose({
 	// go fn is deprecated
 	go: step,
@@ -139,16 +175,29 @@ defineExpose({
 <style scoped lang="scss">
 @use "@/scss/variables" as va;
 
+@property --progress {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+
 .steps {
 	$normal: va.$grey-lighter;
 	$completed: va.$link-light;
 	$active: va.$primary;
+	--completed: #{$completed};
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
 	margin: 2rem auto;
 	counter-reset: stepList;
+	transition: --progress 0.3s ease;
+
+	&.not-transition {
+		transition: none;
+	}
 
 	li {
 		display: flex;
@@ -157,7 +206,7 @@ defineExpose({
 		counter-increment: stepList;
 
 		a {
-			color: $completed;
+			color: var(--completed);
 			white-space: nowrap;
 
 			&[aria-readonly=true] {
@@ -170,8 +219,8 @@ defineExpose({
 				align-items: center;
 				justify-content: center;
 				margin-right: .5em;
-				background-color: $completed;
-				border: solid 1px $completed;
+				background-color: var(--completed);
+				border: solid 1px var(--completed);
 				border-radius: 50%;
 				color: va.$white;
 				width: 1.5em;
@@ -182,12 +231,13 @@ defineExpose({
 		&:not(:last-of-type)::after {
 			content: "";
 			margin: 0 .5em;
-			background-color: $completed;
+			background-color: var(--completed);
 			height: 1px;
 			width: 8em;
 		}
 
 		&.is-active {
+			--deg: 90deg;
 			font-weight: bold;
 
 			a {
@@ -202,6 +252,7 @@ defineExpose({
 			}
 
 			&::after {
+				background-image: linear-gradient(var(--deg), var(--completed) calc(var(--progress) * 1%), transparent calc(var(--progress) * 1%));
 				background-color: $normal;
 			}
 
@@ -225,98 +276,118 @@ defineExpose({
 	}
 
 	&.is-box-style {
-		--square-side: calc(1px * calc(var(--size, 32) * sqrt(2) / 2));
-		$borderColor: var(--bulma-border);
+		--square-side: calc(1px * calc(var(--size, 32) * sqrt(2) / 2) - 1px);
 
 		li {
-			//overflow: hidden;
 			position: relative;
-			padding-block: 0;
-			padding-inline-start: calc(1.2 * var(--square-side));
-			padding-inline-end: 1em;
 			background-color: var(--bulma-background);
-			border: solid $borderColor;
+			border: solid var(--bulma-border);
 			border-width: 1px 0;
-			height: 2.5rem;
-
-			&::before {
-				content: '';
-				position: absolute;
-				inset: 0;
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				background-color: $completed;
-				border: none;
-				border-radius: inherit;
-				width: 100%;
-				height: 100%;
-			}
-
-			&::after {
-				content: '';
-				position: absolute;
-				margin: 0;
-				background-color: $completed;
-				width: var(--square-side);
-				height: var(--square-side);
-				left: 0;
-				border: solid var(--bulma-info-15-invert);
-				border-width: 1px 1px 0 0;
-				border-radius: 0 0 0 9999px;
-				box-shadow: 2px -2px 2px 0 rgba(90, 90, 90, 0.1);
-				transform: translateX(-50%) rotate(45deg);
-				pointer-events: none;
-			}
 
 			&:first-child {
-				padding-inline-start: 1.5em;
 				border-top-left-radius: var(--bulma-radius);
 				border-bottom-left-radius: var(--bulma-radius);
 				border-left-width: 1px;
 
-				&::after {
-					display: none;
+				&::after, a {
+					clip-path: polygon(0 0, 82% 0, 100% 50%, 82% 100%, 0 100%);
+				}
+
+				a {
+					padding-inline-start: 1.5em;
 				}
 			}
 
 			&:last-child {
-				padding-inline-end: 1.5em;
 				border-top-right-radius: var(--bulma-radius);
 				border-bottom-right-radius: var(--bulma-radius);
 				border-right-width: 1px;
+
+				&::before {
+					display: none;
+				}
+
+				&::after {
+					margin-inline-end: 0;
+				}
+
+				&::after, a {
+					clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 17% 50%);
+				}
+
+				a {
+					margin-inline-end: 0;
+					padding-inline-end: 1.5em;
+				}
+			}
+
+			&::before, &::after {
+				content: "";
+				position: absolute;
+			}
+
+			// 小方块箭头
+			&::before {
+				right: 0;
+				border: solid var(--bulma-info-15-invert);
+				border-width: 1px 1px 0 0;
+				transform: translateX(50%) rotate(45deg);
+				box-shadow: 2px -2px 2px 0 rgba(90, 90, 90, 0.1);
+				width: var(--square-side);
+				height: var(--square-side);
+				z-index: 2;
+			}
+
+			// 背景底色
+			&::after {
+				margin: 0 -1.5em 0 0;
+				inset: 0;
+				border-radius: inherit;
+				background-color: var(--completed);
+				width: auto;
+				height: auto;
+				z-index: 1;
+			}
+
+			&::after, a {
+				clip-path: polygon(0 0, 82% 0, 100% 50%, 82% 100%, 0 100%, 17% 50%);
 			}
 
 			a {
 				position: relative;
-				order: 1;
+				display: block;
+				margin-inline-end: -1.5em;
+				padding-inline: 2.5em;
+				border-radius: inherit;
+				line-height: 2.5rem;
 				color: #FFF;
+				height: 2.5rem;
+				z-index: 2;
+				order: 1;
 
 				&::before {
+					background-color: transparent;
 					border-color: #FFF;
 				}
 			}
 
 			&.is-active {
 				&::before {
-					background-color: $active;
+					border-color: var(--bulma-border);
 				}
 
-				+ li::after {
-					background-color: $active !important;
+				&::after {
+					background-color: $active;
 				}
 
 				~ li {
 					&::before {
-						content: '';
-						background-color: transparent;
-						border-color: transparent;
+						border-color: var(--bulma-border);
+						box-shadow: none;
 					}
 
 					&::after {
-						background-color: inherit;
-						border-color: var(--bulma-border);
-						box-shadow: none;
+						background-color: transparent;
 					}
 				}
 			}
@@ -358,6 +429,7 @@ defineExpose({
 			}
 
 			&.is-active {
+				--deg: 180deg;
 				display: flex;
 
 				+ li {
@@ -370,36 +442,48 @@ defineExpose({
 			li {
 				writing-mode: vertical-lr;
 				border-width: 0 1px;
-				width: 2.5rem;
-				height: auto;
-
-				a {
-					flex-direction: row;
-
-					&::before {
-						margin: 0 0 .5em;
-					}
-				}
 
 				&:first-child {
 					border-radius: var(--bulma-radius) var(--bulma-radius) 0 0;
+
+					&::after, a {
+						clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
+					}
 				}
 
 				&:last-child {
 					border-radius: 0 0 var(--bulma-radius) var(--bulma-radius);
 					border-bottom-width: 1px;
+
+					&::after, a {
+						clip-path: polygon(0 0, 50% 17%, 100% 0, 100% 100%, 0 100%);
+					}
+				}
+
+				&::before {
+					right: unset;
+					bottom: 0;
+					transform: translateY(50%) rotate(135deg);
 				}
 
 				&::after {
-					margin: 0;
-					top: 0;
-					left: 50%;
-					width: var(--square-side);
-					height: var(--square-side);
-					border-width: 0 1px 1px 0;
-					border-radius: 9999px 0 0;
-					box-shadow: 2px 2px 2px 0 rgba(90, 90, 90, .1);
-					transform: translate(-50%, -50%) rotate(45deg);
+					margin: 0 0 -1.5em 0;
+					width: auto;
+					height: auto;
+				}
+
+				&::after, a {
+					clip-path: polygon(0 0, 50% 17%, 100% 0, 100% 82%, 50% 100%, 0 82%);
+				}
+
+				a {
+					flex-direction: row;
+					width: 2.5rem;
+					height: auto;
+
+					&::before {
+						margin: 0 0 .5em;
+					}
 				}
 
 				&.is-active {
