@@ -2,7 +2,7 @@
 import { useUILocale } from '@/actions/locale';
 import { ECHARTS_NOT_INSTALLED, SYMBOL_ECHARTS_KEY } from '@/utils';
 import type { ChartData } from './types/charts';
-import { computed, inject, onMounted, provide, ref, shallowRef, watchEffect } from 'vue';
+import { computed, inject, onMounted, provide, ref, shallowRef, watch, watchEffect } from 'vue';
 import { chartColors } from './colors';
 import DatetimePicker from '../../datetimePicker';
 import Loading from '../../loading';
@@ -147,8 +147,15 @@ const isValidPresetDate = () => {
 	return props.presetDate?.length === 2
 			&& props.presetDate.every((date: string) => !isNaN(new Date(date).getTime()));
 };
-const presetDate = (props.dateFilter && isValidPresetDate()) ? props.presetDate as string[] : [];
-const dateRange = ref(presetDate);
+const dateRange = ref<string[]>([]);
+watch(() => props.presetDate, (presetData) => {
+	if (props.dateFilter && isValidPresetDate()) {
+		// 如果有值且更新
+		if (presetData?.length && (presetData[0] !== dateRange.value[0] || presetData[1] !== dateRange.value[1])) {
+			dateRange.value = presetData as string[];
+		}
+	}
+}, {immediate: true});
 watchEffect(() => {
 	if (dateRange.value.length) {
 		refresh();
