@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTimer } from '@/actions/timer';
 import { computed } from 'vue';
 
 defineOptions({
@@ -14,7 +15,8 @@ const props = defineProps({
 		default: 1
 	}
 });
-let timer: any;
+const {timeout, interval, clear} = useTimer();
+let timerId: ReturnType<typeof setTimeout>;
 let longPress = false;
 const modelValue = defineModel({default: 0});
 const isMinimum = computed(() => {
@@ -60,26 +62,25 @@ function keyAuto(e: KeyboardEvent) {
 }
 
 function autoMinus() {
-	timer = setTimeout(() => {
+	timerId = timeout(() => {
 		longPress = true;
-		timer = setInterval(() => {
+		timerId = interval(() => {
 			minusNumber();
 		}, 100);
 	}, 200);
 }
 
 function autoAdd() {
-	timer = setTimeout(() => {
+	timerId = timeout(() => {
 		longPress = true;
-		timer = setInterval(() => {
+		timerId = interval(() => {
 			addNumber();
 		}, 100);
 	}, 200);
 }
 
 function removeAuto() {
-	clearInterval(timer);
-	clearTimeout(timer);
+	clear(timerId);
 }
 </script>
 
@@ -95,7 +96,13 @@ function removeAuto() {
 		</div>
 		<div class="control">
 			<input
-					type="number" class="input" v-bind:class="$attrs.class as string" readonly :disabled :step v-model.number="modelValue">
+					type="number"
+					class="input"
+					v-bind:class="$attrs.class as string"
+					readonly
+					:disabled
+					:step
+					v-model.number="modelValue">
 		</div>
 		<div class="control">
 			<button

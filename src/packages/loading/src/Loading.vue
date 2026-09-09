@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTimer } from '@/actions/timer';
 import { provide, ref, watch } from 'vue';
 
 const emit = defineEmits(['dismiss']);
@@ -10,11 +11,12 @@ const props = withDefaults(defineProps<{
 	timeout?: number;
 	timeoutState?: 'keep' | 'none';
 }>(), {start: true, timeout: 10000, timeoutState: 'none'});
+const {timeout, interval, clear} = useTimer();
 const percent = ref(0);
 const status = ref('load');
 const isEnd = ref(false);
 const isLoading = ref(false);
-let timer: any;
+let timerId: ReturnType<typeof setTimeout>;
 
 watch(() => props.start, (isStarted) => {
 	if (isStarted) {
@@ -40,15 +42,15 @@ function runBar() {
 	status.value = 'load';
 	isLoading.value = true;
 	// 启动模拟进度条定时器
-	if (timer) {
-		clearInterval(timer);
+	if (timerId) {
+		clear(timerId);
 	}
-	timer = setInterval(() => {
+	timerId = interval(() => {
 		percent.value += 1;
 		// 模拟进度条只模拟到90%，剩下的等待异步结果或者设置超时
 		if (percent.value >= 90) {
 			// 停止当前的定时器再执行
-			clearInterval(timer);
+			clear(timerId);
 			// 如果存在完成标识则执行完成操作
 			if (isEnd.value) {
 				finish();
@@ -61,15 +63,15 @@ function runBar() {
 						percent.value = Math.max(newPercent, percent.value);
 					}
 				}, {immediate: true});
-				timeout();
+				doTimeout();
 			}
 		}
 	}, 10);
 }
 
-function timeout() {
+function doTimeout() {
 	// 超时关闭进度条
-	timer = setTimeout(() => {
+	timerId = timeout(() => {
 		percent.value = 100;
 		status.value = 'error';
 		if (props.timeoutState !== 'keep') {
@@ -85,12 +87,10 @@ function finish() {
 }
 
 function dismiss() {
-	if (timer) {
-		clearInterval(timer);
-		clearTimeout(timer);
-		timer = null;
+	if (timerId) {
+		clear(timerId);
 	}
-	setTimeout(() => {
+	timeout(() => {
 		isLoading.value = false;
 		emit('dismiss', status.value);
 	}, 300);

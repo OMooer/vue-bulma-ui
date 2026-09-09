@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { cloneVNode, computed, defineComponent, h, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
+import { useTimer } from '@/actions/timer';
+import { cloneVNode, computed, defineComponent, h, onMounted, ref, useTemplateRef } from 'vue';
 import { flattenVNode } from '@/utils';
 
 const props = defineProps({
@@ -28,6 +29,7 @@ const props = defineProps({
 	}
 });
 const slots = defineSlots();
+const {timeout, clear} = useTimer();
 const current = ref(0);
 const percent = ref(0);
 let autoTimer: any, percentTimer: any, wheelTimer: any, regulateTimer: any;
@@ -60,7 +62,7 @@ const swiperItems = defineComponent(() => {
 
 // 自动播放时的进度
 function startPercent() {
-	percentTimer = setTimeout(() => {
+	percentTimer = timeout(() => {
 		percent.value++;
 		if (percent.value < 100) {
 			startPercent();
@@ -70,10 +72,10 @@ function startPercent() {
 
 // 自动播放
 function autoplay() {
-	percentTimer && clearTimeout(percentTimer);
+	percentTimer && clear(percentTimer);
 	startPercent();
-	autoTimer && clearTimeout(autoTimer);
-	autoTimer = setTimeout(() => {
+	autoTimer && clear(autoTimer);
+	autoTimer = timeout(() => {
 		if (props.seamless) {
 			right();
 		}
@@ -85,8 +87,8 @@ function autoplay() {
 
 function pausePlay() {
 	if (props.autoplay) {
-		percentTimer && clearTimeout(percentTimer);
-		autoTimer && clearTimeout(autoTimer);
+		percentTimer && clear(percentTimer);
+		autoTimer && clear(autoTimer);
 	}
 }
 
@@ -152,8 +154,8 @@ function wheelContainer(e: any) {
 	}
 	e.preventDefault();
 	// 当滚动事件完全停止之后重置滚动状态
-	wheelTimer && clearTimeout(wheelTimer);
-	wheelTimer = setTimeout(() => {
+	wheelTimer && clear(wheelTimer);
+	wheelTimer = timeout(() => {
 		wheelOffsetX = 0;
 		wheelCapture = false;
 	}, 200);
@@ -176,7 +178,7 @@ function wheelContainer(e: any) {
 	// 即时定位新的位置
 	containerOffsetTrans(wheelOffsetX);
 	// 清除可能存在的校正延时
-	regulateTimer && clearTimeout(regulateTimer);
+	regulateTimer && clear(regulateTimer);
 	// 如果滚动位置超过阈值，则直接跳转上一页或下一页，并设置捕获状态
 	if (Math.abs(wheelOffsetX) > width * .3) {
 		wheelCapture = true;
@@ -184,7 +186,7 @@ function wheelContainer(e: any) {
 	}
 	else {
 		// 如果没有超过阈值，则一段时间后校正回当前页所在位置
-		regulateTimer = setTimeout(() => {
+		regulateTimer = timeout(() => {
 			containerRegulate();
 		}, 200);
 	}
@@ -240,10 +242,6 @@ function getItems() {
 onMounted(() => {
 	containerRegulate();
 	startPlay();
-});
-onBeforeUnmount(() => {
-	autoTimer && clearTimeout(autoTimer);
-	percentTimer && clearTimeout(percentTimer);
 });
 </script>
 

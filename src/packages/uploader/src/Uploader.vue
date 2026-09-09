@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
+import { useTimer } from '@/actions/timer';
 import { computed, inject, provide, type Ref, ref, toRef } from 'vue';
 import { abbrNumber, ERROR_ACCEPT, isTruthy, runPromiseSequence } from '@/utils';
 import { ext2mime } from '@/utils/mime';
@@ -59,6 +60,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:modelValue', 'start', 'error', 'status']);
 const {$vbt} = useUILocale();
+const {timeout} = useTimer();
 const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
 const modelInnerValue = computed(() => {
 	if (typeof props.modelValue === 'string' && props.modelValue) {
@@ -270,7 +272,7 @@ function statusChanged(state: string, detail?: any) {
 			break;
 		case 'success':
 			uploadProgress.value = 100;
-			setTimeout(() => {
+			timeout(() => {
 				isStarting.value = false;
 				uploadProgress.value = 0;
 				completedUpload(detail);
@@ -278,7 +280,7 @@ function statusChanged(state: string, detail?: any) {
 			break;
 		case 'error':
 			uploadProgress.value = 100;
-			setTimeout(() => {
+			timeout(() => {
 				isStarting.value = false;
 				uploadProgress.value = 0;
 			}, 200);
@@ -317,14 +319,14 @@ function formatResult(res: string | string[] | Normal.AnyObj[]) {
 /* 模拟进度条 */
 function readyStartProgress() {
 	if (uploadProgress.value < 95) {
-		setTimeout(() => {
+		timeout(() => {
 			const newProgress = uploadProgress.value + 1;
 			uploadProgress.value = Math.min(newProgress, 100);
 			readyStartProgress();
 		}, 30);
 	}
 	else if (uploadProgress.value < 99) {
-		setTimeout(() => {
+		timeout(() => {
 			const newProgress = uploadProgress.value + 0.5;
 			uploadProgress.value = Math.min(newProgress, 100);
 			readyStartProgress();

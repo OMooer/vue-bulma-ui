@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTimer } from '@/actions/timer';
 import { onMounted, ref } from 'vue';
 
 const props = defineProps({
@@ -12,16 +13,18 @@ const props = defineProps({
 	}
 });
 const emit = defineEmits(['start', 'stop']);
+const {interval, clear} = useTimer();
+let timerId: ReturnType<typeof setTimeout>;
 const seconds = ref(props.time);
 const running = ref(false);
 
 function countdown() {
 	emit('start');
 	running.value = true;
-	const timer = setInterval(() => {
+	timerId = interval(() => {
 		seconds.value--;
 		if (seconds.value <= 0) {
-			clearInterval(timer);
+			clear(timerId);
 			seconds.value = props.time;
 			running.value = false;
 			emit('stop', countdown);

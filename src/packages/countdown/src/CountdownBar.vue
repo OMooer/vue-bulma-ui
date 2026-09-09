@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTimer } from '@/actions/timer';
 import { computed, ref } from 'vue';
 import Countdown from './Countdown.vue';
 
@@ -17,25 +18,26 @@ const props = defineProps({
 	}
 });
 const emit = defineEmits(['start', 'stop']);
+const {interval, clear} = useTimer();
 const showBar = ref(false);
 const current = ref(100);
 const stepTime = 20;
 const split = computed(() => 100 / (props.time * 1000 / stepTime));
-let timer: any;
+let timerId: ReturnType<typeof setTimeout>;
 
 function startBar() {
 	emit('start');
 	showBar.value = true;
-	timer = setInterval(() => {
+	timerId = interval(() => {
 		current.value -= split.value;
 		if (current.value <= 0) {
-			clearInterval(timer);
+			clear(timerId);
 		}
 	}, stepTime);
 }
 
 function stopBar() {
-	clearInterval(timer);
+	clear(timerId);
 	current.value = 100;
 	showBar.value = false;
 	emit('stop');
