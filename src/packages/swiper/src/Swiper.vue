@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTimer } from '@/actions/timer';
-import { cloneVNode, computed, defineComponent, h, onMounted, ref, useTemplateRef } from 'vue';
+import { cloneVNode, computed, defineComponent, h, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 import { flattenVNode } from '@/utils';
 
 const props = defineProps({
@@ -19,6 +19,10 @@ const props = defineProps({
 	},
 	seamless      : Boolean,
 	wheeled       : Boolean,
+	pauseOnHover  : {
+		type   : Boolean,
+		default: true
+	},
 	previousMargin: {
 		type   : String,
 		default: '0px'
@@ -29,6 +33,7 @@ const props = defineProps({
 	}
 });
 const slots = defineSlots();
+const emit = defineEmits(['change']);
 const {timeout, clear} = useTimer();
 const current = ref(0);
 const percent = ref(0);
@@ -102,6 +107,7 @@ function moveTo(index: number) {
 	percent.value = 0;
 	current.value = index;
 	containerRegulate();
+	emit('change', current.value);
 	startPlay();
 }
 
@@ -200,10 +206,14 @@ function getNewChild(node: any, _index: number) {
 			height: '100%'
 		},
 		onMouseenter() {
-			pausePlay();
+			if (props.pauseOnHover) {
+				pausePlay();
+			}
 		},
 		onMouseleave() {
-			startPlay();
+			if (props.pauseOnHover) {
+				startPlay();
+			}
 		},
 		onTouchstart(e: TouchEvent) {
 			const {clientX} = e.touches[0];
@@ -239,10 +249,21 @@ function getItems() {
 	return items.map(getNewChild);
 }
 
+function onVisibility() {
+	document.hidden ? pausePlay() : startPlay();
+}
+
 onMounted(() => {
 	containerRegulate();
 	startPlay();
+	document.addEventListener('visibilitychange', onVisibility);
 });
+
+onBeforeUnmount(() => {
+	document.removeEventListener('visibilitychange', onVisibility);
+});
+
+defineExpose({moveTo, left, right, current});
 </script>
 
 <template>

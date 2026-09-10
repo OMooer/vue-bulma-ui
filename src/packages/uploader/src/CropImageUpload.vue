@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
-import { computed, inject, ref, useTemplateRef, watch } from 'vue';
+import { computed, inject, ref, useTemplateRef, watch, watchEffect } from 'vue';
 import InteractiveTracker from '../../InteractiveTracker';
 import PreviewSource from './PreviewSource.vue';
 
@@ -35,12 +35,16 @@ const promiseState = {
 	reject : (reason?: string) => {}
 };
 const previewEl = useTemplateRef('preview');
-const previewImage = computed(() => {
-	if (!imageData.value?.data) {
-		return null;
+const previewImage = ref('');
+watchEffect((onCleanup) => {
+	const data = imageData.value?.data;
+	if (data) {
+		// 将本地文件数据生成图片预览
+		const url = URL.createObjectURL(data);
+		previewImage.value = url;
+		// 依赖变化重跑前 & 组件卸载时，都会自动执行
+		onCleanup(() => URL.revokeObjectURL(url));
 	}
-	// 将本地文件数据生成图片预览
-	return URL.createObjectURL(imageData.value.data);
 });
 
 watch(() => status, (s) => {

@@ -114,7 +114,7 @@ function resolve(n: number): [number, number] {
 	// 移动实际指针下标
 	let next = point.value + (n >= 0 ? 1 : -1);
 	// 如果超出队列长度，异常处理
-	if (next > stepHistory.value.length) {
+	if (next >= stepHistory.value.length) {
 		return [-1, -1];
 	}
 	// 如果小于0则返回初始
