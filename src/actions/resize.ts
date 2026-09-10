@@ -1,6 +1,6 @@
 export const useResize = (dom: HTMLElement, cb: Function) => {
 	if (!dom) {
-		return;
+		return null;
 	}
 	const resizeObserver = new ResizeObserver(entries => {
 		for (let item of entries) {

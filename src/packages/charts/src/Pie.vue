@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, ref, shallowRef, watch } from 'vue';
+import { computed, inject, nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import type { ChildProps } from './types/charts';
 import { useResize } from '@/actions/resize';
 
@@ -8,6 +8,7 @@ const parentChartTitle = inject('parentChartTitle', '');
 const echarts = inject('echarts') as any;
 const pieRef = ref();
 const eChartsInstance = shallowRef<any>(null);
+let resizeObserver: ResizeObserver | null = null;
 const theme = computed(() => {
 	return props.dark ? 'dark' : 'default';
 });
@@ -95,11 +96,12 @@ function drawChart() {
 		return (_value / _total * 100).toFixed(1) + '%\t\t' + seriesName;
 	};
 
+	resizeObserver?.disconnect();
 	nextTick(() => {
 		// @ts-ignore
 		eChartsInstance.value = echarts?.init(pieRef.value, theme.value);
 		eChartsInstance.value?.setOption(chartOption);
-		useResize(pieRef.value, () => eChartsInstance.value?.resize());
+		resizeObserver = useResize(pieRef.value, () => eChartsInstance.value?.resize());
 		updateData();
 	});
 }
@@ -123,6 +125,11 @@ function updateData() {
 		]
 	});
 }
+
+onBeforeUnmount(() => {
+	resizeObserver?.disconnect();
+	eChartsInstance.value?.dispose();
+});
 </script>
 
 <template>
