@@ -57,7 +57,8 @@ export default {
 		emptyText    : 'No data',
 		unknownSlot  : 'Unknown slot',
 		columnDisplay: 'Table column display',
-		selectAll    : 'Select all'
+		selectAll    : 'Select all',
+		selectRow    : 'Select row'
 	},
 
 	tags: {

@@ -57,7 +57,8 @@ export default {
 		emptyText    : 'データなし',
 		unknownSlot  : 'スロット内容未設定',
 		columnDisplay: 'テーブル列表示',
-		selectAll    : 'すべて選択'
+		selectAll    : 'すべて選択',
+		selectRow    : '行を選択'
 	},
 
 	tags: {

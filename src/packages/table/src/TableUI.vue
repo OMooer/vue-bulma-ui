@@ -3,7 +3,7 @@ import { useUILocale } from '@/actions/locale';
 import Dropdown from '@/packages/dropdown';
 import type { VBTable } from '@/types/shim';
 import { SYMBOL_SELECT_ALL } from '@/utils';
-import { computed, ref, watch, watchEffect } from 'vue';
+import { computed, ref, watch } from 'vue';
 import Empty from '../../empty';
 import SortUI from '../../sort';
 
@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<{
 	tableData: Normal.AnyObj[];
 	emptyText?: string;
 	custom?: boolean;
-	mode?: 'grid',
+	mode?: 'grid', // grid 模式是为了达到内容长列完整展示其余列均分空间的目的
 	hoverable?: boolean;
 	striped?: boolean;
 	bordered?: boolean;
@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<{
 	bordered : true
 });
 // 行数据快照：来自 computed 派生，修改不会回写到源数据 tableData
-type TableRow = Readonly<Normal.AnyObj & { readonly: boolean }>;
+type TableRow = Readonly<Normal.AnyObj & { _$readonly: boolean }>;
 // 具名插槽作用域声明：row 为只读，使用者无法（也不应）通过它反向修改源数据
 defineSlots<{
 	[name: string]: (props: { row: TableRow; val: any; index: number }) => any;
@@ -43,7 +43,7 @@ const innerTableData = computed<TableRow[]>(() => {
 	return props.tableData?.map((item: any) => {
 		return {
 			...item,
-			readonly: isReadonly(item)
+			_$readonly: isReadonly(item)
 		} as TableRow;
 	}) ?? [];
 });
@@ -56,13 +56,13 @@ const selectedIndex = ref<number[]>([]);
 // 是否全选
 const selectedAll = ref(false);
 const unselectable = computed(() => {
-	return !innerTableData.value?.some((item: any) => !item.readonly);
+	return !innerTableData.value?.some((item: any) => !item._$readonly);
 });
 watch(() => selectedIndex.value, (selectedArrays) => {
-	selectedAll.value = selectedArrays.length > 0 && selectedArrays.length >= innerTableData.value?.filter((item: any) => !item.readonly).length;
+	selectedAll.value = selectedArrays.length > 0 && selectedArrays.length >= innerTableData.value?.filter((item: any) => !item._$readonly).length;
 	emit('select', selectedArrays);
 });
-watch([() => props.tableData, () => props.tableData.length], ([list]) => {
+watch(() => [...props.tableData], (list) => {
 	selectedIndex.value = [];
 	list.forEach((item: any, index: number) => {
 		// 检查是否预勾选
@@ -72,21 +72,14 @@ watch([() => props.tableData, () => props.tableData.length], ([list]) => {
 	});
 }, {immediate: true});
 // 显示的表头值
-const showHeadList = ref<string[]>([]);
-watchEffect(() => {
-	if (props.tableConfig?.columns) {
-		showHeadList.value = props.tableConfig?.columns.map((item: any) => {
-			return item.field;
-		});
-	}
-});
+const hiddenHeadList = ref<string[]>([]);
 // 表头列表
 const tableHeads = computed(() => {
 	const heads: TVO.DropdownItem[] = props.tableConfig?.columns.map((item) => {
 		return {
 			title   : item.label,
 			value   : item.field,
-			selected: showHeadList.value.includes(item.field),
+			selected: !hiddenHeadList.value.includes(item.field),
 		}
 	});
 	heads?.unshift(
@@ -98,7 +91,7 @@ const tableHeads = computed(() => {
 			{
 				title   : $vbt('table.selectAll'),
 				value   : SYMBOL_SELECT_ALL,
-				selected: showHeadList.value.length === props.tableConfig.columns.length
+				selected: hiddenHeadList.value.length === 0
 			},
 			null
 	);
@@ -107,7 +100,7 @@ const tableHeads = computed(() => {
 });
 // 显示的表列数据
 const renderColumns = computed(() => {
-	return props.tableConfig?.columns.filter(item => showHeadList.value.includes(item.field)) ?? [];
+	return props.tableConfig?.columns.filter(item => !hiddenHeadList.value.includes(item.field)) ?? [];
 });
 // 计算列数
 const columnCount = computed(() => {
@@ -134,25 +127,28 @@ function sortTable(key: string, by: string, exclusive?: boolean) {
 }
 
 function changeSelectTableHead(value: any, selected: boolean) {
-	if (!selected) {
+	// 勾选
+	if (selected) {
+		// 全选清空隐藏列表
 		if (value === SYMBOL_SELECT_ALL) {
-			showHeadList.value.splice(0);
+			hiddenHeadList.value.splice(0);
 			return;
 		}
-		const index = showHeadList.value.indexOf(value);
+		const index = hiddenHeadList.value.indexOf(value);
 		if (index > -1) {
-			showHeadList.value.splice(index, 1);
+			hiddenHeadList.value.splice(index, 1);
 		}
 	}
+	// 取消勾选
 	else {
 		if (value === SYMBOL_SELECT_ALL) {
-			showHeadList.value = props.tableConfig?.columns.map((item: any) => {
+			hiddenHeadList.value = props.tableConfig?.columns.map((item: any) => {
 				return item.field;
 			});
 			return;
 		}
-		if (showHeadList.value.indexOf(value) === -1) {
-			showHeadList.value.push(value);
+		if (hiddenHeadList.value.indexOf(value) === -1) {
+			hiddenHeadList.value.push(value);
 		}
 	}
 }
@@ -161,7 +157,7 @@ function toggleSelectAll() {
 	const allSelect = selectedAll.value;
 	if (allSelect) {
 		selectedIndex.value = innerTableData.value?.map((item: any, index: number) => {
-			return item.readonly ? -1 : index;
+			return item._$readonly ? -1 : index;
 		}).filter(i => i > -1) ?? [];
 	}
 	else {
@@ -195,7 +191,12 @@ function isChecked(data: any) {
 				<!-- 如果有勾选列 -->
 				<th class="col-check is-sticky" v-if="tableConfig?.showSelectColumn">
 					<label class="checkbox">
-						<input type="checkbox" :disabled="unselectable" @change="toggleSelectAll" v-model="selectedAll">
+						<input
+								type="checkbox"
+								:disabled="unselectable"
+								:aria-label="$vbt('table.selectAll')"
+								@change="toggleSelectAll"
+								v-model="selectedAll">
 					</label>
 				</th>
 				<th
@@ -213,13 +214,18 @@ function isChecked(data: any) {
 			</thead>
 			<tbody>
 			<tr
-					:class="{'is-selected': selectedIndex.includes(index), 'is-readonly': data.readonly}"
-					:key="data[tableConfig?.uniqueKey ?? ''] ?? Object.values(data)?.[0] ?? index"
-					v-for="(data, index) in innerTableData">
+					:class="{'is-selected': selectedIndex.includes(index), 'is-readonly': data._$readonly}"
+					:key="data[tableConfig?.uniqueKey as string] ?? index"
+					v-for="(data, index) in innerTableData" v-if="columnCount">
 				<!-- 如果有勾选列 -->
 				<td class="col-check is-sticky" v-if="tableConfig?.showSelectColumn">
 					<label class="checkbox">
-						<input type="checkbox" :disabled="data.readonly" :value="index" v-model="selectedIndex">
+						<input
+								type="checkbox"
+								:disabled="data._$readonly"
+								:value="index"
+								:aria-label="$vbt('table.selectRow')"
+								v-model="selectedIndex">
 					</label>
 				</td>
 				<td
@@ -237,7 +243,7 @@ function isChecked(data: any) {
 				</td>
 			</tr>
 			<tr v-if="!tableData?.length || !columnCount">
-				<td class="empty-column" :colspan="columnCount">
+				<td class="empty-column" :colspan="columnCount || undefined">
 					<Empty :text="emptyText || $vbt('table.emptyText')"/>
 				</td>
 			</tr>
