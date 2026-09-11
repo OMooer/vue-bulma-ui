@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<{
 	disabled?: boolean;
 	list: TVO.List;
 }>(), {name: Math.random().toString(36).slice(2)});
-const modelValue = defineModel<any | any[]>({default: []});
+const modelValue = defineModel<any | any[]>({default: () => []});
 const isError = ref(false);
 const className = computed(() => {
 	return [

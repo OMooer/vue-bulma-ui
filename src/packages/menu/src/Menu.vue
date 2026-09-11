@@ -10,7 +10,7 @@ defineProps({
 	},
 	menuData   : {
 		type   : Array as PropType<VBMenu.Item[]>,
-		default: []
+		default: () => []
 	},
 	activeClass: String,
 	exactClass : String
