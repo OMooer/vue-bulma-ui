@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VBMenu } from '@/types/shim';
-import { ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { getI18nData } from '@/utils';
 import Link from './Link.vue';
 
@@ -15,13 +15,13 @@ const props = withDefaults(defineProps<{
 	activeClass: 'is-active',
 	level      : 0
 });
+const openedSet = inject('menu-opened-set', ref(new Set<string>()));
 
-const menuList = ref(props.data);
-menuList.value.forEach(item => {
-	if (item.children?.length) {
-		item.folded = true;
-	}
-});
+const menuList = computed(() => props.data);
+const keyOf = (item: any) => item.name ?? item.url;
+const isOpened = (item: VBMenu.Item) => {
+	return item.children?.length ? (item.pinned === true || openedSet.value.has(keyOf(item))) : false;
+}
 
 function getMenuTitle(title: string | { [propName: string]: string }): string {
 	// 如果 title 是包含多语言的在这里处理
@@ -31,25 +31,25 @@ function getMenuTitle(title: string | { [propName: string]: string }): string {
 	return title;
 }
 
-function toggleFold(currentMenu: VBMenu.Item, folded: boolean) {
-	currentMenu.folded = folded;
-	// 折叠其他菜单及子菜单
-	const foldOtherMenu = (list: VBMenu.Item[]) => {
-		for (const item of list) {
-			if (item !== currentMenu) {
-				item.folded = true;
-				// 子菜单都折叠
-				if (item?.children?.length) {
-					foldOtherMenu(item?.children ?? []);
-				}
-			}
-		}
+function closestOpen(item: VBMenu.Item) {
+	toggle(item, true);
+	// 往上处理父级菜单的展开
+	emit('toggle', true);
+}
+
+function matchRouteOpen(item: VBMenu.Item, isMatch: boolean) {
+	if (isMatch) {
+		openedSet.value.clear();
+		closestOpen(item);
 	}
-	if (!folded) {
-		// 折叠同一级的其他菜单
-		foldOtherMenu(menuList.value);
-		// 如果是展开的则往上处理父级菜单的展开
-		emit('toggle', true);
+}
+
+function toggle(item: VBMenu.Item, isOpen: boolean) {
+	if (isOpen) {
+		openedSet.value.add(keyOf(item));
+	}
+	else {
+		openedSet.value.delete(keyOf(item));
 	}
 }
 </script>
@@ -57,13 +57,13 @@ function toggleFold(currentMenu: VBMenu.Item, folded: boolean) {
 <template>
 	<ul :style="`--level: ${props.level}`">
 		<li
-				:class="item.folded ? undefined : {[activeClass]: true, 'is-active': true}"
-				:key="(item as any).name ?? (item as any).url" v-for="item in menuList">
+				:class="isOpened(item) ? {[activeClass]: true, 'is-active': true} : undefined"
+				:key="keyOf(item)" v-for="item in menuList">
 			<Link
 					class="menu-link" :exactClass
 					:to="item.external === true ? item.url : {name: item.name}"
 					:title="getMenuTitle(item.title)"
-					@state="toggleFold(item, !$event)">
+					@state="matchRouteOpen(item, $event)">
 				<span class="menu-title">
 					<span class="icon" v-if="item.icon">
 						<i :class="item.icon" v-if="typeof item.icon === 'string'"></i>
@@ -74,16 +74,16 @@ function toggleFold(currentMenu: VBMenu.Item, folded: boolean) {
 					</span>
 				</span>
 				<span
-						class="icon next-icon" :class="{'roll-down': !item?.folded}"
-						@click.prevent.stop="item.folded = !item.folded"
-						v-if="item.children?.length">
+						class="icon next-icon" :class="{'roll-down': isOpened(item)}"
+						@click.prevent.stop="toggle(item, !isOpened(item))"
+						v-if="item.children?.length && !item.pinned">
 					<FasIcon icon="angle-right"/>
 				</span>
 			</Link>
 			<div class="next-menu" v-if="item.children?.length">
 				<MenuItem
 						:level="level + 1" :locale :data="item.children" :exactClass :activeClass
-						@toggle="toggleFold(item, !$event)"/>
+						@toggle="closestOpen(item)"/>
 			</div>
 		</li>
 	</ul>

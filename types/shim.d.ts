@@ -136,7 +136,7 @@ export declare namespace VBMenu {
 		title: string | TitleLang;
 		icon?: any;
 		children?: Item[];
-		folded?: boolean;
+		pinned?: boolean;
 	}
 }
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VBMenu } from '@/types/shim';
-import type { PropType } from 'vue';
+import { PropType, provide, ref } from 'vue';
 import MenuItem from './MenuItem.vue';
 
 defineProps({
@@ -16,6 +16,9 @@ defineProps({
 	exactClass : String
 });
 
+const openedSet = ref(new Set<string>());
+
+provide('menu-opened-set', openedSet);
 </script>
 
 <template>
