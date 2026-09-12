@@ -21,6 +21,8 @@ const maxScale = ref(3);
 const brightSize = 0.6;
 const sideSize = (1 - brightSize) / 2;
 let originFormData: FormData | null = null;
+let safeTimer: ReturnType<typeof setTimeout> | undefined;
+const MAX_SAFE_PASSES = 2;
 const imageData = ref({
 	key : '',
 	data: null as unknown as File,
@@ -83,9 +85,17 @@ if (setHooks) {
 	});
 }
 
-function checkImageSafeRange() {
+function checkImageSafeRange(pass = 0) {
 	const img = previewEl.value as HTMLImageElement;
+	// 如果图片已经被移除，则不进行处理
+	if (!img?.isConnected) {
+		return;
+	}
 	const imgSize = calcImageSize(img);
+	// 如果图片宽高为0，则不进行处理
+	if (!imgSize.width || !imgSize.height) {
+		return;
+	}
 	const viewWidth  = width.value * brightSize,
 	      viewHeight = height.value * brightSize;
 	const sideHorizontal = width.value * sideSize,
@@ -129,18 +139,24 @@ function checkImageSafeRange() {
 		}
 	}
 	if (changes.length) {
+		// 如果已经尝试了 MAX_SAFE_PASSES 次，则不再尝试，防止图片无限收缩回弹
+		if (pass >= MAX_SAFE_PASSES) {
+			return;
+		}
 		resetToSafe(() => {
 			changes.forEach((fn) => fn());
-		});
+		}, () => checkImageSafeRange(pass + 1));
 	}
 }
 
-function resetToSafe(fn: () => void) {
+function resetToSafe(fn: () => void, done?: () => void) {
 	const image = previewEl.value as HTMLImageElement;
+	clearTimeout(safeTimer);
 	image.style.transition = 'transform .3s .2s ease';
 	fn();
-	setTimeout(() => {
+	safeTimer = setTimeout(() => {
 		image.style.transition = null as unknown as string;
+		done?.();
 	}, 600);
 }
 
@@ -203,7 +219,7 @@ function cropImage() {
 	if (isChanged.value) {
 		// 通过 canvas 裁剪
 		imageCanvas.value = createCropCanvas(previewEl.value as HTMLImageElement);
-		cropImageResult.value = imageCanvas.value.toDataURL(imageData.value.type || 'image/png', 1);
+		cropImageResult.value = imageCanvas.value.toDataURL('image/png', 1);
 	}
 	cropperStep.value = 'confirm';
 }
@@ -214,19 +230,21 @@ function confirmImage() {
 			return promiseState.reject();
 		}
 		const formData = new FormData();
-		formData.append(imageData.value.key, blob, imageData.value.name);
+		formData.append(imageData.value.key, blob, imageData.value.name.replace(/\.\w+$/, '') + '.png');
 		promiseState.resolve(formData);
 		cropperStep.value = 'progress';
 		// 添加一个已经提交上传过的标记
 		isSubmitted.value = true;
 		isChanged.value = false;
-	}, imageData.value.type || 'image/png', 1);
+	}, 'image/png', 1);
 }
 
 function cancelImage() {
 	promiseState.reject();
 	originFormData = null;
 	imageData.value = null as any;
+	imageCanvas.value = null;
+	cropImageResult.value = null;
 	cropperStep.value = 'select';
 	isSubmitted.value = false;
 	tranX.value = 0;
@@ -270,18 +288,18 @@ function remove() {
 		<template v-else-if="cropperStep === 'crop'">
 			<div class="cropper" @click.stop.prevent @touchmove.prevent @wheel.prevent>
 				<InteractiveTracker
-						class="cropper__image-container image-opacity-bg" @end="checkImageSafeRange"
+						class="cropper__image-container image-opacity-bg" @end="checkImageSafeRange()"
 						:style="{width:`${width}px`, height:`${height}px`, '--scale': scale, '--x': `${tranX}px`, '--y': `${tranY}px`}"
 						:event-trigger="['drag', 'touch']"
 						v-model:scale="scale" v-model:x="tranX" v-model:y="tranY"
 				>
-					<img ref="preview" :src="previewImage" alt="preview" @load="checkImageSafeRange" v-if="previewImage"/>
+					<img ref="preview" :src="previewImage" alt="preview" @load="checkImageSafeRange()" v-if="previewImage"/>
 				</InteractiveTracker>
 				<div class="cropper__controller">
 					<label class="is-flex is-gap-0.5">
 						<span class="is-size-7">{{ $vbt('uploader.scale') }}</span>
 						<input
-								type="range" min="0.1" :max="maxScale" step="0.1" :disabled @change="checkImageSafeRange"
+								type="range" min="0.1" :max="maxScale" step="0.1" :disabled @change="checkImageSafeRange()"
 								v-model.number="scale">
 						<span class="is-size-7">{{ Math.round(scale * 100) }}%</span>
 					</label>
