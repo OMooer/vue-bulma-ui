@@ -86,24 +86,24 @@ const offsetY = ref(0);
 const currentPhoto = computed(() => photos.value?.[currentIndex.value]);
 const currentPhotoExif = ref();
 const showExifInfo = ref(false);
+let exifRunId = 0;
 watchEffect(() => {
-	if (currentPhoto.value?.origin && showExif) {
-		(async () => {
-			currentPhotoExif.value = await getPhotoExif(currentPhoto.value?.origin as string);
-		})();
+	const origin = currentPhoto.value?.origin;
+	currentPhotoExif.value = undefined;
+	if (origin && showExif) {
+		const id = ++exifRunId;
+		getPhotoExif(origin).then((exif) => {
+			if (id === exifRunId) {
+				currentPhotoExif.value = exif;
+			}
+		});
 	}
 });
 
 async function getPhotoExif(url: string) {
 	try {
 		const fileBlob = await webRequestImageBlob(url);
-		const fileReader = new FileReader();
-		fileReader.readAsArrayBuffer(fileBlob);
-		const buf = await new Promise<ArrayBuffer>((resolve) => {
-			fileReader.onload = () => {
-				resolve(fileReader.result as ArrayBuffer);
-			}
-		});
+		const buf = await fileBlob.arrayBuffer();
 		const of = new ExifOperator(buf);
 		return of.getExif();
 	}
