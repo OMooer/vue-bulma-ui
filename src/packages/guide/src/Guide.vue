@@ -13,6 +13,8 @@ const {$vbt} = useUILocale();
 const show = ref(false);
 const current = ref(-1);
 const watchIndex = ref(-1);
+const pending = ref('');
+let runId = 0;
 // 引导信息配置
 const guideConfig = ref<VBGuide.GuideStyle>({});
 // 当前步骤数据
@@ -78,28 +80,45 @@ watch(watchIndex, async (now, old) => {
 		return;
 	}
 	let beforeUpdated = false;
+	const id = ++runId;
+	// 当前步骤的方向
+	const stepFlag = now > old ? 'next' : 'prev';
+	pending.value = stepFlag;
 	// 之前离开后执行
-	list[old]?.after?.(old < now ? 'next' : 'prev', getTarget(old));
+	try {
+		list[old]?.after?.(stepFlag, getTarget(old));
+	}
+	catch (e) {
+		console.warn(`[Guide] 第 ${ old } 步 after 钩子执行失败:`, e);
+	}
 	// 新的进入前执行
 	const before = list[now]?.before ?? (() => Promise.resolve());
-	const fn = before(getTarget(now));
-	if (fn instanceof Promise) {
-		await fn.then((conf) => {
-			if (conf && Object.keys(conf).length) {
-				// 更新引导配置信息
-				Object.assign(guideConfig.value, conf);
-				beforeUpdated = true;
-			}
-			current.value = now;
-		});
+	// 获取当前步骤的配置信息
+	const item = list[now];
+	let conf: any;
+	try {
+		conf = await before(getTarget(now));
 	}
-	else {
-		current.value = now;
+	catch (e) {
+		console.warn(`[Guide] 第 ${ now } 步 before 钩子执行失败:`, e);
 	}
+	if (id !== runId) {
+		return;
+	}
+	guideConfig.value = {};
+	if (conf && Object.keys(conf).length) {
+		// 更新引导配置信息
+		Object.assign(guideConfig.value, conf);
+		beforeUpdated = true;
+	}
+	current.value = now;
+
+	// 清空 pending 状态
+	pending.value = '';
 
 	// 没有返回新的信息就从配置里获取
 	if (!beforeUpdated) {
-		const {top, bottom, left, right, offsetX, offsetY, maskX, maskY} = currentItem.value;
+		const {top, bottom, left, right, offsetX, offsetY, maskX, maskY} = item;
 		Object.assign(guideConfig.value, {top, bottom, left, right, offsetX, offsetY, maskX, maskY});
 	}
 });
@@ -111,34 +130,56 @@ watch(() => start, (isStarted) => {
 	else {
 		current.value = -1;
 		watchIndex.value = -1;
+		runId++;
+		pending.value = '';
+		show.value = false;
 	}
 });
 
 function getTarget(index: number) {
 	let tar = list[index]?.target;
+	let target: HTMLElement | undefined;
 	if (typeof tar === 'string') {
-		tar = document.querySelector(tar || 'htmlBody') as HTMLElement;
+		try {
+			target = document.querySelector(tar || 'htmlBody') as HTMLElement;
+		}
+		catch {
+			target = undefined;
+		}
 	}
-	return tar;
+	else {
+		target = tar;
+	}
+	return target;
 }
 
 function next() {
+	if (pending.value) {
+		return;
+	}
 	if (current.value < list.length - 1) {
 		watchIndex.value++;
 	}
 	else {
-		exit();
+		exit('finish');
 	}
 }
 
 function prev() {
+	if (pending.value) {
+		return;
+	}
 	if (current.value > 0) {
 		watchIndex.value--;
 	}
 }
 
 function exit(e: string = 'exit') {
-	currentItem.value?.after?.(e, getTarget(current.value));
+	if (!pending.value) {
+		currentItem.value?.after?.(e, getTarget(current.value));
+	}
+	runId++;
+	pending.value = '';
 	show.value = false;
 	emit('exit', e);
 }
@@ -172,13 +213,25 @@ onMounted(startGuide);
 				<div class="is-flex is-align-items-center">
 					<div class="is-size-7 p-2" v-if="!isLast">{{ current + 1 }}/{{ list.length }}</div>
 					<div class="buttons is-right is-flex-grow-1">
-						<button class="button is-small is-link" @click="prev" :disabled="current === 0" v-if="!isLast">
+						<button
+								class="button is-small is-link"
+								:class="{'is-loading': pending === 'prev'}"
+								:disabled="current === 0 || !!pending"
+								@click="prev"
+								v-if="!isLast">
 							{{ $vbt('guide.prev') }}
 						</button>
-						<button class="button is-small is-link is-inverted" @click="exit('skip')" v-if="!isLast">
+						<button
+								class="button is-small is-link is-inverted"
+								@click="exit('skip')"
+								v-if="!isLast">
 							{{ $vbt('guide.exit') }}
 						</button>
-						<button class="button is-small" :class="isLast ? 'is-success is-fullwidth': 'is-info'" @click="next">
+						<button
+								class="button is-small"
+								:class="[{'is-loading': pending === 'next'}, isLast ? 'is-success is-fullwidth': 'is-info']"
+								:disabled="!!pending"
+								@click="next">
 							{{ currentItem?.buttonText || (isLast ? $vbt('guide.finish') : $vbt('guide.next')) }}
 						</button>
 					</div>
