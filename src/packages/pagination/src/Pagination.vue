@@ -5,15 +5,9 @@ import { SelectorNative } from '../../select';
 
 const props = defineProps({
 	router         : null,
-	page           : {
-		type    : Number,
-		required: true,
-		default : 1
-	},
 	total          : {
 		type    : Number,
-		required: true,
-		default : 0
+		required: true
 	},
 	pageSizes      : {
 		type   : Array,
@@ -38,6 +32,7 @@ const props = defineProps({
 		validator: (v: number) => v === 0 || (v >= 3 && v <= 19)
 	}
 });
+const page = defineModel<number>('page', {default: 1});
 const limit = defineModel<number>('limit', {default: 10});
 const emit = defineEmits(['changePage']);
 const {$vbt} = useUILocale();
@@ -66,13 +61,16 @@ const currentPageSize = computed({
 	}
 })
 const currentRangePages = computed(() => {
+	if (!validRangeSize.value) {
+		return [];
+	}
 	// 1 2 3 4 5 6 7 8 9 10 ...
 	const arr = Array(maxPage.value).fill(0).map((_, i) => i + 1);
 	// 如果最大页数小于等于分页按钮个数则显示全部分页
 	if (maxPage.value <= validRangeSize.value) {
 		return arr.slice(0, validRangeSize.value);
 	}
-	const start = Math.max(0, props.page - Math.ceil(validRangeSize.value / 2));
+	const start = Math.max(0, page.value - Math.ceil(validRangeSize.value / 2));
 	const cut = arr.slice(start, start + validRangeSize.value);
 	if (cut.length < validRangeSize.value) {
 		// 如果 cut 的个数少于 rangeSize 则往前面获取 arr 的数据补齐
@@ -99,19 +97,23 @@ const currentRangePages = computed(() => {
 	return cut;
 });
 
-function gotoPage(page: number) {
-	if (page < 1) {
-		page = 1;
+function gotoPage(toPage: number) {
+	if (toPage < 1) {
+		toPage = 1;
 	}
-	else if (page > maxPage.value) {
-		page = maxPage.value;
+	else if (toPage > maxPage.value) {
+		toPage = maxPage.value;
+	}
+	if (toPage === page.value) {
+		return;
 	}
 	if (props.router) {
 		const route = props.router.currentRoute;
-		const params = Object.assign({}, route.params, {page});
+		const params = Object.assign({}, route.params, {page: toPage});
 		props.router.push({name: route.name, params, query: route.query});
 	}
-	emit('changePage', page);
+	page.value = toPage;
+	emit('changePage', toPage);
 }
 </script>
 
@@ -121,18 +123,26 @@ function gotoPage(page: number) {
 			<SelectorNative :allowNull="false" :list="sizes" v-model="currentPageSize" style="width: auto"/>
 		</div>
 		<template v-if="showStepButtons">
-			<a class="pagination-previous" :class="{'is-disabled': page<=1}" @click="gotoPage(page-1)">{{ prevText }}</a>
-			<a class="pagination-next" :class="{'is-disabled': page>=maxPage}" @click="gotoPage(page+1)">{{ nextText }}</a>
+			<a
+					class="pagination-previous"
+					:class="{'is-disabled': page <= 1}"
+					:aria-disabled="page <= 1"
+					@click="gotoPage(page - 1)">{{ prevText }}</a>
+			<a
+					class="pagination-next"
+					:class="{'is-disabled': page >= maxPage}"
+					:aria-disabled="page >= maxPage"
+					@click="gotoPage(page + 1)">{{ nextText }}</a>
 		</template>
-		<ul class="pagination-list" v-if="maxPage>1">
-			<li v-for="item in currentRangePages">
+		<ul class="pagination-list" v-if="maxPage > 1">
+			<li :key="index" v-for="(item, index) in currentRangePages">
 				<span class="pagination-ellipsis" v-if="item === 0">&hellip;</span>
 				<a
 						@click="gotoPage(item)"
 						class="pagination-link"
 						:class="{'is-current': page === item}"
 						:aria-label="`Page ${item}`"
-						aria-current="page"
+						:aria-current="page === item ? 'page' : undefined"
 						v-else>{{ item }}</a>
 			</li>
 		</ul>
