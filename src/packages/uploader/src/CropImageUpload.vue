@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUILocale } from '@/actions/locale';
-import { computed, inject, ref, useTemplateRef, watch, watchEffect } from 'vue';
+import { FILE_UPLOAD_FAILED } from '@/utils';
+import { inject, ref, useTemplateRef, watch, watchEffect } from 'vue';
 import InteractiveTracker from '../../InteractiveTracker';
 import PreviewSource from './PreviewSource.vue';
 
@@ -49,6 +50,7 @@ watchEffect((onCleanup) => {
 	}
 });
 
+// 接收父容器的状态传递变化，设置自身的步骤状态
 watch(() => status, (s) => {
 	if (s === 'error') {
 		cropperStep.value = cropperStep.value === 'progress' ? 'crop' : 'select';
@@ -60,11 +62,18 @@ watch(() => status, (s) => {
 watch([scale, tranX, tranY], () => {
 	isChanged.value = true;
 });
+watch(cropperStep, (step) => {
+	// 如果步骤重新变回选择文件，则重置提交状态
+	if (step === 'select') {
+		isSubmitted.value = false;
+	}
+});
 
 // 增加上传组件选择文件 Hook
 if (setHooks) {
+	// 在父容器(Uploader)里注册选择文件的 hook
 	setHooks('select', (file: FormData) => {
-		// 如果已经是裁剪过的同一个文件，则直接返回裁剪结果
+		// 如果已经是裁剪提交过的同一个文件，则直接复用裁剪结果
 		if (!isSubmitted.value) {
 			originFormData = file;
 			// 选取出文件数据，只取第一张图片
@@ -211,7 +220,7 @@ function createCropCanvas(img: HTMLImageElement) {
 }
 
 function cropImage() {
-	// 重新触发上传事件
+	// 提交过的话重新触发父级上传事件，进入 Hook 设置的 Promise 状态等待
 	if (isSubmitted.value) {
 		startUpload(originFormData);
 	}
@@ -227,6 +236,7 @@ function cropImage() {
 function confirmImage() {
 	imageCanvas.value.toBlob((blob: Blob) => {
 		if (!blob) {
+			emit('error', true, FILE_UPLOAD_FAILED);
 			return promiseState.reject();
 		}
 		const formData = new FormData();
@@ -254,6 +264,7 @@ function cancelImage() {
 
 function remove() {
 	cancelImage();
+	// 裁剪上传只有一个图片，所以向上传递清除第 0 个下标上传的事件
 	emit('removed', 0);
 }
 </script>

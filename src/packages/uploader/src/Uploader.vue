@@ -224,14 +224,18 @@ function startUpload(formDataOfFiles: FormData) {
 	uploadState.value = 'init';
 	emit('status', {status: 'init'});
 	// 增加处理文件的扩展 hook
-	const selectHooks = hooks.get('select') ?? [];
-	selectHooks.push((d: FormData) => Promise.resolve(d));
+	const selectHooks = [...(hooks.get('select') ?? [])];
+	if (!selectHooks.length) {
+		selectHooks.push((d: FormData) => Promise.resolve(d));
+	}
 	runPromiseSequence(selectHooks, formDataOfFiles).then(
 			(data) => {
 				readyStartProgress();
 				statusChanged('start', data);
 			}
-	).catch(() => {});
+	).catch((e) => {
+		console.warn('hooks reject', e);
+	});
 }
 
 function setHooks(method: HookMethod, fn: <T>(a: T) => Promise<T>) {
@@ -367,12 +371,12 @@ defineExpose({
 				}"
 				:style="{ width: uploadProgress + '%' }" v-show="isStarting"></div>
 		<input
-				class="file-input" type="file" tabindex="-1" :id :name="id" :disabled="isTruthy(disabled)"
+				class="file-input" type="file" tabindex="-1" :id="id" :name="id" :disabled="isTruthy(disabled)"
 				:accept="acceptAttr" @change="selectFilesOrDir" :required="isRequired"
 				:multiple="isTruthy(multiple)"
 				v-if="type==='file'">
 		<input
-				class="file-input" type="file" tabindex="-1" :id :name="id" :disabled="isTruthy(disabled)"
+				class="file-input" type="file" tabindex="-1" :id="id" :name="id" :disabled="isTruthy(disabled)"
 				directory mozDirectory webkitDirectory @change="selectFilesOrDir" :required="isRequired" v-else>
 		<label class="uploader-label" :for="id">
 			<slot

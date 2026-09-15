@@ -100,6 +100,7 @@ async function dragUpload(ev: DragEvent) {
 						readFile(url).then((d) => {
 							resolve(d);
 						}).catch(() => {
+							// 获取远程文件数据失败，抛出事件（此事件对应父容器的 setError 且不自清）
 							emit('error', true, FILE_UPLOAD_FAILED);
 						});
 					});
