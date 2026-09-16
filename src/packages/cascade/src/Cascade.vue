@@ -2,7 +2,7 @@
 import { useKeydown } from '@/actions/keydown';
 import { computed, inject, provide, ref, watch } from 'vue';
 import { useUILocale } from '@/actions/locale';
-import { ERROR_NO_SUBLIST, iconNormalize, isOverBoxSize, scroll2Middle } from '@/utils';
+import { ERROR_NO_SUBLIST, iconNormalize, isOverBoxSize, isTruthy, scroll2Middle } from '@/utils';
 import Empty from '../../empty';
 import SelectorUI from '../../select';
 
@@ -11,6 +11,7 @@ const {keyIndex, handler} = useKeydown();
 const isParentSmall = inject('isSmall', ref(false));
 const props = withDefaults(defineProps<{
 	mode?: 'detach' | 'combo';
+	/** 必填：boolean 全部层级；boolean[] 按层级；string 为逗号分隔的层级序号，如 "0,2" */
 	required?: boolean | boolean[] | string;
 	disabled?: boolean;
 	list: TVO.CascadeItem[];
@@ -57,6 +58,19 @@ const lastSelectValue = computed(() => {
 const comboShowValue = computed(() => {
 	return getSelectedValue(modelValue.value || []);
 });
+const comboRequired = computed(() => {
+	const r = props.required;
+	if (!r) {
+		return false;
+	}
+	if (Array.isArray(r)) {
+		return r.some(Boolean);
+	}
+	if (typeof r === 'string') {
+		return parseRequiredSpec(r).size > 0;
+	}
+	return isTruthy(r);
+});
 
 const captureEvent = (ev: Event) => {
 	if (!(ev.target as HTMLElement).closest('.cascade-dropdown.is-active')) {
@@ -100,16 +114,37 @@ function toggleDropdown() {
 	}
 }
 
+// 解析 required 字符串：逗号分隔的层级序号（0 起），如 "0,2"
+function parseRequiredSpec(spec: string): Set<number> {
+	const levels = new Set<number>();
+	for (const token of spec.split(',')) {
+		const t = token.trim();
+		if (!t) {
+			continue;
+		}
+		const n = Number(t);
+		if (!Number.isInteger(n) || n < 0) {
+			console.warn(`[Cascade] 忽略无法识别的 required 层级: "${ t }"`);
+			continue;
+		}
+		levels.add(n);
+	}
+	return levels;
+}
+
 // 获取级联层级的必填状态
 function getCascadeRequire(level: number = 0) {
-	if (typeof props.required === 'boolean') {
-		return props.required;
+	const r = props.required;
+	if (typeof r === 'boolean') {
+		return r;
 	}
-	if (typeof props.required === 'string') {
-		// 暂没想好怎么处理用 name/index 来匹配的，先忽略
-		return false;
+	if (Array.isArray(r)) {
+		return !!r[level];
 	}
-	return (props?.required as boolean[])[level];
+	if (typeof r === 'string') {
+		return parseRequiredSpec(r).has(level);
+	}
+	return false;
 }
 
 // 设置组件预设值
@@ -212,7 +247,11 @@ function updateNodeData(level: number, data: any) {
 					cacheStore.value[`cache_${ level }_${ data }`] = subList;
 				}
 			}
-	).catch(() => {}).finally(() => {
+	).catch((e: any) => {
+		if (e !== ERROR_NO_SUBLIST) {
+			console.warn('[Cascade] 下级数据加载失败:', e);
+		}
+	}).finally(() => {
 		isLoading.value = false;
 	});
 }
@@ -335,7 +374,7 @@ defineExpose({
 			<div class="dropdown cascade-dropdown is-block" :class="classList" @keydown="keyAction">
 				<select
 						class="entity-shadow" tabindex="-1" aria-hidden="true" required
-						@focus="frontFocus" v-if="modelValue == undefined && required"></select>
+						@focus="frontFocus" v-if="modelValue == undefined && comboRequired"></select>
 				<div class="dropdown-trigger">
 					<button
 							ref="frontRef" type="button" class="button is-fullwidth is-justify-content-space-between"
