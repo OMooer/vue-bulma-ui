@@ -48,13 +48,17 @@ watch(() => currentPopup.value, (popup) => {
 function autoClose(popup: OP.MsgObj) {
 	if (popup.autoClose) {
 		timerMap[popup.id] = window.setTimeout(() => {
-			closePopup();
+			delete timerMap[popup.id];
+			if (currentPopup.value?.id === popup.id) {
+				closePopup();
+			}
 		}, popup.autoClose);
 	}
 }
 
 function hoverPopup(id: symbol) {
 	clearTimeout(timerMap[id]);
+	delete timerMap[id];
 	emit('hover', id);
 }
 
@@ -70,7 +74,7 @@ function removePopup(id: symbol) {
 	remove(id).then(() => {
 		emit('remove', id, never.value);
 		never.value = false;
-	});
+	}).catch(() => {});
 	show.value = true;
 }
 
@@ -81,13 +85,17 @@ defineExpose({
 </script>
 
 <template>
-	<Transition :name="animate" @afterLeave="removePopup(currentPopup.id)">
+	<Transition :name="animate" @afterLeave="removePopup(currentPopup?.id)">
 		<div
 				class="vb-popup box"
-				@mouseover="hoverPopup(currentPopup.id)" @mouseleave="autoClose(currentPopup)"
+				@mouseover="currentPopup && hoverPopup(currentPopup.id)"
+				@mouseleave="currentPopup && autoClose(currentPopup)"
 				v-if="showPopup">
 			<button
-					type="button" class="delete is-small" aria-label="close" @click="closePopup"
+					type="button"
+					class="delete is-small"
+					aria-label="close"
+					@click="closePopup"
 					v-if="currentPopup.showClose"></button>
 			<div class="popup-body">
 				<figure class="image is-1by1" v-if="currentPopup.image">
@@ -113,6 +121,7 @@ defineExpose({
 	bottom: 1.5rem;
 	right: 1.5rem;
 	z-index: 9999;
+	margin: 0;
 	border: solid 1px va.$split-color;
 
 	> .delete {
