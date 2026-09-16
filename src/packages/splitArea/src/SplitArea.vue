@@ -17,8 +17,8 @@ const {
 	bordered?: boolean;
 	direction?: 'horizontal' | 'vertical';
 	basicStart?: string;
-	minStart?: number;
-	minEnd?: number;
+	minStart?: number | string;
+	minEnd?: number | string;
 }>();
 
 const isDragging = ref(false);
@@ -31,24 +31,23 @@ const styleObj = computed(() => {
 		'--bordered'   : isBordered.value ? 0.85 : 0
 	}
 });
+const dim = computed(() => direction === 'horizontal' ? 'width' : 'height');
+// 将计算出来的数值收敛到 minStart 和 100 - minEnd 之间
+const clamped = (pct: number) => Math.max(toPercent(minStart), Math.min(pct, 100 - toPercent(minEnd)));
+// 百分比×100 的整数化，吸收 toFixed(2) 量化误差与除法噪声
+const quantize = (pct: number) => Math.round(pct * 100);
 const splitArea = useTemplateRef<HTMLElement>('splitArea');
 
-function transBasicPercent(bs: string | number) {
-	// 先将数字的转为字符串好适应后续的处理
-	if (typeof bs === 'number') {
-		bs = bs.toFixed(2);
+function toPercent(v: number | string): number {
+	if (typeof v === 'string' && v.endsWith('%')) {
+		return parseFloat(v) || 0;
 	}
-	// 如果是百分比则直接返回对应的数字
-	if (bs.endsWith('%') || !splitArea.value) {
-		return parseFloat(bs);
-	}
-	// 与实际的长度值进行百分比的转换，排除非法值
-	const pixel = parseFloat(bs);
-	if (isNaN(pixel)) {
+	const pixel = parseFloat(String(v));
+	if (isNaN(pixel) || !splitArea.value) {
 		return 0;
 	}
 	const rect = splitArea.value.getBoundingClientRect();
-	return pixel / rect[direction === 'horizontal' ? 'width' : 'height'] * 100;
+	return pixel / rect[dim.value] * 100;
 }
 
 function endDrag() {
@@ -70,29 +69,28 @@ function clickHandle(e: MouseEvent) {
 		return;
 	}
 
-	const rect = splitArea.value.getBoundingClientRect();
-	const currentBasic = transBasicPercent(basic.value);
+	const currentBasic = toPercent(basic.value);
+	const basicStartPct = toPercent(basicStart);
+	const roundCurrentBasic = quantize(currentBasic);
+	const roundBasicStart = quantize(basicStartPct);
 
 	if (setBasic === 'start') {
-		// 如果小于等于原始的 basicStart 则设置为 0
-		if (currentBasic <= transBasicPercent(basicStart)) {
-			const start = Math.max(minStart, 0);
-			basic.value = `${ (start / rect[direction === 'horizontal' ? 'width' : 'height'] * 100).toFixed(2) }%`;
+		// 如果小于等于原始的 basicStart 则设置为 0%
+		if (roundCurrentBasic <= roundBasicStart) {
+			basic.value = `${ clamped(0).toFixed(2) }%`;
 		}
 		else {
-			basic.value = basicStart;
+			basic.value = `${ basicStartPct.toFixed(2) }%`;
 		}
 	}
 	else if (setBasic === 'end') {
 		// 如果小于原始的 basicStart 则设置为 basicStart
-		if (currentBasic < transBasicPercent(basicStart)) {
-			basic.value = basicStart;
+		if (roundCurrentBasic < roundBasicStart) {
+			basic.value = `${ basicStartPct.toFixed(2) }%`;
 		}
 		else {
-			const end = (rect[direction === 'horizontal' ? 'width' : 'height'] - minEnd) / rect[direction === 'horizontal'
-					? 'width'
-					: 'height'] * 100;
-			basic.value = `${ Math.min(100, end).toFixed(2) }%`;
+			// 设置为 100%
+			basic.value = `${ clamped(100).toFixed(2) }%`;
 		}
 	}
 }
@@ -103,7 +101,7 @@ function dragging(o: any) {
 	}
 	const {x: clientX, y: clientY} = o.client;
 
-	if (!clientX || !clientY) {
+	if (clientX == null || clientY == null) {
 		return;
 	}
 
@@ -115,19 +113,13 @@ function dragging(o: any) {
 	isBordered.value = true;
 
 	const rect = splitArea.value.getBoundingClientRect();
+	const isH = direction === 'horizontal';
 
-	if (direction === 'horizontal') {
-		const x = Math.max(minStart, Math.min(clientX - rect.left, rect.width));
-		const max = Math.min(x, rect.width - minEnd);
-		const percentage = (max / rect.width) * 100;
-		basic.value = `${ percentage.toFixed(2) }%`;
-	}
-	else {
-		const y = Math.max(minStart, Math.min(clientY - rect.top, rect.height));
-		const max = Math.min(y, rect.height - minEnd);
-		const percentage = (max / rect.height) * 100;
-		basic.value = `${ percentage.toFixed(2) }%`;
-	}
+	const raw = isH ? clientX - rect.left : clientY - rect.top;
+	const size = rect[dim.value];
+	const pct = raw / size * 100;
+
+	basic.value = `${ clamped(pct).toFixed(2) }%`;
 }
 
 function preventScroll(e: TouchEvent) {
@@ -140,8 +132,8 @@ function changeBasic(b: string) {
 	if (!isValidInputValue(b)) {
 		return;
 	}
-	const percentage = transBasicPercent(b);
-	basic.value = `${ percentage.toFixed(2) }%`;
+	const pct = toPercent(b);
+	basic.value = `${ clamped(pct).toFixed(2) }%`;
 }
 
 defineExpose({
