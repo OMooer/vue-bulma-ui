@@ -83,7 +83,12 @@ defineExpose({
 								@click="btnClose" @start="isMoving = true" @end="isMoving = false"
 								v-model:x="modalX" v-model:y="modalY">
 							<p class="modal-card-title" :id="titleId">{{ title }}</p>
-							<button type="button" class="delete" aria-label="close" v-if="isTruthy(hasClose)"></button>
+							<button
+									type="button"
+									class="delete"
+									aria-label="close"
+									@click="btnClose"
+									v-if="isTruthy(hasClose)"></button>
 						</InteractiveTracker>
 						<section class="modal-card-body">
 							<slot :dismiss="dismiss"/>
@@ -112,6 +117,12 @@ defineExpose({
 @use "@/scss/animates";
 
 .vb-modal.modal {
+	.modal-card, .modal-content {
+		&:focus-visible {
+			outline: none;
+		}
+	}
+
 	.modal-card {
 		translate: var(--modal-x) var(--modal-y);
 
@@ -132,6 +143,10 @@ defineExpose({
 
 		&-body {
 			overscroll-behavior: contain;
+
+			&:focus-visible {
+				outline: none;
+			}
 		}
 
 		&-foot {
@@ -158,7 +173,11 @@ defineExpose({
 			.card-content {
 				overflow: auto;
 				overscroll-behavior: contain;
-				height: calc(100% - 3rem - 1px);
+				max-height: calc(100vh - 3rem - 1px - 2em);
+
+				&:focus-visible {
+					outline: none;
+				}
 			}
 
 			.card-content:last-child {
