@@ -69,7 +69,7 @@ defineExpose({
 </script>
 
 <template>
-	<TransitionGroup :name="animate" tag="div" class="vb-toasts" :class="isTop ? 'is-top' : 'is-bottom'">
+	<TransitionGroup :name="animate" tag="div" role="status" aria-live="polite" class="vb-toasts" :class="isTop ? 'is-top' : 'is-bottom'">
 		<div class="toast box has-background-dark has-text-white-ter" :key="item.id" v-for="item in list as OP.MsgObj[]">
 			{{ item.message }}
 		</div>

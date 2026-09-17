@@ -1,14 +1,19 @@
 <script setup lang="ts">
+import { ref, useId } from 'vue';
+
 defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean, 'noIcon': Boolean});
+
+const tipsDescId = useId();
+const ddOpen = ref(false);
 </script>
 
 <template>
-	<span class="vb-tips tooltip" :data-tips="tips" v-if="!$slots?.default">
+	<span class="vb-tips tooltip" tabindex="0" :data-tips="tips" :aria-label="tips" v-if="!$slots?.default">
 		<span class="tooltip-icon">
 			<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
 		</span>
 	</span>
-	<div class="vb-tips tooltip" :data-tips="tips" v-else-if="noIcon">
+	<div class="vb-tips tooltip" :data-tips="tips" :aria-label="tips" v-else-if="noIcon">
 		<slot/>
 	</div>
 	<div class="vb-tips icon-text" v-else-if="inline">
@@ -17,13 +22,19 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean, 'noIcon':
 		</span>
 		<slot/>
 	</div>
-	<div class="vb-tips dropdown is-hoverable" v-else>
-		<div class="dropdown-trigger">
-			<span class="dropdown-icon">
+	<div class="vb-tips dropdown is-hoverable" @focusin="ddOpen = true" @focusout="ddOpen = false" v-else>
+		<div
+				class="dropdown-trigger"
+				tabindex="0"
+				role="button"
+				:aria-expanded="ddOpen"
+				aria-haspopup="true"
+				:aria-describedby="tipsDescId">
+			<span class="dropdown-icon" aria-hidden="true">
 				<FasIcon :icon="['fas', isQuestion ? 'circle-question' : 'circle-info']"/>
 			</span>
 		</div>
-		<div class="dropdown-menu">
+		<div class="dropdown-menu" :id="tipsDescId">
 			<div class="dropdown-content">
 				<div class="dropdown-item">
 					<slot/>
@@ -77,7 +88,7 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean, 'noIcon':
 		margin: 0 0.25em;
 	}
 
-	&:hover {
+	&:hover, &:focus-within {
 		--color-opacity: 0.85;
 
 		&::before, &::after {
@@ -101,6 +112,10 @@ defineProps({'isQuestion': Boolean, 'tips': String, 'inline': Boolean, 'noIcon':
 	.dropdown-trigger {
 		padding: 0 0.25em;
 		line-height: normal;
+	}
+
+	&:focus-within .dropdown-menu {
+		display: block;
 	}
 
 	.dropdown-menu {

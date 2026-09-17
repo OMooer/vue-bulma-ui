@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useKeydown } from '@/actions/keydown';
-import { computed, inject, provide, ref, watch } from 'vue';
+import { computed, inject, provide, ref, useId, watch } from 'vue';
 import { useUILocale } from '@/actions/locale';
 import { ERROR_NO_SUBLIST, iconNormalize, isOverBoxSize, isTruthy, scroll2Middle } from '@/utils';
 import Empty from '../../empty';
@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
 }>(), {mode: 'detach', cache: false});
 const emit = defineEmits(['error']);
 const modelValue = defineModel<any[]>({default: () => []});
-
+const menuId = useId();
 const isLoading = ref(false);
 const isError = ref(false);
 const isOpen = ref(false);
@@ -377,8 +377,14 @@ defineExpose({
 						@focus="frontFocus" v-if="modelValue == undefined && comboRequired"></select>
 				<div class="dropdown-trigger">
 					<button
-							ref="frontRef" type="button" class="button is-fullwidth is-justify-content-space-between"
-							aria-haspopup="true" aria-controls="dropdown-menu" @click="toggleDropdown" :disabled="disabled">
+							ref="frontRef"
+							type="button"
+							class="button is-fullwidth is-justify-content-space-between"
+							:aria-expanded="isOpen"
+							aria-haspopup="true"
+							:aria-controls="menuId"
+							@click="toggleDropdown"
+							:disabled="disabled">
 						<span class="is-flex is-align-items-center" style="overflow: hidden;" v-if="comboShowValue">
 							<i :class="comboShowValue.icon" v-if="comboShowValue.icon"></i>
 							<FasIcon :icon="holderIcon" v-else-if="holderIcon"/>
@@ -392,11 +398,12 @@ defineExpose({
 						</span>
 					</button>
 				</div>
-				<div class="dropdown-menu" role="menu">
+				<div class="dropdown-menu" role="menu" :id="menuId">
 					<div class="dropdown-content" @mouseover="resetKeyIndex">
 						<div class="cascade-level" :key="level" v-for="(item, level) in cascadeList">
 							<template :key="node.value as string" v-for="(node, index) in item.list">
 								<a
+										role="menuitem"
 										class="dropdown-item"
 										:class="{'is-disabled': node.disabled, 'is-active': cascadeValue.includes(node.value), 'is-focused': keyIndex === index && lastSelectLevel === level}"
 										@click="selectLevel(level, node.value)">

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useKeydown } from '@/actions/keydown';
 import { useUILocale } from '@/actions/locale';
-import { computed, inject, ref, watch } from 'vue';
-import { isOverBoxSize, scroll2Middle, TAB_CLOSE_METHOD, vFocus } from '@/utils';
+import { computed, inject, ref, useId, watch } from 'vue';
+import { isOverBoxSize, scroll2Middle, TAB_CLOSE_METHOD } from '@/utils';
 import Empty from '../../empty';
 
 const isParentSmall = inject('isSmall', ref(false));
@@ -19,6 +19,7 @@ const props = defineProps<{
 const emit = defineEmits(['error']);
 const innerValue = defineModel();
 const {$vbt} = useUILocale();
+const menuId = useId();
 const {keyIndex, handler} = useKeydown();
 const isError = ref(false);
 const isOpen = ref(false);
@@ -188,8 +189,8 @@ defineExpose({
 		<div class="dropdown-trigger">
 			<button
 					ref="frontRef" type="button" @click="toggleDropdown" :disabled="disabled"
-					class="button is-fullwidth is-justify-content-space-between" aria-haspopup="true"
-					aria-controls="dropdown-menu">
+					class="button is-fullwidth is-justify-content-space-between"
+					aria-haspopup="true" :aria-expanded="isOpen" :aria-controls="menuId">
 				<span class="is-flex is-align-items-center" style="overflow: hidden;" v-if="findValue">
 					<i :class="findValue.icon" v-if="findValue.icon"></i>
 					{{ findValue.title }}
@@ -202,7 +203,7 @@ defineExpose({
 				</span>
 			</button>
 		</div>
-		<div class="dropdown-menu is-fullwidth" role="menu">
+		<div class="dropdown-menu is-fullwidth" role="menu" :id="menuId">
 			<div class="dropdown-content">
 				<template v-if="filter">
 					<div class="dropdown-item filter">
@@ -214,6 +215,7 @@ defineExpose({
 				</template>
 				<div class="dropdown-scroll-view" @mouseover="resetKeyIndex">
 					<a
+							role="menuitem"
 							class="dropdown-item"
 							@click="selectValue(item.value)"
 							:class="{'is-active': item.value === innerValue, 'is-disabled': item.disabled, 'is-focused': keyIndex === index}"

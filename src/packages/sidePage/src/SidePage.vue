@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { vTrapTab, vFocus } from '@/utils';
 import { computed, ref, watchEffect } from "vue";
 
 const emit = defineEmits(['close']);
 const props = defineProps({
 	direction: {type: String, default: 'right'},
 	hasClose : {type: Boolean, default: true},
+	maskClose: {type: Boolean, default: true}
 });
 
 const isShow = defineModel<boolean>('show', {default: true});
@@ -41,6 +43,12 @@ const animateName = computed(() => {
 	}
 });
 
+function doMaskClose(e: any) {
+	if (props.maskClose) {
+		dismiss(e);
+	}
+}
+
 function dismiss(e: any) {
 	if (!e || !e.target.closest('.sp-scroll-view')) {
 		isShow.value = false;
@@ -55,11 +63,11 @@ function afterDismissAnimate() {
 
 <template>
 	<Teleport to="body">
-		<div class="side-page" @click="dismiss" v-if="isMainShow">
+		<div class="side-page" tabindex="-1" v-trap-tab v-focus @click="doMaskClose" v-if="isMainShow">
 			<Transition :name="animateName" @after-leave="afterDismissAnimate" appear>
 				<div class="sp-container" :class="contClassName" v-show="isShow">
 					<!-- 关闭按钮 -->
-					<a class="delete is-medium" aria-label="Close" @click="dismiss" v-if="hasClose"></a>
+					<button type="button" class="delete is-medium" aria-label="Close" @click="dismiss" v-if="hasClose"></button>
 					<div class="sp-scroll-view">
 						<slot/>
 					</div>
@@ -85,7 +93,6 @@ function afterDismissAnimate() {
 	.sp-container {
 		position: absolute;
 		background: var(--bulma-background);
-		padding: 0 1rem;
 		border: va.$split-color solid;
 		box-shadow: va.$shadow;
 		box-sizing: border-box;
@@ -152,7 +159,8 @@ function afterDismissAnimate() {
 
 		.sp-scroll-view {
 			overflow: auto;
-			padding: 1rem 0;
+			overscroll-behavior: contain;
+			padding: 1rem;
 			box-sizing: border-box;
 			width: 100%;
 			height: 100%;

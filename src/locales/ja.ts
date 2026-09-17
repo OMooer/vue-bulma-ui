@@ -63,7 +63,8 @@ export default {
 
 	tags: {
 		placeholder: '1つまたは複数を選択してください',
-		emptyText  : 'データなし'
+		emptyText  : 'データなし',
+		remove     : '削除'
 	},
 
 	tree: {
@@ -89,5 +90,22 @@ export default {
 		press     : 'ここを押す',
 		pasteImage: '画像を貼り付けてアップロード',
 		dblClick  : 'またはダブルクリックでファイルを選択'
+	},
+
+	menu: {
+		expand  : 'サブメニューを開く',
+		collapse: 'サブメニューを閉じる'
+	},
+
+	sort: {
+		label: '並べ替え',
+		none : '未ソート',
+		asc  : '昇順',
+		desc : '降順'
+	},
+
+	increment: {
+		plus : '増加',
+		minus: '減少'
 	}
 }

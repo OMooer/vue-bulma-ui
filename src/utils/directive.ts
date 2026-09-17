@@ -1,5 +1,8 @@
 import { EMPTY_IMG } from './statement';
 
+/**
+ * 自动获取焦点
+ */
 export const vFocus = {
 	mounted(el: HTMLElement, binding: any) {
 		const isFocus = binding.value ?? true;
@@ -11,6 +14,9 @@ export const vFocus = {
 	}
 }
 
+/**
+ * 图片懒加载
+ */
 const instObserver = new IntersectionObserver((entries) => {
 	for (const entry of entries) {
 		if (entry.isIntersecting) {
@@ -41,6 +47,11 @@ export const vLazy = {
 	}
 }
 
+/**
+ * 滚动条定制
+ * @description 自动根据出现的滚动条添加指定的样式
+ */
+
 function checkHasScrollbar(el: HTMLElement) {
 	return {
 		horizontal: el.scrollWidth > el.clientWidth,
@@ -52,9 +63,9 @@ function setScrollClass(el: HTMLElement, scrollbarDir: 'x' | 'y', cls?: false | 
 	// 没有提供正确的样式类名
 	if (!cls) {
 		// 如果另一个方向的滚动条也不存在，则移除掉 has-scrollbar 类
-		if (el.classList.contains('has-scrollbar') && !checkHasScrollbar(el)[scrollbarDir === 'x'
-				? 'vertical'
-				: 'horizontal']) {
+		if (el.classList.contains('has-scrollbar') && !checkHasScrollbar(el)[
+				scrollbarDir === 'x' ? 'vertical' : 'horizontal'
+				]) {
 			el.classList.remove('has-scrollbar');
 		}
 		return;
@@ -112,5 +123,51 @@ export const vScrollbar = {
 	},
 	beforeUnmount: (el: HTMLElement) => {
 		resizeObserver?.unobserve(el);
+	}
+}
+
+/**
+ * 限制键盘 Tab 切换范围
+ */
+
+// Tab 圈住：焦点只许在弹窗内轮转
+function trapFocus(el: HTMLElement) {
+	return (e: KeyboardEvent) => {
+		if (e.key !== 'Tab' || !el) {
+			return;
+		}
+		const items = Array.from(
+				el.querySelectorAll<HTMLElement>(
+						'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+				)
+		);
+		if (!items.length) {
+			return;
+		}
+		const first = items[0];
+		const last = items[items.length - 1];
+		if (e.shiftKey && document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		}
+		else if (!e.shiftKey && document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
+}
+
+export const vTrapTab = {
+	mounted(el: HTMLElement, binding: any) {
+		const event = trapFocus(el);
+		(el as any)._trapTabHandler = event;
+		el.addEventListener('keydown', event);
+	},
+	beforeUnmount(el: HTMLElement) {
+		const event = (el as any)._trapTabHandler;
+		if (event) {
+			el.removeEventListener('keydown', event);
+			delete (el as any)._trapTabHandler;
+		}
 	}
 }

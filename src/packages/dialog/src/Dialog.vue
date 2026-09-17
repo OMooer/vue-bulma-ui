@@ -54,12 +54,14 @@ function chooseHandler(o: boolean) {
 		</slot>
 		<template #footer>
 			<footer class="card-footer">
-				<a
+				<button
+						type="button"
 						class="card-footer-item has-text-weight-bold" :class="[primaryColor]"
-						@click="chooseHandler(true)">{{ doneText || $vbt('dialog.doneText') }}</a>
-				<a
-						class="card-footer-item" @click="chooseHandler(false)"
-						v-if="type === 'confirm'">{{ cancelText || $vbt('dialog.cancelText') }}</a>
+						@click="chooseHandler(true)">{{ doneText || $vbt('dialog.doneText') }}</button>
+				<button
+						type="button"
+						class="card-footer-item has-text-link" @click="chooseHandler(false)"
+						v-if="type === 'confirm'">{{ cancelText || $vbt('dialog.cancelText') }}</button>
 			</footer>
 		</template>
 	</Modal>

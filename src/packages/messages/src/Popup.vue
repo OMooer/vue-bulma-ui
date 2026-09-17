@@ -88,6 +88,7 @@ defineExpose({
 	<Transition :name="animate" @afterLeave="removePopup(currentPopup?.id)">
 		<div
 				class="vb-popup box"
+				role="alert"
 				@mouseover="currentPopup && hoverPopup(currentPopup.id)"
 				@mouseleave="currentPopup && autoClose(currentPopup)"
 				v-if="showPopup">

@@ -66,7 +66,7 @@ defineExpose({
 </script>
 
 <template>
-	<TransitionGroup :name="animate" tag="div" class="vb-notify">
+	<TransitionGroup :name="animate" tag="div" role="status" aria-live="polite" class="vb-notify">
 		<div class="message" :class="'is-' + item.type" :key="item.id" v-for="item in list as OP.MsgObj[]">
 			<button
 					type="button" class="delete" aria-label="delete"

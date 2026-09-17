@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { useTimer } from '@/actions/timer';
 import { computed } from 'vue';
 
@@ -15,6 +16,7 @@ const props = defineProps({
 		default: 1
 	}
 });
+const {$vbt} = useUILocale();
 const {timeout, interval, clear} = useTimer();
 let timerId: ReturnType<typeof setTimeout>;
 let longPress = false;
@@ -54,9 +56,11 @@ function addNumber() {
 
 function keyAuto(e: KeyboardEvent) {
 	if (e.code === 'ArrowUp') {
+		e.preventDefault();
 		addNumber();
 	}
 	else if (e.code === 'ArrowDown') {
+		e.preventDefault();
 		minusNumber();
 	}
 }
@@ -85,13 +89,14 @@ function removeAuto() {
 </script>
 
 <template>
-	<div class="vb-increment field has-addons" @keydown.capture.prevent="keyAuto">
+	<div class="vb-increment field has-addons" @keydown.capture="keyAuto">
 		<div class="control">
 			<button
 					type="button" class="button" v-bind:class="$attrs.class as string" :disabled="disabled || isMinimum"
+					:aria-label="$vbt('increment.minus')"
 					@click="minusNumber" @touchstart="autoMinus" @touchend="removeAuto"
 					@mousedown="autoMinus" @mouseup="removeAuto" @mouseleave="removeAuto">
-				<span class="icon"><FasIcon icon="minus"/></span>
+				<span class="icon" aria-hidden="true"><FasIcon icon="minus"/></span>
 			</button>
 		</div>
 		<div class="control">
@@ -101,15 +106,16 @@ function removeAuto() {
 					v-bind:class="$attrs.class as string"
 					readonly
 					:disabled
-					:step
+					:step="step"
 					v-model.number="modelValue">
 		</div>
 		<div class="control">
 			<button
 					type="button" class="button" v-bind:class="$attrs.class as string" :disabled="disabled || isMaximum"
+					:aria-label="$vbt('increment.plus')"
 					@click="addNumber" @touchstart="autoAdd" @touchend="removeAuto"
 					@mousedown="autoAdd" @mouseup="removeAuto" @mouseleave="removeAuto">
-				<span class="icon"><FasIcon icon="plus"/></span>
+				<span class="icon" aria-hidden="true"><FasIcon icon="plus"/></span>
 			</button>
 		</div>
 	</div>

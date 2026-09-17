@@ -203,6 +203,7 @@ function isChecked(data: any) {
 						:class="[`col-${idx}`, {[`col-${item.slot}`]: item.slot, 'is-sticky': item.sticky}]"
 						:style="item.style ?? null"
 						:key="item.field"
+						:aria-sort="sorts[item.field] === 'asc' ? 'ascending' : sorts[item.field] === 'desc' ? 'descending' : undefined"
 						v-for="(item, idx) in renderColumns">
 					{{ item.label }}
 					<!-- 如果有排序 -->

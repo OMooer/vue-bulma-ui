@@ -63,7 +63,8 @@ export default {
 
 	tags: {
 		placeholder: '请选择一个或多个',
-		emptyText  : '无数据'
+		emptyText  : '无数据',
+		remove     : '移除'
 	},
 
 	tree: {
@@ -89,5 +90,22 @@ export default {
 		press     : '在此按下',
 		pasteImage: '粘贴图片上传',
 		dblClick  : '或者双击选择文件上传'
+	},
+
+	menu: {
+		expand  : '展开子菜单',
+		collapse: '收起子菜单'
+	},
+
+	sort: {
+		label: '排序',
+		none : '未排序',
+		asc  : '升序',
+		desc : '降序'
+	},
+
+	increment: {
+		plus : '增加',
+		minus: '减少'
 	}
 }

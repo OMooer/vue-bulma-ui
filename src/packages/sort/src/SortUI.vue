@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import { computed, ref, watchEffect } from 'vue';
 
 const emit = defineEmits(['sort']);
@@ -8,6 +9,7 @@ const props = defineProps({
 		default: 'none'
 	}
 });
+const {$vbt} = useUILocale();
 const orderBy = ref('none');
 const sorts = ref(['none', 'desc', 'asc']);
 const sortClass = computed(() => {
@@ -22,6 +24,10 @@ const sortClass = computed(() => {
 watchEffect(() => {
 	orderBy.value = sorts.value.includes(props.state) ? props.state : 'none';
 });
+const sortLabel = computed(() => {
+	const state = $vbt(orderBy.value === 'none' ? 'sort.none' : orderBy.value === 'asc' ? 'sort.asc' : 'sort.desc');
+	return `${ $vbt('sort.label') } (${ state })`;
+});
 
 function changeSort() {
 	let newSort = sorts.value.indexOf(orderBy.value) + 1;
@@ -34,9 +40,14 @@ function changeSort() {
 </script>
 
 <template>
-	<a class="sort-btn" @click.prevent="changeSort">
-		<FasIcon :icon="sortClass"></FasIcon>
-	</a>
+	<button
+			type="button"
+			class="sort-btn"
+			:class="{'is-active': orderBy !== 'none'}"
+			:aria-label="sortLabel"
+			@click="changeSort">
+		<FasIcon :icon="sortClass" aria-hidden="true"></FasIcon>
+	</button>
 </template>
 
 <style scoped lang="scss">
@@ -46,7 +57,7 @@ function changeSort() {
 	margin: 0 .2em;
 	cursor: pointer;
 
-	&:hover {
+	&:hover, &.is-active {
 		color: va.$blue;
 	}
 }

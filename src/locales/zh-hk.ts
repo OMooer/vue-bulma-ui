@@ -1,6 +1,6 @@
 export default {
 	back: {
-		text: '返回'
+		text: '返回',
 	},
 
 	cascade: {
@@ -63,7 +63,8 @@ export default {
 
 	tags: {
 		placeholder: '請選擇一個或多個',
-		emptyText  : '無數據'
+		emptyText  : '無數據',
+		remove     : '移除'
 	},
 
 	tree: {
@@ -89,5 +90,22 @@ export default {
 		press     : '在此按下',
 		pasteImage: '貼上圖片上傳',
 		dblClick  : '或者雙擊選擇文件上傳'
+	},
+
+	menu: {
+		expand  : '展開子選單',
+		collapse: '收起子選單'
+	},
+
+	sort: {
+		label: '排序',
+		none : '未排序',
+		asc  : '升序',
+		desc : '降序'
+	},
+
+	increment: {
+		plus : '增加',
+		minus: '減少'
 	}
 }

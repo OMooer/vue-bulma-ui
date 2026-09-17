@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
-import { computed, defineComponent, h, ref, useAttrs, watch } from 'vue';
+import { computed, defineComponent, h, ref, useAttrs, useId, watch } from 'vue';
 import { iconNormalize, isElementPartiallyHidden, isOverBoxSize } from '@/utils';
 
 defineOptions({
@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<{
 }>(), {hasArrow: true});
 const emit = defineEmits(['active', 'select']);
 const attrs = useAttrs();
+const menuId = useId();
 const isOpen = ref(false);
 const isUp = ref(false);
 const isRight = ref(false);
@@ -89,6 +90,7 @@ const menuCont = defineComponent(() => {
 				{
 					class: 'dropdown-menu',
 					role : 'menu',
+					id   : menuId,
 					style: isFixed.value
 							? `--fr-size: ${ frSize.value }px; --ft-size: ${ ftSize.value }px;`
 							: `opacity: ${ isOpacity.value }`
@@ -176,7 +178,8 @@ function menuClicked(e: any) {
 			<button
 					type="button" @click="toggleDropdown"
 					class="button is-fullwidth is-justify-content-space-between"
-					aria-haspopup="true" aria-controls="dropdown-menu">
+					:aria-expanded="isOpen"
+					aria-haspopup="true" :aria-controls="menuId">
 				<slot></slot>
 				<span class="icon is-small" v-if="hasArrow">
 					<FasIcon icon="angle-down" aria-hidden="true"/>

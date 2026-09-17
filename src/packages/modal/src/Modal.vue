@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { provide, ref, watchEffect } from 'vue';
-import { isTruthy } from '@/utils';
+import { provide, ref, useId, watchEffect } from 'vue';
+import { isTruthy, vFocus, vTrapTab } from '@/utils';
 import InteractiveTracker from '../../InteractiveTracker';
 
 defineOptions({inheritAttrs: false});
@@ -14,6 +14,7 @@ const {title, maskClose, hasClose = true, hasCancel = true} = defineProps<{
 }>();
 const isShow = defineModel<boolean>('show', {default: true});
 const isMainShow = ref(isShow.value);
+const titleId = useId();
 const isMoving = ref(false);
 const modalX = ref(0);
 const modalY = ref(0);
@@ -64,15 +65,24 @@ defineExpose({
 		<div
 				class="vb-modal modal" :class="[$attrs.class, isMainShow ? 'is-active' : null]"
 				:style="`--modal-x: ${modalX}px; --modal-y: ${modalY}px`">
-			<div class="modal-background" @click="mClose(maskClose)"></div>
+			<div class="modal-background" @click="mClose(maskClose)" @wheel.prevent.stop></div>
 			<Transition name="animate-zoom" @after-leave="afterDismissAnimate" appear>
-				<div :class="[title ? 'modal-card' : 'modal-content']" :style="style" v-show="isShow">
+				<div
+						role="dialog"
+						aria-modal="true"
+						:aria-labelledby="title ? titleId : undefined"
+						:class="[title ? 'modal-card' : 'modal-content']"
+						:style="style"
+						tabindex="-1"
+						v-trap-tab
+						v-focus
+						v-show="isShow">
 					<template v-if="title">
 						<InteractiveTracker
 								tag="header" class="modal-card-head" :class="{'is-moving': isMoving}" :event-trigger="['drag']"
 								@click="btnClose" @start="isMoving = true" @end="isMoving = false"
 								v-model:x="modalX" v-model:y="modalY">
-							<p class="modal-card-title">{{ title }}</p>
+							<p class="modal-card-title" :id="titleId">{{ title }}</p>
 							<button type="button" class="delete" aria-label="close" v-if="isTruthy(hasClose)"></button>
 						</InteractiveTracker>
 						<section class="modal-card-body">
@@ -120,6 +130,10 @@ defineExpose({
 			font-weight: bold;
 		}
 
+		&-body {
+			overscroll-behavior: contain;
+		}
+
 		&-foot {
 			padding-top: .5rem;
 			padding-bottom: .5rem;
@@ -143,6 +157,8 @@ defineExpose({
 
 			.card-content {
 				overflow: auto;
+				overscroll-behavior: contain;
+				height: calc(100% - 3rem - 1px);
 			}
 
 			.card-content:last-child {

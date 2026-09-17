@@ -63,7 +63,8 @@ export default {
 
 	tags: {
 		placeholder: 'Select one or more',
-		emptyText  : 'No data'
+		emptyText  : 'No data',
+		remove     : 'Remove'
 	},
 
 	tree: {
@@ -89,5 +90,22 @@ export default {
 		press     : 'Press',
 		pasteImage: 'here to paste the image upload',
 		dblClick  : 'Or double click to select file to upload'
+	},
+
+	menu: {
+		expand  : 'Expand submenu',
+		collapse: 'Collapse submenu'
+	},
+
+	sort: {
+		label: 'Sort',
+		none : 'not sorted',
+		asc  : 'ascending',
+		desc : 'descending'
+	},
+
+	increment: {
+		plus : 'Increase',
+		minus: 'Decrease'
 	}
 }

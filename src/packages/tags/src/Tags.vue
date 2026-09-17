@@ -3,7 +3,7 @@ import { useKeydown } from '@/actions/keydown';
 import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 import Empty from '../../empty';
-import { isOverBoxSize, isTruthy, scroll2Middle, TAB_CLOSE_METHOD, vFocus } from '@/utils';
+import { isOverBoxSize, isTruthy, scroll2Middle, TAB_CLOSE_METHOD } from '@/utils';
 
 const isParentSmall = inject('isSmall', ref(false));
 const props = withDefaults(defineProps<{
@@ -41,9 +41,9 @@ watchEffect(() => {
 		setTimeout(() => {
 			useList.value = (props?.list || []).map((item: TVO.Item) => {
 				return {
-					title   : item.title,
-					value   : item.value,
-					icon    : item.icon,
+					title: item.title,
+					value: item.value,
+					icon: item.icon,
 					disabled: item.disabled
 				}
 			});
@@ -282,7 +282,11 @@ defineExpose({
 								<i :class="item.icon" v-if="item.icon"></i>
 								{{ item.title }}
 							</span>
-							<a class="tag is-delete" @click.stop="removeValue(item)"></a>
+							<button
+									type="button"
+									class="tag is-delete"
+									:aria-label="`${$vbt('tags.remove')} ${item.title}`"
+									@click.stop="removeValue(item)"></button>
 						</div>
 					</div>
 					<div class="control" v-if="!isOpen && isTruthy(collapse) && selectedTags.length > collapse">

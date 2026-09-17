@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUILocale } from '@/actions/locale';
 import type { VBMenu } from '@/types/shim';
 import { computed, inject, ref } from 'vue';
 import { getI18nData } from '@/utils';
@@ -16,6 +17,7 @@ const props = withDefaults(defineProps<{
 	level      : 0
 });
 const openedSet = inject('menu-opened-set', ref(new Set<string>()));
+const {$vbt} = useUILocale();
 
 const menuList = computed(() => props.data);
 const keyOf = (item: any) => item.name ?? item.url;
@@ -75,7 +77,11 @@ function toggle(item: VBMenu.Item, isOpen: boolean) {
 				</span>
 				<span
 						class="icon next-icon" :class="{'roll-down': isOpened(item)}"
+						role="button" tabindex="0" :aria-expanded="isOpened(item)"
+						:aria-label="isOpened(item) ? $vbt('menu.collapse') : $vbt('menu.expand')"
 						@click.prevent.stop="toggle(item, !isOpened(item))"
+						@keydown.enter.prevent.stop="toggle(item, !isOpened(item))"
+						@keydown.space.prevent.stop="toggle(item, !isOpened(item))"
 						v-if="item.children?.length && !item.pinned">
 					<FasIcon icon="angle-right"/>
 				</span>
