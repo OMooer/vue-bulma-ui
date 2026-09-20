@@ -37,6 +37,8 @@ const lastSelectLevel = ref(0);
 const cascadeList = ref<{ list: TVO.CascadeItem[]; required?: boolean; value: any; }[]>([]);
 const cacheStore = ref<{ [propName: string]: TVO.CascadeItem[] }>({});
 const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
+let presetRunId = 0;
+let dataGenId = 0;
 watch(() => props.list, (newList) => {
 	cascadeList.value = [
 		{
@@ -149,12 +151,16 @@ function getCascadeRequire(level: number = 0) {
 
 // 设置组件预设值
 async function updatePresetValue() {
+	const run = ++presetRunId;
 	const currentValue = modelValue.value;
 	if (currentValue?.length) {
 		lastSelectLevel.value = currentValue.length - 1;
 		// 检测后续值是否存在于级联列表中
 		// 如果其中某个节点不匹配则更新节点
 		for (const [i, value] of currentValue.entries()) {
+			if (run !== presetRunId) {
+				return;
+			}
 			const level = cascadeList.value[i];
 			if (value && level.value !== value) {
 				await updateNodeData(i, value);
@@ -224,6 +230,7 @@ function updateNodeData(level: number, data: any) {
 	if (!data) {
 		return;
 	}
+	const gen = ++dataGenId;
 	// 将当前选择的值更新到级联列表所在层级里
 	cascadeList.value[level].value = data;
 	const currentList = cascadeList.value[level].list;
@@ -236,6 +243,9 @@ function updateNodeData(level: number, data: any) {
 	// 获取下级数据，如果有的话
 	return loadDataFn({data, level, hasChild: !!findNode?.children, detail: findNode}).then(
 			(subList: TVO.CascadeItem[]) => {
+				if (gen !== dataGenId) {
+					return;
+				}
 				lastSelectLevel.value = level + 1;
 				cascadeList.value.push({
 					list    : subList,
