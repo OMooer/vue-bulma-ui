@@ -2,12 +2,14 @@
 import { provide, ref, useId, watchEffect } from 'vue';
 import { isTruthy, vFocus, vTrapTab } from '@/utils';
 import InteractiveTracker from '../../InteractiveTracker';
+import { useEscClose } from '@/actions/escStack';
 
 defineOptions({inheritAttrs: false});
 const emit = defineEmits(['close']);
-const {title, maskClose, hasClose = true, hasCancel = true} = defineProps<{
+const {title, maskClose, escClose, hasClose = true, hasCancel = true} = defineProps<{
 	title?: string;
 	maskClose?: boolean;
+	escClose?: boolean;
 	hasClose?: boolean;
 	hasCancel?: boolean;
 	style?: any;
@@ -24,6 +26,8 @@ watchEffect(() => {
 		isMainShow.value = true;
 	}
 });
+
+useEscClose(() => isShow.value && isTruthy(escClose), dismiss);
 
 function open() {
 	isShow.value = true;
@@ -95,7 +99,7 @@ defineExpose({
 						</section>
 						<footer class="modal-card-foot">
 							<slot name="footer" :dismiss="dismiss">
-								<div class="buttons is-right">
+								<div class="buttons is-right is-flex-grow-1">
 									<slot name="primary-buttons" :dismiss="dismiss"/>
 									<button type="button" class="button" @click="dismiss" v-if="isTruthy(hasCancel)">Cancel</button>
 								</div>

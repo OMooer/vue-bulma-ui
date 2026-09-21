@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useEscClose } from '@/actions/escStack';
 import { useUILocale } from '@/actions/locale';
 import { ExifOperator } from '@imnull/exif';
 import { webRequestImageBlob } from '@imnull/imgkit-web';
@@ -402,6 +403,20 @@ function resizeHandler(e: Event) {
 	}
 	mainRect = getMainRect();
 }
+
+function escClose() {
+	if (photoScaleRatio.value !== 0) {
+		zoomReset();
+		return;
+	}
+	if (showExifInfo.value) {
+		showExifInfo.value = false;
+		return;
+	}
+	emit('close');
+}
+
+useEscClose(() => true, escClose);
 
 const resizeFn = debounce(resizeHandler, 300);
 

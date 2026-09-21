@@ -21,6 +21,7 @@ const dialogVNode = defineComponent(
 
 			return () => h(Modal, {
 						ref     : modalEntity,
+						escClose: true,
 						hasClose: false,
 						style   : {
 							width      : props.width,

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useEscClose } from '@/actions/escStack';
 import { vTrapTab, vFocus } from '@/utils';
 import { computed, ref, watchEffect } from "vue";
 
@@ -6,7 +7,8 @@ const emit = defineEmits(['close']);
 const props = defineProps({
 	direction: {type: String, default: 'right'},
 	hasClose : {type: Boolean, default: true},
-	maskClose: {type: Boolean, default: true}
+	maskClose: {type: Boolean, default: true},
+	escClose : {type: Boolean, default: true}
 });
 
 const isShow = defineModel<boolean>('show', {default: true});
@@ -17,6 +19,8 @@ watchEffect(() => {
 		isMainShow.value = true;
 	}
 });
+
+useEscClose(() => isShow.value && props.escClose, () => isShow.value = false);
 
 const contClassName = computed(() => {
 	switch (props.direction) {

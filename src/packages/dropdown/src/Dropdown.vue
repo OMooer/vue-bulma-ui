@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useEscClose } from '@/actions/escStack';
 import { FontAwesomeIcon as FontIcon } from '@fortawesome/vue-fontawesome';
 import { computed, defineComponent, h, ref, useAttrs, useId, watch } from 'vue';
 import { iconNormalize, isElementPartiallyHidden, isOverBoxSize } from '@/utils';
@@ -170,6 +171,8 @@ function menuClicked(e: any) {
 		}, 200);
 	}
 }
+
+useEscClose(isOpen, () => isOpen.value = false);
 </script>
 
 <template>

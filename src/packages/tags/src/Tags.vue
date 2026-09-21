@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useEscClose } from '@/actions/escStack';
 import { useKeydown } from '@/actions/keydown';
 import { useUILocale } from '@/actions/locale';
 import { computed, inject, ref, watch, watchEffect } from 'vue';
@@ -210,9 +211,6 @@ function keyAction(e: any) {
 				}
 			}
 			break;
-		case 'Escape':
-			isOpen.value = false;
-			break;
 		case 'Toggle':
 			if (!isInput || !isOpen.value) {
 				toggleShow(e);
@@ -240,6 +238,8 @@ function keyAction(e: any) {
 			break;
 	}
 }
+
+useEscClose(isOpen, () => isOpen.value = false);
 
 function blurEntity(e: any) {
 	if (e.relatedTarget && !entity.value?.contains(e.relatedTarget)) {

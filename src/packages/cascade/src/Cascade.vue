@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useEscClose } from '@/actions/escStack';
 import { useKeydown } from '@/actions/keydown';
 import { computed, inject, provide, ref, useId, watch } from 'vue';
 import { useUILocale } from '@/actions/locale';
@@ -322,9 +323,6 @@ function keyAction(e: any) {
 		case 'ArrowDown':
 			e.preventDefault();
 			break;
-		case 'Escape':
-			isOpen.value = false;
-			break;
 		case 'ArrowLeft':
 			e.preventDefault();
 			if (lastSelectLevel.value > 0) {
@@ -353,6 +351,8 @@ function keyAction(e: any) {
 			break;
 	}
 }
+
+useEscClose(isOpen, () => isOpen.value = false);
 
 function setError(is: boolean, msg?: string) {
 	isError.value = is;
