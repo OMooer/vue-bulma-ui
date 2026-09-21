@@ -1,11 +1,12 @@
-.idea
-.vscode
-
-node_modules
-dist
-test
+.idea/
+.vscode/
+.DS_Store/
+node_modules/
+dist/
+test/
 
 .npmignore
 feature.md
 index.html
 vite.config.ts
+tsconfig.tsbuildinfo
