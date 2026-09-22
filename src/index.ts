@@ -37,7 +37,7 @@ import {
 	faSquareMinus,
 	faSquarePlus
 } from '@fortawesome/free-regular-svg-icons';
-import { type App, isRef, type Ref, toValue, watchEffect } from 'vue';
+import { type App, isRef, type Ref, type Component, toValue, watchEffect } from 'vue';
 import { SYMBOL_ECHARTS_KEY } from './utils';
 import { useUILocale } from './actions/locale';
 import { useDialog } from './actions/dialog';
@@ -97,9 +97,9 @@ export default {
 		library.add(...iconSet);
 		Vue.component('FasIcon', FontAwesomeIcon);
 		// UI 组件注册
-		Object.keys(components).forEach((key) => {
-			Vue.component(key, components[key as keyof typeof components]);
-		});
+		for (const [name, comp] of Object.entries(components)) {
+			Vue.component(name, comp as Component);
+		}
 		// UI 方法注册
 		Vue.config.globalProperties.$dialog = $dialog;
 		Vue.config.globalProperties.$alert = $alert;

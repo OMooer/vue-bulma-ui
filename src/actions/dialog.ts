@@ -7,11 +7,13 @@ import Modal from '../packages/modal';
 const dialogVNode = defineComponent(
 		(props, {slots, emit, expose}) => {
 			const modalEntity = ref(null);
+			const isDoneState = ref(props.type !== 'confirm');
 			// 反向触发 Modal 关闭，因为要呈现 Modal 的关闭动画
 			// 所以在这里暴露出实例事件给到 dialog 的实例组件
 			// 而在 Modal 的内部也同样是暴露出来了 dismiss 事件
 			// 注意这个事件与 dialog 的 dismiss 事件不是同一个
-			function modalClose() {
+			function modalClose(isDone: boolean) {
+				isDoneState.value = isDone;
 				(modalEntity.value as any)?.dismiss();
 			}
 
@@ -28,7 +30,7 @@ const dialogVNode = defineComponent(
 							'min-width': '20rem'
 						},
 						onClose() {
-							emit('dismiss');
+							emit('dismiss', isDoneState.value);
 						}
 					},
 					{
@@ -42,6 +44,7 @@ const dialogVNode = defineComponent(
 		},
 		{
 			props: {
+				type   : String,
 				title  : String,
 				content: String,
 				width  : {
@@ -79,36 +82,49 @@ export function useDialog(optionLanguage?: OP.DialogText) {
 			options.doneText ??= language.doneText;
 			options.cancelText ??= language.cancelText;
 			const dialogEntity = ref(null);
-			const dismissDialog = () => {
+			const dismissDialog = (isDone: boolean) => {
+				// 接上关闭的路径决定是 resolve 还是 reject
+				if (isDone) {
+					resolve(true);
+				}
+				else {
+					reject('cancel');
+				}
 				dialog.unmount();
-			}
+			};
 			let footOpera = [];
 			switch (options.type) {
 				case 'confirm':
 					footOpera = [
-						h('a', {
-							class: 'card-footer-item has-text-weight-bold',
+						h('button', {
+							type : 'button',
+							class: 'card-footer-item has-text-link has-text-weight-bold',
+							style: {
+								color: options.primaryColor ? `${ options.primaryColor } !important` : undefined
+							},
 							onClick() {
-								(dialogEntity.value as any)?.modalClose();
-								resolve(true);
+								(dialogEntity.value as any)?.modalClose(true);
 							}
 						}, options.doneText),
-						h('a', {
-							class: 'card-footer-item',
+						h('button', {
+							type : 'button',
+							class: 'card-footer-item has-text-link',
 							onClick() {
-								(dialogEntity.value as any)?.modalClose();
-								reject();
+								(dialogEntity.value as any)?.modalClose(false);
 							}
 						}, options.cancelText)
 					]
 					break;
 				default:
 					footOpera = [
-						h('a', {
-							class: 'card-footer-item has-text-weight-bold',
+						h('button', {
+							type : 'button',
+							class: 'card-footer-item has-text-link has-text-weight-bold',
+							style: {
+								color: options.primaryColor ? `${ options.primaryColor } !important` : undefined
+							},
 							onClick() {
-								(dialogEntity.value as any)?.modalClose();
-								resolve(true);
+								(dialogEntity.value as any)?.modalClose(true);
 							}
 						}, options.doneText)
 					]
@@ -117,6 +133,7 @@ export function useDialog(optionLanguage?: OP.DialogText) {
 			const dialog = createApp({
 				render: () => h(dialogVNode as any, {
 							ref      : dialogEntity,
+							type     : options.type,
 							title    : options.title,
 							content  : options.content,
 							width    : options.width,
@@ -129,12 +146,12 @@ export function useDialog(optionLanguage?: OP.DialogText) {
 		});
 	};
 	const $alert = (content: string, opt?: OP.FastDialogOpt) => {
-		const {title, width, doneText} = opt || {};
-		return $dialog({type: 'alert', title, content, width, doneText});
+		const {title, width, primaryColor, doneText} = opt || {};
+		return $dialog({type: 'alert', title, content, width, primaryColor, doneText});
 	};
 	const $confirm = (content: string, opt?: OP.FastDialogOpt) => {
-		const {title, width, doneText, cancelText} = opt || {};
-		return $dialog({type: 'confirm', title, content, width, doneText, cancelText});
+		const {title, width, primaryColor, doneText, cancelText} = opt || {};
+		return $dialog({type: 'confirm', title, content, width, primaryColor, doneText, cancelText});
 	};
 
 

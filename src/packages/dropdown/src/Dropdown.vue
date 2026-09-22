@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<{
 	isHoverable?: boolean;
 	parentElement?: string;
 }>(), {hasArrow: true});
-const emit = defineEmits(['active', 'select']);
+const emit = defineEmits(['active', 'select', 'open']);
 const attrs = useAttrs();
 const menuId = useId();
 const isOpen = ref(false);
@@ -54,6 +54,7 @@ const event = (ev: Event) => {
 };
 
 watch(isOpen, (is) => {
+	emit('open', is);
 	if (is) {
 		// 计算位置决定展开方向
 		const target = entity.value?.querySelector('.dropdown-menu');

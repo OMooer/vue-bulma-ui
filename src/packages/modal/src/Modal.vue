@@ -132,6 +132,7 @@ defineExpose({
 		}
 	}
 
+	// 带标题页脚的样式
 	.modal-card {
 		translate: var(--modal-x) var(--modal-y);
 
@@ -168,6 +169,7 @@ defineExpose({
 		}
 	}
 
+	// 无标题
 	.modal-content {
 		max-width: 100vw;
 		max-height: 100vh;

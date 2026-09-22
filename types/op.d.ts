@@ -19,6 +19,7 @@ declare namespace OP {
 		title?: string;
 		content: string;
 		width?: string;
+		primaryColor?: string;
 	} & DialogText;
 
 	type FastDialogOpt = Omit<DialogOption, 'id' | 'type' | 'content'>;

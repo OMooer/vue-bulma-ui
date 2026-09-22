@@ -17,7 +17,7 @@ const props = defineProps<{
 	filterText?: string;
 	emptyText?: string;
 }>();
-const emit = defineEmits(['error']);
+const emit = defineEmits(['error', 'open']);
 const innerValue = defineModel();
 const {$vbt} = useUILocale();
 const menuId = useId();
@@ -62,6 +62,7 @@ const event = (ev: Event) => {
 };
 
 watch(isOpen, (is) => {
+	emit('open', is);
 	if (is) {
 		// 计算位置决定展开方向
 		const target = entity.value?.querySelector('.dropdown-menu');

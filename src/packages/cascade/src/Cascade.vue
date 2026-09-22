@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
 	loadingText?: string;
 	isSmall?: boolean;
 }>(), {mode: 'detach', cache: false});
-const emit = defineEmits(['error']);
+const emit = defineEmits(['error', 'open']);
 const modelValue = defineModel<any[]>({default: () => []});
 const menuId = useId();
 const isLoading = ref(false);
@@ -82,6 +82,7 @@ const captureEvent = (ev: Event) => {
 };
 
 watch(isOpen, (is) => {
+	emit('open', is);
 	if (is) {
 		// 计算位置决定展开方向
 		const target = entity.value?.querySelector('.dropdown-menu');

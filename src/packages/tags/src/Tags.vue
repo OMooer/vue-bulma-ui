@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<{
 	disabled?: boolean;
 	emptyText?: string;
 }>(), {collapse: 0});
-const emit = defineEmits(['error']);
+const emit = defineEmits(['error', 'open']);
 const {$vbt} = useUILocale();
 const {keyIndex, handler} = useKeydown();
 const isReallySmall = computed(() => isParentSmall.value || props.isSmall);
@@ -134,6 +134,7 @@ const event = (ev: Event) => {
 };
 
 watch(isOpen, (is) => {
+	emit('open', is);
 	if (is) {
 		// 计算位置决定展开方向
 		const target = tagEntity.value?.closest('.vb-tags').querySelector('.dropdown-menu');
